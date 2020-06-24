@@ -52,7 +52,7 @@ export const Registration = () => {
 
                         <CustomTextInput name='password' type='password' placeholder='Password' autoComplete='off'/>
 
-                        <button type='submit'>{props.isSubmitting ? 'Loading...' : 'Submit'}</button>
+                        <button type='submit'>{props.isSubmitting ? 'Loading...' : 'Sign Up'}</button>
 
                         <div className='bottom-text'>
                             Have an account? <a href='#'>Log in</a>
