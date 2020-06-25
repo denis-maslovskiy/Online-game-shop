@@ -55,7 +55,7 @@ export const Registration = () => {
                         <button type='submit'>{props.isSubmitting ? 'Loading...' : 'Sign Up'}</button>
 
                         <div className='bottom-text'>
-                            Have an account? <a href='#'>Log in</a>
+                            Have an account? <a href='/authorization'>Log in</a>
                         </div>
                     </Form>
                 )}
