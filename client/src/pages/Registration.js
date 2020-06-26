@@ -21,6 +21,21 @@ const CustomTextInput = ({ label, ...props }) => {
 
 export const Registration = () => {
 
+    const schema = Yup.object({
+        userName: Yup.string().min(3, 'Must be at least 3 characters').max(15, 'Must be no more than 15 characters').required('Required'),
+        email: Yup.string().email('Invalid email address').required('Required'),
+        password: Yup.string().min(6, 'Must be at least 6 characters').required('Required')
+    });
+
+    const submit = (values, { setSubmitting, resetForm }) => {
+        setTimeout(() => {
+            console.log(JSON.stringify(values));
+            resetForm();
+            setSubmitting(false);
+        }, 3000);
+       
+    };
+
     return (
             <Formik
                 initialValues={{
@@ -28,19 +43,10 @@ export const Registration = () => {
                     email: "",
                     password: "",
                 }}
-                validationSchema={Yup.object({
-                    userName: Yup.string().min(3, 'Must be at least 3 characters').max(15, 'Must be no more than 15 characters').required('Required'),
-                    email: Yup.string().email('Invalid email address').required('Required'),
-                    password: Yup.string().min(6, 'Must be at least 6 characters').required('Required')
-                })}
-                onSubmit={(values, { setSubmitting, resetForm }) => {
-                    setTimeout(() => {
-                        console.log(JSON.stringify(values));
-                        resetForm();
-                        setSubmitting(false);
-                    }, 3000);
-                   
-                }}
+
+                validationSchema = {schema}
+
+                onSubmit = {submit}
             >
                 {props => (
                     <Form className='box'>
