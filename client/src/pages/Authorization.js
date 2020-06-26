@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, useField, Form } from 'formik';
 import * as Yup from 'yup';
+import { Link } from 'react-router-dom';
 import '../styles/auth.scss'
 
 const CustomTextInput = ({ label, ...props }) => {
@@ -27,8 +28,8 @@ export const Authorization = () => {
                     password: "",
                 }}
                 validationSchema={Yup.object({
-                    email: Yup.string().email('Invalid email address'),
-                    password: Yup.string().min(6, 'Must be at least 6 characters')
+                    email: Yup.string().email('Invalid email address').required('Required'),
+                    password: Yup.string().min(6, 'Must be at least 6 characters').required('Required')
                 })}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     setTimeout(() => {
@@ -41,16 +42,16 @@ export const Authorization = () => {
             >
                 {props => (
                     <Form className='box'>
-                        <h1>Authorization</h1>
+                        <h1 className="box__title">Authorization</h1>
                         
-                        <CustomTextInput name='email' type='text' placeholder='Email' autoComplete='off'/>
+                        <CustomTextInput className='box__input' name='email' type='text' placeholder='Email' autoComplete='off'/>
 
-                        <CustomTextInput name='password' type='password' placeholder='Password' autoComplete='off'/>
+                        <CustomTextInput className='box__input' name='password' type='password' placeholder='Password' autoComplete='off'/>
 
-                        <button type='submit'>{props.isSubmitting ? 'Loading...' : 'Log In'}</button>
+                        <button className='box__submit-btn' type='submit'>{props.isSubmitting ? 'Loading...' : 'Log In'}</button>
 
-                        <div className='bottom-text'>
-                            Don't have an account? <a href='/registration'>Sign up</a>
+                        <div className='box__bottom-text'>
+                            Don't have an account? <Link to='/registration' className='box__bottom-text__link'>Sign up</Link>
                         </div>
                     </Form>
                 )}

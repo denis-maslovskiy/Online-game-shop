@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, useField, Form } from 'formik';
 import * as Yup from 'yup';
+import { Link } from 'react-router-dom';
 import '../styles/auth.scss'
 
 const CustomTextInput = ({ label, ...props }) => {
@@ -28,9 +29,9 @@ export const Registration = () => {
                     password: "",
                 }}
                 validationSchema={Yup.object({
-                    userName: Yup.string().min(3, 'Must be at least 3 characters').max(15, 'Must be no more than 15 characters'),
-                    email: Yup.string().email('Invalid email address'),
-                    password: Yup.string().min(6, 'Must be at least 6 characters')
+                    userName: Yup.string().min(3, 'Must be at least 3 characters').max(15, 'Must be no more than 15 characters').required('Required'),
+                    email: Yup.string().email('Invalid email address').required('Required'),
+                    password: Yup.string().min(6, 'Must be at least 6 characters').required('Required')
                 })}
                 onSubmit={(values, { setSubmitting, resetForm }) => {
                     setTimeout(() => {
@@ -43,19 +44,19 @@ export const Registration = () => {
             >
                 {props => (
                     <Form className='box'>
-                        <h1>Registration</h1>
+                        <h1 className="box__title">Registration</h1>
 
                         
-                        <CustomTextInput name='userName' type='text' placeholder='Username' autoComplete='off' />
+                        <CustomTextInput className='box__input' name='userName' type='text' placeholder='Username' autoComplete='off' />
                         
-                        <CustomTextInput name='email' type='text' placeholder='Email' autoComplete='off'/>
+                        <CustomTextInput className='box__input' name='email' type='text' placeholder='Email' autoComplete='off'/>
 
-                        <CustomTextInput name='password' type='password' placeholder='Password' autoComplete='off'/>
+                        <CustomTextInput className='box__input' name='password' type='password' placeholder='Password' autoComplete='off'/>
 
-                        <button type='submit'>{props.isSubmitting ? 'Loading...' : 'Sign Up'}</button>
+                        <button className='box__submit-btn' type='submit'>{props.isSubmitting ? 'Loading...' : 'Sign Up'}</button>
 
-                        <div className='bottom-text'>
-                            Have an account? <a href='/authorization'>Log in</a>
+                        <div className='box__bottom-text'>
+                            Have an account? <Link to='/authorization' className='box__bottom-text__link'>Log in</Link>
                         </div>
                     </Form>
                 )}
