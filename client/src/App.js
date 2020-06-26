@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { useRoutes } from './routes';
+import { Navbar } from './components/Navbar';
 
 function App() {
 
@@ -9,6 +10,8 @@ function App() {
   return (
 
     <BrowserRouter>
+
+      <Navbar/>
 
       <div>
         { routes }
