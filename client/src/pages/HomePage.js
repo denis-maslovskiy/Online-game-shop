@@ -8,7 +8,6 @@ export const HomePage = () => {
     return (
         <main className='container'>
             <div className='content'>
-
                 {
                     goods.map((item, index) => {
 
@@ -27,6 +26,10 @@ export const HomePage = () => {
                         )
                     })
                 }
+
+                <div>
+                    
+                </div>
             </div>
         </main>
     )
