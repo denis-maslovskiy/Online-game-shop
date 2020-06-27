@@ -11,6 +11,9 @@ import Menu from '@material-ui/core/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { Link } from 'react-router-dom';
+
+import FilterListIcon from '@material-ui/icons/FilterList';
+
 import '../styles/navbar.scss'
 
 const useStyles = makeStyles((theme) => ({
@@ -121,7 +124,7 @@ export const Navbar = () => {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar>
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
             Online Game Shop
@@ -139,6 +142,15 @@ export const Navbar = () => {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
+
+          <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                color="inherit"
+              >
+                <FilterListIcon/>
+            </IconButton>
 
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
