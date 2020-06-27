@@ -7,3 +7,28 @@
 .mobile-menu-link {
     color: black;
 }
+
+.filter-block {
+    width: 400px;
+    height: 300px;
+    background-color: white;
+
+    &__filter, &__sort {
+        padding: 10px;
+    }
+
+    &__filter {
+        border-bottom: 2px solid grey;
+    }
+
+
+    &__filter-option {
+        display: flex;
+        align-items: center;
+
+        &__title {
+            width: 100px;
+            margin-right: 10px;
+        }
+    }
+}
