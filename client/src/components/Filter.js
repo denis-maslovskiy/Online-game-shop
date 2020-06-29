@@ -50,9 +50,9 @@ const useStyles = makeStyles((theme) => ({
   inputRoot: {
     color: "inherit",
   },
-  inputInput: {
+  input: {
     padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    paddingLeft: theme.spacing(4),
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
@@ -94,6 +94,20 @@ export const Filter = () => {
     setAnchorEl(null);
   };
 
+  const sortValues = [
+    { value: "popular", label: "Popular" },
+    { value: "price", label: "Price" },
+    { value: "new", label: "New" },
+    { value: "discount", label: "Discount" },
+  ];
+
+  const filterValues = [
+    { inputName: "Game Name:", inputLabel: "Game Name" },
+    { inputName: "Author:", inputLabel: "Author" },
+    { inputName: "Genre:", inputLabel: "Genre" },
+    { inputName: "Number of copies:", inputLabel: "Number of copies" },
+  ];
+
   return (
     <>
       <IconButton
@@ -103,7 +117,6 @@ export const Filter = () => {
       >
         <FilterListIcon />
       </IconButton>
-
       <Menu
         id="menu-appbar"
         anchorEl={anchorEl}
@@ -122,55 +135,25 @@ export const Filter = () => {
         <div className="filter-block">
           <div className="filter-block__filter">
             <h2>Filter</h2>
-
-            <div className="filter-block__filter-option">
-              <span className="filter-block__filter-option__title">
-                Game Name:
-              </span>
-              <FormControl className={classes.margin}>
-                <InputLabel htmlFor="demo-customized-textbox">
-                  Game Name
-                </InputLabel>
-                <CustomInput className="demo-customized-textbox" />
-              </FormControl>
-            </div>
-
-            <div className="filter-block__filter-option">
-              <span className="filter-block__filter-option__title">
-                Author:
-              </span>
-              <FormControl className={classes.margin}>
-                <InputLabel htmlFor="demo-customized-textbox">
-                  Author
-                </InputLabel>
-                <CustomInput className="demo-customized-textbox" />
-              </FormControl>
-            </div>
-
-            <div className="filter-block__filter-option">
-              <span className="filter-block__filter-option__title">Genre:</span>
-              <FormControl className={classes.margin}>
-                <InputLabel htmlFor="demo-customized-textbox">Genre</InputLabel>
-                <CustomInput className="demo-customized-textbox" />
-              </FormControl>
-            </div>
-
-            <div className="filter-block__filter-option">
-              <span className="filter-block__filter-option__title">
-                Number of copies:
-              </span>
-              <FormControl className={classes.margin}>
-                <InputLabel htmlFor="demo-customized-textbox">
-                  Number of copies
-                </InputLabel>
-                <CustomInput className="demo-customized-textbox" />
-              </FormControl>
-            </div>
+            {filterValues.map((item, index) => {
+              return (
+                <div className="filter-block__filter-option" key={index}>
+                  <span className="filter-block__filter-option__title">
+                    {item.inputName}
+                  </span>
+                  <FormControl className={classes.margin}>
+                    <InputLabel htmlFor="demo-customized-textbox">
+                      {item.inputLabel}
+                    </InputLabel>
+                    <CustomInput className="demo-customized-textbox" />
+                  </FormControl>
+                </div>
+              );
+            })}
           </div>
 
           <div className="filter-block__sort">
             <h2>Sorting</h2>
-
             <div className="filter-block__filter-option">
               <span className="filter-block__filter-option__title">
                 Select sort:
@@ -189,10 +172,13 @@ export const Filter = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value={"popular"}>Popular</MenuItem>
-                  <MenuItem value={"price"}>Price</MenuItem>
-                  <MenuItem value={"new"}>New</MenuItem>
-                  <MenuItem value={"discount"}>Discount</MenuItem>
+                  {sortValues.map((item, index) => {
+                    return (
+                      <MenuItem value={item.value} key={index}>
+                        {item.label}
+                      </MenuItem>
+                    );
+                  })}
                 </Select>
               </FormControl>
             </div>
