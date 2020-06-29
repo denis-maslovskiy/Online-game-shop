@@ -62,7 +62,7 @@ export const Navbar = () => {
 
   return (
     <div className={classes.grow}>
-      <AppBar style={{ display: "block" }}>
+      <AppBar>
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
             <Link to="/" className="navbar-links">
