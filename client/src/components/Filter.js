@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BootstrapInput } from "./BootstrapInput";
+import { CustomInput } from "./CustomInput";
 import { useStyles } from '../hooks/useStyles';
 import IconButton from "@material-ui/core/IconButton";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -9,8 +9,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import "../styles/navbar.scss";
-
-const CustomInput = BootstrapInput;
 
 export const Filter = () => {
   const [age, setAge] = useState("");
