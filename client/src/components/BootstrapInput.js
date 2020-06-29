@@ -8,6 +8,7 @@ export const BootstrapInput = withStyles((theme) => ({
     },
   },
   input: {
+    width: '55%',
     borderRadius: 4,
     position: "relative",
     backgroundColor: theme.palette.background.paper,
