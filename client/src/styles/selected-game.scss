@@ -1,0 +1,89 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+.content-area {
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 24px;
+    background: $selectedGame-bg;
+    @include flex-display(wrap);
+
+    &__carousel {
+        width: 100%;
+        @include flex-display(nowrap, row, center, center);
+        color: white;
+    }
+
+    &__game-info {
+        width: 49%;
+        margin: 1% 0 0 1%;
+
+        &__text-field-title {
+            @include selectedGame-textSize(24px);
+        }
+
+        &__text-field-value {
+            display: inline-block;
+            margin-bottom: 10px;
+            @include selectedGame-textSize(18px);
+        }
+    }
+
+    &__buy-game {
+        width: 49%;
+        @include flex-display(wrap, row, space-around, stretch);
+
+        &__digital-copy, &__physical-copy {
+            @include flex-display(nowrap, column, flex-start, center);
+            margin-bottom: 5%;
+            @media (max-width: 382px) {
+                border-bottom: 2px solid $light-green-color;
+            }
+        }
+
+        // &__digital-copy {
+            
+        // }
+
+        &__title {
+            @include selectedGame-textSize(24px);
+            margin-top: 5px;
+        }
+
+        &__price {
+            @include selectedGame-textSize(28px);
+            margin-top: 5px;
+        }
+
+        &__button {
+            border: 0;
+            background: none;
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+            border: 2px solid $light-green-color;
+            padding: 14px 40px;
+            outline: none;
+            color: black;
+            border-radius: 24px;
+            transition: .25s;
+            @include selectedGame-textSize(18px);
+            cursor: pointer;
+
+            &:hover {
+                background: $light-green-color;
+            }
+        }
+    }
+
+    @media (max-width: 1110px) {
+        &__game-info {
+            width: 100%;
+        }
+
+        &__buy-game {
+            width: 100%;
+            border-top: 2px solid $light-green-color;
+        }
+    }
+}
