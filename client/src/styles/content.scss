@@ -1,22 +1,14 @@
+@import './mixins.scss';
+@import './variables.scss';
+
 .container {
     margin: 0 auto;
-    padding: 0px 5%;
+    padding: 0px 5%;  
 
-    @media screen and (max-width: 1450px) {
-        max-width: 1180px;
-    }
-    
-    @media screen and (max-width: 1200px) {
-        max-width: 970px;
-    }
-    
-    @media screen and (max-width: 992px) {
-        max-width: 750px;
-    }
-    
-    @media screen and (max-width: 767px) {
-        max-width: none;
-    }
+    @include phone(1450px, 1180px);
+    @include phone(1200px, 970px);
+    @include phone(992px, 750px);
+    @include phone(767px, none); 
 }
 
 .content {
@@ -31,10 +23,9 @@
         outline: none;
         border-radius: 24px;
 
-
         &:active, &:focus {
             .content__card {
-                background-color: rgb(219, 245, 248);
+                background-color: $custom-light-blue;
             }
         }
     }
@@ -45,7 +36,7 @@
         width: 300px;
         height: 200px;
         background-color: white;
-        color: rgb(97, 96, 96);
+        color: $custom-grey;
         font-family: sans-serif;
         margin: 1% 1%;
         border-radius: 24px;
