@@ -1,0 +1,18 @@
+@mixin phone($phone-width, $max-width) {
+    @media (max-width: $phone-width) {
+        max-width: $max-width;
+    }
+}
+
+@mixin selectedGame-textSize($font-size) {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: $font-size;
+}
+
+@mixin flex-display($flex-wrap: nowrap, $flex-direction: row, $justify-content: flex-start, $align-items: stretch) {
+    display: flex;
+    flex-wrap: $flex-wrap;
+    flex-direction: $flex-direction;
+    justify-content: $justify-content;
+    align-items: $align-items;
+}
