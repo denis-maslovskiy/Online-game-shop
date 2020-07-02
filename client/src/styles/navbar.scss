@@ -23,9 +23,10 @@
     &__filter {
         border-bottom: 1px solid grey;
     }
+}
 
-
-    &__filter-option {
+.filter {
+    &__option {
         display: flex;
         align-items: center;
 
