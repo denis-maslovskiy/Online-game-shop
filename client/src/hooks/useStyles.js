@@ -40,7 +40,7 @@ export const useStyles = makeStyles((theme) => ({
   inputRoot: {
     color: "inherit",
   },
-  inputInput: {
+  input: {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: theme.spacing(6),
     transition: theme.transitions.create("width"),
