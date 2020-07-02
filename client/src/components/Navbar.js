@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { Filter } from "./Filter";
-import { useStyles } from "../hooks/useStyles";
-import { Link } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -12,6 +9,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import { Filter } from "./Filter";
+import { useStyles } from "../hooks/useStyles";
+import { Link } from "react-router-dom";
 import "../styles/navbar.scss";
 
 export const Navbar = () => {
@@ -47,7 +47,6 @@ export const Navbar = () => {
           </Badge>
         </IconButton>
       </MenuItem>
-
       <MenuItem>
         <IconButton>
           <Badge>
@@ -77,14 +76,12 @@ export const Navbar = () => {
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
-                input: classes.inputInput,
+                input: classes.input,
               }}
               inputProps={{ "aria-label": "search" }}
             />
           </div>
-
           <Filter />
-
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton>
@@ -94,7 +91,6 @@ export const Navbar = () => {
                 </Link>
               </Badge>
             </IconButton>
-
             <IconButton>
               <Badge>
                 <Link to="/registration" className="navbar-links">
@@ -103,7 +99,6 @@ export const Navbar = () => {
               </Badge>
             </IconButton>
           </div>
-
           <div className={classes.sectionMobile}>
             <IconButton
               aria-label="show more"
