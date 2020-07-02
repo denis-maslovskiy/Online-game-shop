@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { CustomInput } from "./CustomInput";
-import { useStyles } from '../hooks/useStyles';
 import IconButton from "@material-ui/core/IconButton";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
@@ -8,6 +6,8 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import { CustomInput } from "./CustomInput";
+import { useStyles } from "../hooks/useStyles";
 import "../styles/navbar.scss";
 
 export const Filter = () => {
@@ -68,12 +68,12 @@ export const Filter = () => {
         onClose={handleClose}
       >
         <div className="filter-block">
-          <div className="filter-block__filter">
+          <div className="filter-block__filter filter">
             <h2>Filter</h2>
             {filterValues.map((item, index) => {
               return (
-                <div className="filter-block__filter-option" key={index}>
-                  <span className="filter-block__filter-option__title">
+                <div className="filter__option" key={index}>
+                  <span className="filter__option__title">
                     {item.inputName}
                   </span>
                   <FormControl className={classes.margin}>
@@ -86,13 +86,10 @@ export const Filter = () => {
               );
             })}
           </div>
-
           <div className="filter-block__sort">
             <h2>Sorting</h2>
-            <div className="filter-block__filter-option">
-              <span className="filter-block__filter-option__title">
-                Select sort:
-              </span>
+            <div className="filter__option">
+              <span className="filter__option__title">Select sort:</span>
               <FormControl className={classes.margin}>
                 <InputLabel id="demo-customized-select-label">
                   Sorting
