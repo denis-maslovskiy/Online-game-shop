@@ -1,6 +1,14 @@
 import React, { useRef } from "react";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
+import img1 from "../img/1.jpg";
+import img2 from "../img/2.jpg";
+import img3 from "../img/3.jpg";
+import img4 from "../img/4.jpg";
+import img5 from "../img/5.jpg";
+import img6 from "../img/6.jpg";
+import img7 from "../img/7.jpg";
+import img8 from "../img/8.jpg";
 
 const Carousel = () => {
   const ul = useRef();
@@ -24,79 +32,40 @@ const Carousel = () => {
       ? (position = Math.max(position, -2240))
       : (position = Math.max(position, -1400));
     ul.current.style.marginLeft = position + "px";
-    console.log(position);
   };
+
+  const arrayOfImgs = [
+    { img: img1, id: 1 },
+    { img: img2, id: 2 },
+    { img: img3, id: 3 },
+    { img: img4, id: 4 },
+    { img: img5, id: 5 },
+    { img: img6, id: 6 },
+    { img: img7, id: 7 },
+    { img: img8, id: 8 },
+  ];
 
   return (
     <div className="carousel">
       <button
-        className="carousel__arrow carousel__arrow__prev"
+        className="carousel__arrow carousel__arrow_prev"
         onClick={onClickPrevHandler}
       >
         ⇦
       </button>
-      <div className="carousel__gallery">
-        <ul className="carousel__gallery__images" ref={ul}>
-          <li ref={li}>
-            <img
-              src={require("../img/1.jpg")}
-              alt="1"
-              className="carousel__gallery__images__img"
-            />
-          </li>
-          <li ref={li}>
-            <img
-              src={require("../img/2.jpg")}
-              alt="2"
-              className="carousel__gallery__images__img"
-            />
-          </li>
-          <li ref={li}>
-            <img
-              src={require("../img/3.jpg")}
-              alt="3"
-              className="carousel__gallery__images__img"
-            />
-          </li>
-          <li ref={li}>
-            <img
-              src={require("../img/4.jpg")}
-              alt="4"
-              className="carousel__gallery__images__img"
-            />
-          </li>
-          <li ref={li}>
-            <img
-              src={require("../img/5.jpg")}
-              alt="5"
-              className="carousel__gallery__images__img"
-            />
-          </li>
-          <li ref={li}>
-            <img
-              src={require("../img/6.jpg")}
-              alt="6"
-              className="carousel__gallery__images__img"
-            />
-          </li>
-          <li ref={li}>
-            <img
-              src={require("../img/7.jpg")}
-              alt="7"
-              className="carousel__gallery__images__img"
-            />
-          </li>
-          <li ref={li}>
-            <img
-              src={require("../img/8.jpg")}
-              alt="8"
-              className="carousel__gallery__images__img"
-            />
-          </li>
+      <div className="carousel__gallery gallery">
+        <ul className="gallery__images images" ref={ul}>
+          {arrayOfImgs.map((item) => {
+            return (
+              <li ref={li} className="images__li" key={item.id}>
+                <img src={item.img} alt="pic" className="images__img" />
+              </li>
+            );
+          })}
         </ul>
       </div>
       <button
-        className="carousel__arrow carousel__arrow__next"
+        className="carousel__arrow carousel__arrow_next"
         onClick={onClickNextHandler}
       >
         ⇨
@@ -123,36 +92,28 @@ export const SelectedGame = () => {
     <div className="content-area">
       {Carousel()}
 
-      <div className="content-area__game-info">
+      <div className="content-area__game-info game-info">
         {textFields.map((item) => {
           return (
             <div key={item.title}>
-              <span className="content-area__game-info__text-field-title">
-                {item.title}
-              </span>
-              <p className="content-area__game-info__text-field-value">
-                {item.value}
-              </p>
+              <span className="game-info__text-field-title">{item.title}</span>
+              <p className="game-info__text-field-value">{item.value}</p>
             </div>
           );
         })}
       </div>
 
-      <div className="content-area__buy-game">
-        <div className="content-area__buy-game__digital-copy">
-          <h2 className="content-area__buy-game__title">Digital Copy</h2>
-          <h2 className="content-area__buy-game__price">Price</h2>
-          <button className="content-area__buy-game__button">
-            Add to card
-          </button>
+      <div className="content-area__buy-game buy-game">
+        <div className="buy-game__digital-copy">
+          <h2 className="buy-game__title">Digital Copy</h2>
+          <h2 className="buy-game__price">Price</h2>
+          <button className="buy-game__button">Add to card</button>
         </div>
 
-        <div className="content-area__buy-game__physical-copy">
-          <h2 className="content-area__buy-game__title">Physical Copy</h2>
-          <h2 className="content-area__buy-game__price">Price</h2>
-          <button className="content-area__buy-game__button">
-            Add to card
-          </button>
+        <div className="buy-game__physical-copy">
+          <h2 className="buy-game__title">Physical Copy</h2>
+          <h2 className="buy-game__price">Price</h2>
+          <button className="buy-game__button">Add to card</button>
         </div>
       </div>
     </div>
