@@ -3,6 +3,7 @@ import { Switch, Route} from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { Registration } from './pages/Registration';
 import { SelectedGame } from './pages/SelectedGame';
+import { Basket } from './pages/Basket';
 
 export const useRoutes = () => {
 
@@ -19,6 +20,10 @@ export const useRoutes = () => {
 
             <Route path='/selectedgame' exact>
                 <SelectedGame/>
+            </Route>
+
+            <Route path='/basket'>
+                <Basket/>
             </Route>
 
         </Switch>
