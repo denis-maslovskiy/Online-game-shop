@@ -72,8 +72,8 @@ export const Filter = () => {
             <h2>Filter</h2>
             {filterValues.map((item, index) => {
               return (
-                <div className="filter__option" key={index}>
-                  <span className="filter__option__title">
+                <div className="filter__option option" key={index}>
+                  <span className="option__title">
                     {item.inputName}
                   </span>
                   <FormControl className={classes.margin}>
@@ -88,8 +88,8 @@ export const Filter = () => {
           </div>
           <div className="filter-block__sort">
             <h2>Sorting</h2>
-            <div className="filter__option">
-              <span className="filter__option__title">Select sort:</span>
+            <div className="filter__option option">
+              <span className="option__title">Select sort:</span>
               <FormControl className={classes.margin}>
                 <InputLabel id="demo-customized-select-label">
                   Sorting
