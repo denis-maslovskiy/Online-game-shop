@@ -1,12 +1,15 @@
+@import './variables.scss';
+
 @mixin phone($phone-width, $max-width) {
     @media (max-width: $phone-width) {
         max-width: $max-width;
     }
 }
 
-@mixin selectedGame-textSize($font-size) {
+@mixin text-style($font-size, $font-weight: normal) {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: $font-size;
+    font-weight: $font-weight;
 }
 
 @mixin flex-display($flex-wrap: nowrap, $flex-direction: row, $justify-content: flex-start, $align-items: stretch) {
@@ -15,4 +18,24 @@
     flex-direction: $flex-direction;
     justify-content: $justify-content;
     align-items: $align-items;
+}
+
+@mixin custom-btn( $font-size, $padding: 14px 40px, $margin: 20px auto, $border: 2px solid $light-green-color, $border-radius: 24px, $bg-hover: $light-green-color) {
+    border: 0;
+    background: none;
+    display: block;
+    margin: $margin;
+    text-align: center;
+    border: $border;
+    padding: $padding;
+    outline: none;
+    color: black;
+    border-radius: $border-radius;
+    transition: .25s;
+    @include text-style($font-size);
+    cursor: pointer;
+    
+    &:hover {
+        background: $bg-hover;
+    }
 }
