@@ -29,11 +29,13 @@
     &__option {
         display: flex;
         align-items: center;
+    }
+}
 
-        &__title {
-            width: 100px;
-            margin-right: 10px;
-            font-weight: bold;
-        }
+.option {
+    &__title {
+        width: 100px;
+        margin-right: 10px;
+        font-weight: bold;
     }
 }
