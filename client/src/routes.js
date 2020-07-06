@@ -4,6 +4,7 @@ import { HomePage } from './pages/HomePage';
 import { Registration } from './pages/Registration';
 import { SelectedGame } from './pages/SelectedGame';
 import { Basket } from './pages/Basket';
+import { PersonalAccount } from './pages/PersonalAccount';
 
 export const useRoutes = () => {
 
@@ -24,6 +25,10 @@ export const useRoutes = () => {
 
             <Route path='/basket'>
                 <Basket/>
+            </Route>
+
+            <Route path='/account'>
+                <PersonalAccount/>
             </Route>
 
         </Switch>
