@@ -69,7 +69,7 @@ export const HomePage = () => {
           return (
             <button className="content__card-btn" key={game.id}>
               <div className="content__card card">
-                <img src={image} className="card__picture" />
+                <img src={image} className="card__picture" alt={game.gameName}/>
                 <div className="card_description">
                   <h2>{game.gameName}</h2>
                   <h3>{game.genre}</h3>
