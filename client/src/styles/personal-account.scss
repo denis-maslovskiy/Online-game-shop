@@ -1,0 +1,123 @@
+@import './mixins.scss';
+@import './variables.scss';
+
+.container {
+    width: 80%;
+    background-color: $content-area-bg;
+    border-radius: 24px;
+    padding: 1%;
+}
+
+.block-title {
+    @include text-style(32px);
+    text-align: center;
+}
+
+.user-info {
+    width: 90%;
+    background-color: white;
+    border-radius: 24px;
+    padding: 2%;
+    margin: 0 auto 20px auto;
+
+    &__text {
+        @include text-style(24px);
+        @media (max-width: 759px) {
+            @include text-style(18px);
+            text-align: center;
+        }
+    }
+
+    &__title {
+        @include text-style(24px, bold);
+
+        @media (max-width: 759px) {
+            @include text-style(18px, bold);
+            text-align: center;
+        }
+    }
+}
+
+.account-info {
+    width: 100%;
+
+    &__orders, &__achievements {
+        width: 100%;
+    }
+}
+
+.orders {
+    border-top: 2px solid $blue-color;
+    border-bottom: 2px solid $blue-color;
+}
+
+.game {
+    @include flex-display(nowrap, row, flex-start, center);
+    max-width: 1100px;
+    border-radius: 24px;
+    margin: 0 auto 20px auto;
+    background-color: white;
+
+    &__text {
+        @include flex-display(nowrap, row, space-between, stretch);
+        @include text-style(24px);
+        width: 100%;
+        margin: 0 3%;
+
+        @media (max-width: 759px) {
+            flex-direction: column;
+            align-items: center;
+            @include text-style(18px);
+        }
+    }
+
+    &__picture {
+        height: 150px;
+        width: 150px;
+        margin: 2%;
+
+        @media (max-width: 759px) {
+            width: 90%;
+        }
+    }
+
+    @media (max-width: 759px) {
+        flex-direction: column;
+        width: 90%;
+    }
+}
+
+.achievements {
+    background-color: white;
+    border-radius: 24px;
+    width: 90%;
+    margin: 20px auto;
+    padding: 2%;
+
+    &__title {
+        @include text-style(32px);
+        text-align: center;
+        margin: 20px 0;    
+    }
+}
+
+.achieve {
+    &__text {
+        @include text-style(24px);
+        @media (max-width: 759px) {
+            @include text-style(18px);
+            text-align: center;
+        }
+    }
+
+    &__title {
+        @include text-style(24px, bold);
+
+        @media (max-width: 759px) {
+            @include text-style(18px, bold);
+            text-align: center;
+        }
+    }
+}
+
+
