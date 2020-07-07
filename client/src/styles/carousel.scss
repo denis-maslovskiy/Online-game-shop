@@ -1,0 +1,84 @@
+@import './variables.scss';
+
+.carousel {
+  position: relative;
+  display: flex;
+  width: 70%;
+  margin: 0 auto;
+  margin-top: 1%;
+  padding: 10px 40px;
+  border-radius: 15px;
+  background: none;
+
+  &__arrow {
+    padding: 0;
+    background-color: $light-green-color;
+    border: none;
+    font-size: 32px;
+    line-height: 24px;
+    display: block;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &_prev {
+      border-radius: 15px 0 0 15px;
+      
+    }
+
+    &_next {
+      border-radius: 0 15px 15px 0;
+    }
+  }
+
+  &__gallery {
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
+  }
+}
+
+.gallery {
+  &__images {
+    height: 300px;
+    width: 9999px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transition: margin-left 250ms;
+    font-size: 0;
+  }
+}
+
+.images {
+  &__img{
+    width: 320px;
+    height: 300px;
+    display: block;
+  }
+
+  &__li {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 504px) {
+  .carousel {
+    &__gallery {
+      height: 150px;
+    }
+  }
+
+  .images {
+    height: 150px;
+    &__img {
+      width: 200px;
+      height: 150px;
+    }
+  }
+}

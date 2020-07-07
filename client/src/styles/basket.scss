@@ -1,0 +1,99 @@
+@import './mixins.scss';
+@import './variables.scss';
+
+.container {
+    width: 80%;
+    background-color: $content-area-bg;
+    border-radius: 24px;
+    padding: 1%;
+}
+
+.order {
+    border-bottom: 2px solid $blue-color;
+
+    &__game {
+        @include flex-display(nowrap, row, flex-start, center);
+        background-color: white;
+        margin-bottom: 3%;
+        width: 100%;
+        max-width: 1000px;
+        border-radius: 24px;
+    }
+
+    &__empty-basket-text {
+        @include text-style(24px);
+        color: grey;
+    }
+}
+
+.game {
+
+    &__text {
+        @include flex-display(nowrap, row, space-between, stretch);
+        @include text-style(24px, bold);
+        width: 100%;
+        margin: 0 3%;
+    }
+
+    &__picture {
+        height: 150px;
+        width: 150px;
+        margin: 2%;
+    }
+}
+
+.price-summary {
+    @include flex-display(nowrap, column, flex-start, stretch);
+
+    &__text {
+        @include text-style(24px, bold);
+        text-transform: uppercase;
+        margin-bottom: 1%;
+    }
+}
+
+.purchase-btn {
+    @include custom-btn(24px);
+
+    &_disabled {
+        border: 2px solid grey;
+
+        &:hover {
+            background: grey;
+            color: white;
+        }
+    }
+    
+}
+
+.remove-game {
+    @include custom-btn(none, 8px 12px, 2%, 2px solid $blue-color, 24px, $blue-color);
+}
+
+@media (max-width: 599px) {
+    .container {
+        &__titles {
+            text-align: center;
+        }
+    }
+
+    .order {
+        &__game {
+            flex-direction: column;
+            padding: 10px 0;
+            width: 70%;
+            margin: 1% auto;
+        }
+    }
+
+    .game {
+        &__text {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        &__picture {
+            width: 90%;
+        }
+    }
+}

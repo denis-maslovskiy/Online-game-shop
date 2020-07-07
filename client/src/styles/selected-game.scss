@@ -1,0 +1,73 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+.content-area {
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 24px;
+    background: $content-area-bg;
+    @include flex-display(wrap);
+
+    &__carousel {
+        width: 100%;
+        @include flex-display(nowrap, row, center, center);
+        color: white;
+    }
+
+    &__game-info {
+        width: 49%;
+        margin: 1% 0 0 1%;    
+    }
+
+    &__buy-game {
+        width: 49%;
+        @include flex-display(wrap, row, space-around, stretch);
+
+        &__digital-copy, &__physical-copy {
+            @include flex-display(nowrap, column, flex-start, center);
+            margin-bottom: 5%;
+            @media (max-width: 382px) {
+                border-bottom: 2px solid $light-green-color;
+            }
+        }
+    }
+
+    @media (max-width: 1110px) {
+        &__game-info {
+            width: 100%;
+        }
+
+        &__buy-game {
+            width: 100%;
+            border-top: 2px solid $light-green-color;
+        }
+    }
+}
+
+.game-info {
+    &__text-field-title {
+        @include text-style(24px);
+    }
+
+    &__text-field-value {
+        display: inline-block;
+        margin-bottom: 10px;
+        @include text-style(18px);
+    }
+}
+
+.buy-game {
+    &__title {
+        @include text-style(24px);
+        margin-top: 5px;
+    }
+
+    &__price {
+        @include text-style(28px);
+        margin-top: 5px;
+    }
+
+    &__button {
+        @include custom-btn(18px);
+    }
+}

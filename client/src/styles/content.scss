@@ -1,0 +1,74 @@
+@import './mixins.scss';
+@import './variables.scss';
+
+.container {
+    margin: 0 auto;
+    padding: 0px 5%;  
+
+    @include phone(1450px, 1180px);
+    @include phone(1200px, 970px);
+    @include phone(992px, 750px);
+    @include phone(767px, none); 
+}
+
+.content {
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    &__card-btn {
+        border: none;
+        background: none;
+        outline: none;
+        border-radius: 24px;
+        cursor: pointer;
+
+        &:active, &:focus {
+            .content__card {
+                background-color: $custom-light-blue;
+            }
+        }
+    }
+    
+    &__card {
+        display: flex;
+        justify-content: space-around;
+        min-width: 200px;
+        max-width: 600px;
+        background-color: white;
+        color: $custom-grey;
+        font-family: sans-serif;
+        margin: 1% 1%;
+        border-radius: 24px;
+    }
+}
+
+.card {
+    &__picture {
+        width: 150px;
+        height: 180px;
+        margin: 10px;
+        background-color: salmon;   
+    }
+}
+
+@media (max-width: 912px) {
+    .content {
+        &__card-btn {
+            width: 90%;
+        }
+
+        &__card {
+            flex-direction: column;
+        }
+    }
+
+    .card {
+        &__picture {
+            margin: 3% auto;
+            width: 90%;
+            height: 200px;
+        }
+    }
+}
