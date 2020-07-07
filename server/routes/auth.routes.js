@@ -10,13 +10,15 @@ const router = Router();
 router.post(
     '/registration',
     [
-        check('username', 'The minimum username length is 3 characters, the maximum is 15').isLength({ min: 6, max: 15 }),
+        check('username', 'The minimum username length is 3 characters, the maximum is 15').isLength({ min: 3, max: 15 }),
         check('email', 'Incorrect email').isEmail(),
         check('password', 'The minimum password length is 6 characters').isLength({ min: 6})
     ], 
     async (req, res) => {
     try {
-        const errors = validationResult(reg);
+        console.log('Body:', req.body);
+
+        const errors = validationResult(req);
 
         if(!errors.isEmpty()) {
             return res,status(400).json({ errors: errors.array(), message: 'Incorrect data during registration' })
@@ -24,7 +26,7 @@ router.post(
 
         const {username, email, password} = req.body;
 
-        const candidate = await User.findOne({username, email});
+        const candidate = await User.findOne({ email });
 
         if(candidate) {
             return res.status(400).json({ message: 'Such user already exist' });
@@ -46,21 +48,20 @@ router.post(
 router.post(
     '/login', 
     [
-        check('username', 'Enter username').exists(),
         check('email', 'Enter the correct email').normalizeEmail().isEmail(),
         check('password', 'Enter password').exists(),
     ],
     async (req, res) => {
         try {
-            const errors = validationResult(reg);
+            const errors = validationResult(req);
     
             if(!errors.isEmpty()) {
                 return res,status(400).json({ errors: errors.array(), message: 'Incorrect data during login' })
             }
     
-            const {username, email, password} = req.body;
+            const {email, password} = req.body;
 
-            const user = await User.findOne({ username, email });
+            const user = await User.findOne({ email });
 
             if(!user) {
                 return res.status(400).json({ message: 'User is not found' })
