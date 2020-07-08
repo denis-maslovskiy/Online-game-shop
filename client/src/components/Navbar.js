@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -13,11 +13,13 @@ import { Filter } from "./Filter";
 import { useStyles } from "../hooks/useStyles";
 import { Link } from "react-router-dom";
 import "../styles/navbar.scss";
+import { AuthContext } from "../context/AuthContext";
 
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const classes = useStyles();
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const auth = useContext(AuthContext);
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -25,6 +27,11 @@ export const Navbar = () => {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const logoutHandler = () => {
+    auth.logout();
+    console.log(auth.isAuthenticated);
   };
 
   const mobileMenuId = "primary-search-account-menu-mobile";
@@ -39,29 +46,44 @@ export const Navbar = () => {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton>
-          <Badge>
-            <Link to="/authorization" className="mobile-menu-link">
-              Log In
-            </Link>
-          </Badge>
-        </IconButton>
+        {!auth.isAuthenticated && (
+          <IconButton>
+            <Badge>
+              <Link to="/authorization" className="mobile-menu-link">
+                Log In
+              </Link>
+            </Badge>
+          </IconButton>
+        )}
       </MenuItem>
+
       <MenuItem>
-        <IconButton>
-          <Badge>
-            <Link to="/registration" className="mobile-menu-link">
-              Sign Up
-            </Link>
-          </Badge>
-        </IconButton>
+        {!auth.isAuthenticated && (
+          <IconButton>
+            <Badge>
+              <Link to="/registration" className="mobile-menu-link">
+                Sign Up
+              </Link>
+            </Badge>
+          </IconButton>
+        )}
+      </MenuItem>
+
+      <MenuItem>
+        {auth.isAuthenticated && (
+          <IconButton onClick={logoutHandler}>
+            <Badge>
+              <p className="mobile-menu-link">Log Out</p>
+            </Badge>
+          </IconButton>
+        )}
       </MenuItem>
     </Menu>
   );
 
   return (
     <div className={classes.grow}>
-      <AppBar>
+      <AppBar id='navbar'>
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
             <Link to="/" className="navbar-links">
@@ -84,20 +106,33 @@ export const Navbar = () => {
           <Filter />
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton>
-              <Badge>
-                <Link to="/authorization" className="navbar-links">
-                  Log In
-                </Link>
-              </Badge>
-            </IconButton>
-            <IconButton>
-              <Badge>
-                <Link to="/registration" className="navbar-links">
-                  Sign Up
-                </Link>
-              </Badge>
-            </IconButton>
+            {!auth.isAuthenticated && (
+              <>
+                <IconButton>
+                  <Badge>
+                    <Link to="/authorization" className="navbar-links">
+                      Log In
+                    </Link>
+                  </Badge>
+                </IconButton>
+                <IconButton>
+                  <Badge>
+                    <Link to="/registration" className="navbar-links">
+                      Sign Up
+                    </Link>
+                  </Badge>
+                </IconButton>
+              </>
+            )}
+            {auth.isAuthenticated && (
+              <>
+                <IconButton onClick={logoutHandler}>
+                  <Badge>
+                    <p className="navbar-links">Log Out</p>
+                  </Badge>
+                </IconButton>
+              </>
+            )}
           </div>
           <div className={classes.sectionMobile}>
             <IconButton
