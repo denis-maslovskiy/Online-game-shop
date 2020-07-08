@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext, useState, useRef } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
+import ClearIcon from "@material-ui/icons/Clear";
 import { Link } from "react-router-dom";
-import { useHttp } from '../hooks/httpHook';
+import { useHttp } from "../hooks/httpHook";
 import "../styles/auth.scss";
+import { AuthContext } from "../context/AuthContext";
 
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -18,16 +20,41 @@ const CustomTextInput = ({ label, ...props }) => {
 };
 
 export const Authorization = () => {
-    const { request } = useHttp();
+  const auth = useContext(AuthContext);
+  const { request, error, clearError } = useHttp();
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const submit = async (values, { setSubmitting, resetForm }) => {
+    setIsSubmit(true);
     try {
-        const data = await request('/api/auth/login', 'POST', {...values});
-        console.log(data);
+      const data = await request("/api/auth/login", "POST", { ...values });
+      auth.login(data.token, data.userId);
+      resetForm();
+      setSubmitting(false);
     } catch (e) {}
+    setTimeout(() => clearError(), 3000)
+  };
+
+  const alert = useRef();
+  const clickHandler = () => {
+    alert.current.classList.remove("show");
+    alert.current.classList.add("hide");
   };
 
   return (
+    <>
+    {isSubmit && error &&
+      <div ref={alert} className="alert alert-error show">
+        <span className="alert__text">{error}</span>
+        <button
+          className="alert__close-btn alert__close-btn_error"
+          onClick={clickHandler}
+        >
+          <ClearIcon />
+        </button>
+      </div>
+    }
+
     <Formik
       initialValues={{
         email: "",
@@ -50,7 +77,6 @@ export const Authorization = () => {
             name="email"
             type="text"
             placeholder="Email"
-            autoComplete="off"
           />
 
           <CustomTextInput
@@ -58,7 +84,6 @@ export const Authorization = () => {
             name="password"
             type="password"
             placeholder="Password"
-            autoComplete="off"
           />
 
           <button className="box__submit-btn" type="submit">
@@ -74,5 +99,7 @@ export const Authorization = () => {
         </Form>
       )}
     </Formik>
+
+    </>
   );
 };
