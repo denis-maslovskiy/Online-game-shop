@@ -1,0 +1,78 @@
+@import './variables.scss';
+
+.alert {
+    position: absolute;
+    display: flex;
+    max-width: 280px;
+    padding: 15px;
+    color: white;
+    border-radius: 24px;
+    z-index: 10;
+
+    &-error {
+        background-color: $red-color;
+    }
+
+    &-success {
+        background-color: $dark-green-color;
+    }
+
+    &__close-btn {
+        border: 2px solid white;
+        background: none;
+        border-radius: 24px;
+        color: white;
+        margin-left: 1%;
+        cursor: pointer;
+
+        &_error {
+            &:hover {
+                background-color: $light-red-color;
+            }
+        }
+
+        &_success {
+            &:hover {
+                background-color: $light-green-color;
+            }
+        }
+    }
+}
+
+.alert.show {
+    animation: show_slide 1s ease forwards;
+}
+
+@keyframes show_slide {
+    0% {
+        transform: translateX(-100%);
+    }
+    40% {
+        transform: translateX(10%);
+    }
+    80% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(10px);
+    }
+}
+
+.alert.hide {
+    animation: hide_slide 1s ease forwards;
+} 
+
+@keyframes hide_slide {
+    0% {
+        transform: translateX(10px);
+    }
+    40% {
+        transform: translateX(00%);
+    }
+    80% {
+        transform: translateX(10%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
