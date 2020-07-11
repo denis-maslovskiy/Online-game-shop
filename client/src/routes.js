@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
-import { Registration } from "./pages/Registration";
+import  Registration  from "./pages/Registration";
 import { SelectedGame } from "./pages/SelectedGame";
 import { Basket } from "./pages/Basket";
 import { PersonalAccount } from "./pages/PersonalAccount";

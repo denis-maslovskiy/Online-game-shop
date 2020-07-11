@@ -1,11 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
 import ClearIcon from "@material-ui/icons/Clear";
 import { Link } from "react-router-dom";
-import { useHttp } from "../hooks/httpHook";
+// import { useHttp } from "../hooks/httpHook";
 import "../styles/auth.scss";
 import "../styles/alert.scss";
+
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
+import { connect } from 'react-redux';
+import { registerUser, errorMessage } from '../redux/alert/alertActions';
 
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -54,10 +59,9 @@ const Alert = ({ status }) => {
   }
 };
 
-export const Registration = () => {
-  const { loading, request, error, clearError } = useHttp();
-  const [isSubmit, setIsSubmit] = useState(false);
-  const [successStatus, setSuccessStatus] = useState("");
+const Registration = (props) => {
+
+  const auth = useContext(AuthContext);
 
   const schema = Yup.object({
     username: Yup.string()
@@ -70,27 +74,22 @@ export const Registration = () => {
       .required("Required"),
   });
 
-  const submit = async (values, { setSubmitting, resetForm }) => {
-    setIsSubmit(true);
-    try {
-      const data = await request("/api/auth/registration", "POST", {
-        ...values,
-      });
-      setSuccessStatus(data.message);
-      resetForm();
-      setSubmitting(false);
-    } catch (e) {}
-    setTimeout(() => setSuccessStatus(null), 3000);
-    setTimeout(() => clearError(), 3000);
+  const { errorMsg, successMsg, registerUser, } = props;
+
+  const submit = async (userData, { setSubmitting, resetForm }) => {
+    registerUser(userData);
+    console.log('error: ', errorMsg, 'success: ', successMsg)
+
+    // Добавить login (автологи)
+    // auth.login();
+
+    resetForm();
+    setSubmitting(false);
   };
 
   return (
     <>
-      {isSubmit && successStatus ? (
-        <Alert status={successStatus} />
-      ) : error ? (
-        <Alert status={error} />
-      ) : null}
+
 
       <Formik
         initialValues={{
@@ -126,11 +125,7 @@ export const Registration = () => {
               placeholder="Password"
             />
 
-            <button
-              className="box__submit-btn"
-              type="submit"
-              disabled={loading}
-            >
+            <button className="box__submit-btn" type="submit">
               {props.isSubmitting ? "Loading..." : "Sign Up"}
             </button>
 
@@ -143,6 +138,24 @@ export const Registration = () => {
           </Form>
         )}
       </Formik>
+
+      <div>{successMsg}, {errorMsg}</div>
     </>
   );
 };
+
+const mapStateToProps = (state) => {
+  // console.log('state: ',state);
+  return {
+    errorMsg: state.alert.errorMsg,
+    successMsg: state.alert.successMsg,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    registerUser: (userData) => dispatch(registerUser(userData)), // Добавить history
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Registration);
