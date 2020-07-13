@@ -2,8 +2,8 @@ const { Router } = require("express");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
-const config = require("config");
 const jwt = require("jsonwebtoken");
+const config = require("config");
 const router = Router();
 
 // /api/auth/registration
@@ -38,19 +38,30 @@ router.post(
       const candidate = await User.findOne({ email });
 
       if (candidate) {
-        return res
-          .status(400)
-          .json({
-            message: "Such user already exist. Try another email or user name",
-          });
+        return res.status(400).json({
+          message: "Such user already exist. Try another email or user name",
+        });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
-      const user = new User({ username, email, password: hashedPassword });
+      const newUser = new User({
+        username,
+        email,
+        password: hashedPassword,
+        dateOfRegistration: Date.now(),
+      });
 
-      await user.save();
+      await newUser.save();
 
-      res.status(201).json({ message: "User created" });
+      res.status(201).json({
+        message: "User created",
+        user: {
+          id: newUser._id,
+          name: newUser.username,
+          email: newUser.email,
+          dateOfRegistration: newUser.dateOfRegistration,
+        },
+      });
     } catch (e) {
       res.status(500).json({ message: "Something wrong, try again..." });
     }
@@ -97,7 +108,16 @@ router.post(
         expiresIn: "1h",
       });
 
-      res.json({ token, userId: user.id });
+      res.json({
+        token,
+        userId: user.id,
+        user: {
+          id: user._id,
+          name: user.username,
+          email: user.email,
+          dateOfRegistration: user.dateOfRegistration,
+        },
+      });
     } catch (e) {
       res.status(500).json({ message: "Something wrong, try again..." });
     }
