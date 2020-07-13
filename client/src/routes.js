@@ -7,31 +7,7 @@ import { Basket } from "./pages/Basket";
 import { PersonalAccount } from "./pages/PersonalAccount";
 import Authorization from "./pages/Authorization";
 
-export const useRoutes = (isAuthenticated) => {
-  if (isAuthenticated) {
-    return (
-      <Switch>
-        <Route path="/" exact>
-          <HomePage />
-        </Route>
-
-        <Route path="selectedgame" exact>
-          <SelectedGame />
-        </Route>
-
-        <Route path="/basket" exact>
-          <Basket />
-        </Route>
-
-        <Route path="/account" exact>
-          <PersonalAccount />
-        </Route>
-
-        <Redirect to="/" />
-      </Switch>
-    );
-  }
-
+export const useRoutes = () => {
   return (
     <Switch>
       <Route path="/" exact>
@@ -48,6 +24,14 @@ export const useRoutes = (isAuthenticated) => {
 
       <Route path="/authorization" exact>
         <Authorization />
+      </Route>
+
+      <Route path="/account" exact>
+        <PersonalAccount />
+      </Route>
+
+      <Route path="/basket" exact>
+        <Basket />
       </Route>
 
       <Redirect to="/authorization" />
