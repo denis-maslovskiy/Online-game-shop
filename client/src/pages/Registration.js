@@ -1,16 +1,15 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
-import ClearIcon from "@material-ui/icons/Clear";
 import { Link } from "react-router-dom";
-// import { useHttp } from "../hooks/httpHook";
+import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
+import { clearErrorMessage } from "../redux/notification/notificationActions";
+import { registerUser } from "../redux/authentication/authenticationActions";
+import { AuthContext } from "../context/AuthContext";
+import Notification from "../components/Notification";
 import "../styles/auth.scss";
 import "../styles/alert.scss";
-
-import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
-import { connect } from 'react-redux';
-import { registerUser, errorMessage } from '../redux/alert/alertActions';
 
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -24,44 +23,12 @@ const CustomTextInput = ({ label, ...props }) => {
   );
 };
 
-const Alert = ({ status }) => {
-  const alert = useRef();
-
-  const clickHandler = () => {
-    alert.current.classList.remove("show");
-    alert.current.classList.add("hide");
-  };
-
-  if (status === "User created") {
-    return (
-      <div ref={alert} className="alert alert-success show">
-        <span className="alert__text">{status}! Now you can Log In.</span>
-        <button
-          className="alert__close-btn alert__close-btn_success"
-          onClick={clickHandler}
-        >
-          <ClearIcon />
-        </button>
-      </div>
-    );
-  } else {
-    return (
-      <div ref={alert} className="alert alert-error show">
-        <span className="alert__text">{status}</span>
-        <button
-          className="alert__close-btn alert__close-btn_error"
-          onClick={clickHandler}
-        >
-          <ClearIcon />
-        </button>
-      </div>
-    );
-  }
-};
-
 const Registration = (props) => {
-
   const auth = useContext(AuthContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const history = useHistory();
+
+  const { errorMsg, successMsg, registerUser, clearErrorMessage } = props;
 
   const schema = Yup.object({
     username: Yup.string()
@@ -74,22 +41,29 @@ const Registration = (props) => {
       .required("Required"),
   });
 
-  const { errorMsg, successMsg, registerUser, } = props;
+  const onInputClickHandler = () => {
+    clearErrorMessage();
+  };
 
   const submit = async (userData, { setSubmitting, resetForm }) => {
-    registerUser(userData);
-    console.log('error: ', errorMsg, 'success: ', successMsg)
-
-    // Добавить login (автологи)
-    // auth.login();
-
+    const data = await registerUser(userData);
+    if (data) {
+      auth.login(data.token, data.userId);
+      history.push("/");
+    }
+    setIsSubmitting(true);
     resetForm();
     setSubmitting(false);
   };
 
   return (
     <>
-
+      {isSubmitting && errorMsg && (
+        <Notification values={{ successMsg, errorMsg }} />
+      )}
+      {isSubmitting && successMsg && (
+        <Notification values={{ successMsg, errorMsg }} />
+      )}
 
       <Formik
         initialValues={{
@@ -109,6 +83,7 @@ const Registration = (props) => {
               name="username"
               type="text"
               placeholder="Username"
+              onClick={onInputClickHandler}
             />
 
             <CustomTextInput
@@ -116,6 +91,7 @@ const Registration = (props) => {
               name="email"
               type="text"
               placeholder="Email"
+              onClick={onInputClickHandler}
             />
 
             <CustomTextInput
@@ -123,6 +99,7 @@ const Registration = (props) => {
               name="password"
               type="password"
               placeholder="Password"
+              onClick={onInputClickHandler}
             />
 
             <button className="box__submit-btn" type="submit">
@@ -138,23 +115,21 @@ const Registration = (props) => {
           </Form>
         )}
       </Formik>
-
-      <div>{successMsg}, {errorMsg}</div>
     </>
   );
 };
 
 const mapStateToProps = (state) => {
-  // console.log('state: ',state);
   return {
-    errorMsg: state.alert.errorMsg,
-    successMsg: state.alert.successMsg,
+    errorMsg: state.notification.errorMsg,
+    successMsg: state.notification.successMsg,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    registerUser: (userData) => dispatch(registerUser(userData)), // Добавить history
+    registerUser: (userData) => dispatch(registerUser(userData)),
+    clearErrorMessage: () => dispatch(clearErrorMessage()),
   };
 };
 
