@@ -17,7 +17,6 @@ function App() {
     >
       <BrowserRouter>
         <Navbar />
-
         <div>{routes}</div>
       </BrowserRouter>
     </AuthContext.Provider>

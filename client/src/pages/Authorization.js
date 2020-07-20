@@ -10,7 +10,6 @@ import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { loginUser } from "../redux/authentication/authenticationActions";
 import "../styles/auth.scss";
 
-
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
 
@@ -38,7 +37,6 @@ const Authorization = (props) => {
     if (response) {
       auth.login(response.data.token, response.data.userId);
       history.push("/");
-      console.log(response);
     }
     setIsSubmitting(true);
     resetForm();
@@ -48,7 +46,6 @@ const Authorization = (props) => {
   return (
     <>
       {isSubmitting && errorMsg && <Notification values={{ errorMsg }} />}
-
       <Formik
         initialValues={{
           email: "",
@@ -67,7 +64,6 @@ const Authorization = (props) => {
         {(props) => (
           <Form className="box">
             <h1 className="box__title">Authorization</h1>
-
             <CustomTextInput
               className="box__input"
               name="email"
@@ -75,7 +71,6 @@ const Authorization = (props) => {
               placeholder="Email"
               onClick={onInputClickHandler}
             />
-
             <CustomTextInput
               className="box__input"
               name="password"
@@ -83,11 +78,9 @@ const Authorization = (props) => {
               placeholder="Password"
               onClick={onInputClickHandler}
             />
-
             <button className="box__submit-btn" type="submit">
               {props.isSubmitting ? "Loading..." : "Log In"}
             </button>
-
             <div className="box__bottom-text">
               Don't have an account?{" "}
               <Link to="/registration" className="box__bottom-text__link">
