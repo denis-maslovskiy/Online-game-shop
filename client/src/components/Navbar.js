@@ -31,7 +31,6 @@ export const Navbar = () => {
 
   const logoutHandler = () => {
     auth.logout();
-    console.log(auth.isAuthenticated);
   };
 
   const mobileMenuId = "primary-search-account-menu-mobile";
@@ -56,7 +55,6 @@ export const Navbar = () => {
           </IconButton>
         )}
       </MenuItem>
-
       <MenuItem>
         {!auth.isAuthenticated && (
           <IconButton>
@@ -68,7 +66,6 @@ export const Navbar = () => {
           </IconButton>
         )}
       </MenuItem>
-
       <MenuItem>
         {auth.isAuthenticated && (
           <IconButton onClick={logoutHandler}>
@@ -80,6 +77,12 @@ export const Navbar = () => {
       </MenuItem>
     </Menu>
   );
+
+  // const path = ['/authorization', '/registration'];
+  const navbarLinks = [
+    {linkName: 'Log In', path: '/authorization'},
+    {linkName: 'Sign Up', path: '/registration'}
+  ]
 
   return (
     <div className={classes.grow}>
@@ -108,27 +111,28 @@ export const Navbar = () => {
           <div className={classes.sectionDesktop}>
             {!auth.isAuthenticated && (
               <>
-                <IconButton>
-                  <Badge>
-                    <Link to="/authorization" className="navbar-links">
-                      Log In
-                    </Link>
-                  </Badge>
-                </IconButton>
-                <IconButton>
-                  <Badge>
-                    <Link to="/registration" className="navbar-links">
-                      Sign Up
-                    </Link>
-                  </Badge>
-                </IconButton>
+                {
+                  navbarLinks.map(item => {
+                    return (
+                      <IconButton>
+                        <Badge>
+                          <Link to={item.path} className='navbar-links'>
+                            {item.linkName}
+                          </Link>
+                        </Badge>
+                      </IconButton>
+                    )
+                  })
+                }
               </>
             )}
             {auth.isAuthenticated && (
               <>
                 <IconButton onClick={logoutHandler}>
                   <Badge>
-                    <p className="navbar-links">Log Out</p>
+                    <Link className="navbar-links">
+                      Log Out
+                    </Link>
                   </Badge>
                 </IconButton>
               </>
