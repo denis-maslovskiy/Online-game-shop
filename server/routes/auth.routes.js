@@ -39,7 +39,7 @@ router.post(
 
       if (candidate) {
         return res.status(400).json({
-          message: "Such user already exist. Try another email or user name",
+          message: "Such user already exist. Try another email or user name.",
         });
       }
 
@@ -63,7 +63,7 @@ router.post(
         },
       });
     } catch (e) {
-      res.status(500).json({ message: "Something wrong, try again..." });
+      res.status(500).json({ message: "Something wrong, try again later..." });
     }
   }
 );
