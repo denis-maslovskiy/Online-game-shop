@@ -1,71 +1,130 @@
-import React from 'react';
-import { Formik, useField, Form } from 'formik';
-import * as Yup from 'yup';
-import { Link } from 'react-router-dom';
-import '../styles/auth.scss'
+import React, { useState, useContext } from "react";
+import { Formik, useField, Form } from "formik";
+import * as Yup from "yup";
+import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
+import { clearErrorMessage } from "../redux/notification/notificationActions";
+import { registerUser } from "../redux/authentication/authenticationActions";
+import { AuthContext } from "../context/AuthContext";
+import Notification from "../components/Notification";
+import "../styles/auth.scss";
+import "../styles/notification.scss";
 
 const CustomTextInput = ({ label, ...props }) => {
-    const [field, meta] = useField(props);
-    
+  const [field, meta] = useField(props);
 
-    return (
-        <>
-            <label htmlFor={props.id || props.name}>{label}</label>
-            <input {...field} {...props}/>
-            {meta.touched && meta.error ? (
-                <div>{meta.error}</div>
-            ) : null}
-        </>
-    )
-}
+  return (
+    <>
+      <label htmlFor={props.id || props.name}>{label}</label>
+      <input {...field} {...props} />
+      {meta.touched && meta.error ? <div>{meta.error}</div> : null}
+    </>
+  );
+};
 
-export const Registration = () => {
+const Registration = (props) => {
+  const auth = useContext(AuthContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const history = useHistory();
 
-    const schema = Yup.object({
-        userName: Yup.string().min(3, 'Must be at least 3 characters').max(15, 'Must be no more than 15 characters').required('Required'),
-        email: Yup.string().email('Invalid email address').required('Required'),
-        password: Yup.string().min(6, 'Must be at least 6 characters').required('Required')
-    });
+  const { errorMsg, successMsg, registerUser, clearErrorMessage } = props;
 
-    const submit = (values, { setSubmitting, resetForm }) => {
-        setTimeout(() => {
-            console.log(JSON.stringify(values));
-            resetForm();
-            setSubmitting(false);
-        }, 3000);
-       
-    };
+  const schema = Yup.object({
+    username: Yup.string()
+      .min(3, "Must be at least 3 characters")
+      .max(15, "Must be no more than 15 characters")
+      .required("Required"),
+    email: Yup.string().email("Invalid email address").required("Required"),
+    password: Yup.string()
+      .min(6, "Must be at least 6 characters")
+      .required("Required"),
+  });
 
-    return (
-            <Formik
-                initialValues={{
-                    userName: "",
-                    email: "",
-                    password: "",
-                }}
+  const onInputClickHandler = () => {
+    clearErrorMessage();
+  };
 
-                validationSchema = {schema}
+  const submit = async (userData, { setSubmitting, resetForm }) => {
+    const data = await registerUser(userData);
+    if (data) {
+      auth.login(data.token, data.userId);
+      history.push("/");
+    }
+    setIsSubmitting(true);
+    resetForm();
+    setSubmitting(false);
+  };
 
-                onSubmit = {submit}
-            >
-                {props => (
-                    <Form className='box'>
-                        <h1 className="box__title">Registration</h1>
+  return (
+    <>
+      {isSubmitting && errorMsg && (
+        <Notification values={{ successMsg, errorMsg }} />
+      )}
+      {isSubmitting && successMsg && (
+        <Notification values={{ successMsg, errorMsg }} />
+      )}
+      <Formik
+        initialValues={{
+          username: "",
+          email: "",
+          password: "",
+        }}
+        validationSchema={schema}
+        onSubmit={submit}
+      >
+        {(props) => (
+          <Form className="box">
+            <h1 className="box__title">Registration</h1>
+            <CustomTextInput
+              className="box__input"
+              name="username"
+              type="text"
+              placeholder="Username"
+              onClick={onInputClickHandler}
+            />
+            <CustomTextInput
+              className="box__input"
+              name="email"
+              type="text"
+              placeholder="Email"
+              onClick={onInputClickHandler}
+            />
+            <CustomTextInput
+              className="box__input"
+              name="password"
+              type="password"
+              placeholder="Password"
+              onClick={onInputClickHandler}
+            />
+            <button className="box__submit-btn" type="submit">
+              {props.isSubmitting ? "Loading..." : "Sign Up"}
+            </button>
+            <div className="box__bottom-text">
+              Have an account?{" "}
+              <Link to="/authorization" className="box__bottom-text__link">
+                Log in
+              </Link>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </>
+  );
+};
 
-                        
-                        <CustomTextInput className='box__input' name='userName' type='text' placeholder='Username' autoComplete='off' />
-                        
-                        <CustomTextInput className='box__input' name='email' type='text' placeholder='Email' autoComplete='off'/>
+const mapStateToProps = (state) => {
+  return {
+    errorMsg: state.notification.errorMsg,
+    successMsg: state.notification.successMsg,
+  };
+};
 
-                        <CustomTextInput className='box__input' name='password' type='password' placeholder='Password' autoComplete='off'/>
+const mapDispatchToProps = (dispatch) => {
+  return {
+    registerUser: (userData) => dispatch(registerUser(userData)),
+    clearErrorMessage: () => dispatch(clearErrorMessage()),
+  };
+};
 
-                        <button className='box__submit-btn' type='submit'>{props.isSubmitting ? 'Loading...' : 'Sign Up'}</button>
-
-                        <div className='box__bottom-text'>
-                            Have an account? <Link to='/authorization' className='box__bottom-text__link'>Log in</Link>
-                        </div>
-                    </Form>
-                )}
-            </Formik>
-    )
-}
+export default connect(mapStateToProps, mapDispatchToProps)(Registration);
