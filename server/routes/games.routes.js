@@ -13,6 +13,9 @@ router.post("/createOrUpdateGame", async (req, res) => {
       rating,
       gameDescription,
       releaseDate,
+      isPhysical,
+      isDigital,
+      numberOfPhysicalCopies
     } = req.body;
 
     const isGameExist = await Game.findOne({ gameName });
@@ -32,6 +35,9 @@ router.post("/createOrUpdateGame", async (req, res) => {
       gameDescription,
       releaseDate,
       gameAddDate: Date.now(),
+      isPhysical,
+      isDigital,
+      numberOfPhysicalCopies
     });
     await newGame.save();
 
@@ -47,6 +53,9 @@ router.post("/createOrUpdateGame", async (req, res) => {
         gameDescription: newGame.gameDescription,
         releaseDate: newGame.releaseDate,
         gameAddDate: newGame.gameAddDate,
+        isPhysical: newGame.isPhysical,
+        isDigital: newGame.isDigital,
+        numberOfPhysicalCopies: newGame.numberOfPhysicalCopies
       },
     });
   } catch (e) {
