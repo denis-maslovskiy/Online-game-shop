@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
 import img1 from "../img/1.jpg";
@@ -9,6 +9,8 @@ import img5 from "../img/5.jpg";
 import img6 from "../img/6.jpg";
 import img7 from "../img/7.jpg";
 import img8 from "../img/8.jpg";
+import { getGameInfo } from "../redux/games/gamesActions";
+import { connect } from "react-redux";
 
 const Carousel = () => {
   const ul = useRef();
@@ -74,48 +76,87 @@ const Carousel = () => {
   );
 };
 
-export const SelectedGame = () => {
-  const textFields = [
-    {
-      title: "Game description: ",
-      value:
-        "Fugiat proident eu cillum ipsum reprehenderit. Voluptate cupidatat qui ex sint do elit mollit eiusmod do non irure. Esse reprehenderit ad laborum exercitation ex sit. Sint cillum culpa et esse consectetur culpa elit non irure minim. Excepteur incididunt exercitation nostrud anim est irure non consequat aliquip fugiat exercitation voluptate quis. Ad sint fugiat ullamco proident ea ad aliquip ad fugiat anim cillum proident.",
-    },
-    { title: "Rating: ", value: 100 },
-    { title: "Release date: ", value: "30/06/2020" },
-    { title: "Author: ", value: "GameDev" },
-    { title: "Genre: ", value: "RPG" },
-    { title: "Custom Achievements: ", value: "Any achievements" },
-  ];
+const SelectedGame = (props) => {
+  const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(
+    false
+  );
+  const [isPhysical, setIsPhysical] = useState(false);
+  const [isDigital, setIsDigital] = useState(false);
+
+  const [textFields, setTextFields] = useState([
+    { title: "Game description: ", value: "", fieldName: "gameDescription" },
+    { title: "Rating: ", value: 0, fieldName: "rating" },
+    { title: "Release date: ", value: "", fieldName: "releaseDate" },
+    { title: "Author: ", value: "", fieldName: "author" },
+    { title: "Genre: ", value: "", fieldName: "genre" },
+    { title: "Game Name: ", value: "", fieldName: "gameName" },
+    { title: "Number Of Copies: ", value: "No physical copies", fieldName: "numberOfPhysicalCopies" },
+  ]);
+
+  const { getGameInfo } = props;
+
+  useEffect(() => {
+    let userId = window.location.href.split("/")[4];
+    (async function () {
+      const gameInfoFromServer = await getGameInfo(userId);
+
+      textFields.map((item) => {
+        return (item.value = gameInfoFromServer[item.fieldName]);
+      });
+      setTextFields(textFields);
+      console.log(gameInfoFromServer);
+      setIsReadyToDisplayGameInfo(true);
+      setIsDigital(gameInfoFromServer.isDigital)
+      setIsPhysical(gameInfoFromServer.isPhysical)
+    })();
+  }, [getGameInfo, textFields]);
 
   return (
     <div className="content-area">
+      {isReadyToDisplayGameInfo && (
+        <h2 className="content-area__game-name">{textFields[5].value}</h2>
+      )}
       {Carousel()}
-
       <div className="content-area__game-info game-info">
-        {textFields.map((item) => {
-          return (
-            <div key={item.title}>
-              <span className="game-info__text-field-title">{item.title}</span>
-              <p className="game-info__text-field-value">{item.value}</p>
-            </div>
-          );
-        })}
+        {
+          isReadyToDisplayGameInfo &&
+          textFields.map((item) => {
+            return (
+              <div key={item.title}>
+                <span className="game-info__text-field-title">
+                  {item.title}
+                </span>
+                <p className="game-info__text-field-value">{item.value}</p>
+              </div>
+            );
+          })
+        }
+        {
+          
+        }
       </div>
-
       <div className="content-area__buy-game buy-game">
         <div className="buy-game__digital-copy">
           <h2 className="buy-game__title">Digital Copy</h2>
           <h2 className="buy-game__price">Price</h2>
-          <button className="buy-game__button">Add to card</button>
+          {isDigital && <button className="buy-game__button" onClick={() => console.log('Added to basket')}>Add to card</button>}
+          {!isDigital && <button className="buy-game__button--disable" disabled>Add to card</button>}
         </div>
-
         <div className="buy-game__physical-copy">
           <h2 className="buy-game__title">Physical Copy</h2>
           <h2 className="buy-game__price">Price</h2>
-          <button className="buy-game__button">Add to card</button>
+          {isPhysical && <button className="buy-game__button" onClick={() => console.log('Added to basket')}>Add to card</button>}
+          {!isPhysical && <button className="buy-game__button--disable" disabled>Add to card</button>}
         </div>
       </div>
     </div>
   );
 };
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getGameInfo: (gameId) => dispatch(getGameInfo(gameId)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(SelectedGame);
