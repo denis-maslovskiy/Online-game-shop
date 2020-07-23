@@ -6,7 +6,6 @@ import {
 } from "../notification/notificationActions";
 
 export const setCurrentUser = (decoded) => {
-  console.log("hi", decoded);
   return {
     type: SET_CURRENT_USER,
     payload: decoded,
