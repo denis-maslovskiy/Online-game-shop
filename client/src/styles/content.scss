@@ -30,21 +30,23 @@
             }
         }
     }
-    
-    &__card {
-        display: flex;
-        justify-content: space-around;
-        min-width: 200px;
-        max-width: 600px;
-        background-color: white;
-        color: $custom-grey;
-        font-family: sans-serif;
-        margin: 1% 1%;
-        border-radius: 24px;
-    }
+}
+
+.link {
+    text-decoration: none;
 }
 
 .card {
+    display: flex;
+    justify-content: space-around;
+    min-width: 350px;
+    max-width: 600px;
+    background-color: white;
+    color: $custom-grey;
+    font-family: sans-serif;
+    margin: 1% 1%;
+    border-radius: 24px;
+
     &__picture {
         width: 150px;
         height: 180px;
