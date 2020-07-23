@@ -1,1 +1,0 @@
-// export const GET_FULL_LIST_OF_GAMES = 'GET_FULL_LIST_OF_GAMES';
