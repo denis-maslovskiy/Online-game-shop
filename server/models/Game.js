@@ -9,6 +9,9 @@ const schema = new Schema({
   gameDescription: { type: String, required: true },
   releaseDate: { type: String, required: true },
   gameAddDate: { type: Date, required: true },
+  isPhysical: { type: Boolean, required: true },
+  isDigital: { type: Boolean, required: true },
+  numberOfPhysicalCopies: { type: Number }
 });
 
 module.exports = model("Game", schema);
