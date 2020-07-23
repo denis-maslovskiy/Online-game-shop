@@ -25,13 +25,13 @@
         margin-left: 1%;
         cursor: pointer;
 
-        &_error {
+        &--error {
             &:hover {
                 background-color: $light-red-color;
             }
         }
 
-        &_success {
+        &--success {
             &:hover {
                 background-color: $light-green-color;
             }

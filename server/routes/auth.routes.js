@@ -28,7 +28,7 @@ router.post(
           res,
           status(400).json({
             errors: errors.array(),
-            message: "Incorrect data during registration",
+            message: "Incorrect data during registration.",
           })
         );
       }
@@ -54,7 +54,7 @@ router.post(
       await newUser.save();
 
       res.status(201).json({
-        message: "User created",
+        message: "User created!",
         user: {
           id: newUser._id,
           name: newUser.username,
@@ -84,7 +84,7 @@ router.post(
           res,
           status(400).json({
             errors: errors.array(),
-            message: "Incorrect data during login",
+            message: "Incorrect data during login.",
           })
         );
       }
@@ -94,7 +94,7 @@ router.post(
       const user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(400).json({ message: "User is not found" });
+        return res.status(400).json({ message: "User is not found." });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);

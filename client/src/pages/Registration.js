@@ -9,7 +9,7 @@ import { registerUser } from "../redux/authentication/authenticationActions";
 import { AuthContext } from "../context/AuthContext";
 import Notification from "../components/Notification";
 import "../styles/auth.scss";
-import "../styles/alert.scss";
+import "../styles/notification.scss";
 
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -64,7 +64,6 @@ const Registration = (props) => {
       {isSubmitting && successMsg && (
         <Notification values={{ successMsg, errorMsg }} />
       )}
-
       <Formik
         initialValues={{
           username: "",
@@ -77,7 +76,6 @@ const Registration = (props) => {
         {(props) => (
           <Form className="box">
             <h1 className="box__title">Registration</h1>
-
             <CustomTextInput
               className="box__input"
               name="username"
@@ -85,7 +83,6 @@ const Registration = (props) => {
               placeholder="Username"
               onClick={onInputClickHandler}
             />
-
             <CustomTextInput
               className="box__input"
               name="email"
@@ -93,7 +90,6 @@ const Registration = (props) => {
               placeholder="Email"
               onClick={onInputClickHandler}
             />
-
             <CustomTextInput
               className="box__input"
               name="password"
@@ -101,11 +97,9 @@ const Registration = (props) => {
               placeholder="Password"
               onClick={onInputClickHandler}
             />
-
             <button className="box__submit-btn" type="submit">
               {props.isSubmitting ? "Loading..." : "Sign Up"}
             </button>
-
             <div className="box__bottom-text">
               Have an account?{" "}
               <Link to="/authorization" className="box__bottom-text__link">
