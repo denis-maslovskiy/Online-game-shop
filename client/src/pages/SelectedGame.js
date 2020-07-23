@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
-import "../styles/selected-game.scss";
-import "../styles/carousel.scss";
+import { connect } from "react-redux";
+import { getGameInfo } from "../redux/games/gamesActions";
 import img1 from "../img/1.jpg";
 import img2 from "../img/2.jpg";
 import img3 from "../img/3.jpg";
@@ -9,8 +9,8 @@ import img5 from "../img/5.jpg";
 import img6 from "../img/6.jpg";
 import img7 from "../img/7.jpg";
 import img8 from "../img/8.jpg";
-import { getGameInfo } from "../redux/games/gamesActions";
-import { connect } from "react-redux";
+import "../styles/selected-game.scss";
+import "../styles/carousel.scss";
 
 const Carousel = () => {
   const ul = useRef();
@@ -77,9 +77,7 @@ const Carousel = () => {
 };
 
 const SelectedGame = (props) => {
-  const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(
-    false
-  );
+  const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(false);
   const [isPhysical, setIsPhysical] = useState(false);
   const [isDigital, setIsDigital] = useState(false);
 
@@ -104,10 +102,9 @@ const SelectedGame = (props) => {
         return (item.value = gameInfoFromServer[item.fieldName]);
       });
       setTextFields(textFields);
-      console.log(gameInfoFromServer);
       setIsReadyToDisplayGameInfo(true);
-      setIsDigital(gameInfoFromServer.isDigital)
-      setIsPhysical(gameInfoFromServer.isPhysical)
+      setIsDigital(gameInfoFromServer.isDigital);
+      setIsPhysical(gameInfoFromServer.isPhysical);
     })();
   }, [getGameInfo, textFields]);
 
@@ -118,8 +115,7 @@ const SelectedGame = (props) => {
       )}
       {Carousel()}
       <div className="content-area__game-info game-info">
-        {
-          isReadyToDisplayGameInfo &&
+        {isReadyToDisplayGameInfo &&
           textFields.map((item) => {
             return (
               <div key={item.title}>
@@ -129,24 +125,42 @@ const SelectedGame = (props) => {
                 <p className="game-info__text-field-value">{item.value}</p>
               </div>
             );
-          })
-        }
-        {
-          
-        }
+          })}
       </div>
       <div className="content-area__buy-game buy-game">
         <div className="buy-game__digital-copy">
           <h2 className="buy-game__title">Digital Copy</h2>
           <h2 className="buy-game__price">Price</h2>
-          {isDigital && <button className="buy-game__button" onClick={() => console.log('Added to basket')}>Add to card</button>}
-          {!isDigital && <button className="buy-game__button--disable" disabled>Add to card</button>}
+          {isDigital && (
+            <button
+              className="buy-game__button"
+              onClick={() => console.log("Added to basket")}
+            >
+              Add to card
+            </button>
+          )}
+          {!isDigital && (
+            <button className="buy-game__button--disable" disabled>
+              Add to card
+            </button>
+          )}
         </div>
         <div className="buy-game__physical-copy">
           <h2 className="buy-game__title">Physical Copy</h2>
           <h2 className="buy-game__price">Price</h2>
-          {isPhysical && <button className="buy-game__button" onClick={() => console.log('Added to basket')}>Add to card</button>}
-          {!isPhysical && <button className="buy-game__button--disable" disabled>Add to card</button>}
+          {isPhysical && (
+            <button
+              className="buy-game__button"
+              onClick={() => console.log("Added to basket")}
+            >
+              Add to card
+            </button>
+          )}
+          {!isPhysical && (
+            <button className="buy-game__button--disable" disabled>
+              Add to card
+            </button>
+          )}
         </div>
       </div>
     </div>
