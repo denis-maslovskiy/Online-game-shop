@@ -78,10 +78,9 @@ export const Navbar = () => {
     </Menu>
   );
 
-  // const path = ['/authorization', '/registration'];
   const navbarLinks = [
-    {linkName: 'Log In', path: '/authorization'},
-    {linkName: 'Sign Up', path: '/registration'}
+    {linkName: 'Log In', path: '/authorization', id: '1'},
+    {linkName: 'Sign Up', path: '/registration', id: '2'}
   ]
 
   return (
@@ -114,7 +113,7 @@ export const Navbar = () => {
                 {
                   navbarLinks.map(item => {
                     return (
-                      <IconButton>
+                      <IconButton key={item.id}>
                         <Badge>
                           <Link to={item.path} className='navbar-links'>
                             {item.linkName}
