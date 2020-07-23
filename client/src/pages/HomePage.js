@@ -1,88 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import image from "../img/3.jpg";
 import "../styles/content.scss";
+import { getAllGames } from "../redux/games/gamesActions";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
-export const HomePage = () => {
-  const games = [
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 1,
-    },
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 2,
-    },
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 3,
-    },
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 4,
-    },
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 5,
-    },
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 6,
-    },
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 7,
-    },
-    {
-      gameName: "Some kind of game",
-      genre: "Action",
-      author: "Artificial Intelligence",
-      price: "20",
-      id: 8,
-    },
-  ];
+const HomePage = (props) => {
+  const [listOfGames, setListOfGames] = useState([])
+  const { getAllGames } = props;
+
+  useEffect(() => {
+
+    const func = async () => {
+      const arrayOfGames = await getAllGames();
+      setListOfGames(arrayOfGames);
+    }
+    func();
+  }, [getAllGames])
 
   return (
     <main className="container">
       <div className="content">
-        {games.map((game) => {
+        {listOfGames && 
+          listOfGames.map((game) => {
           return (
-            <button className="content__card-btn" key={game.id}>
-              <div className="content__card card">
-                <img src={image} className="card__picture" alt={game.gameName}/>
-                <div className="card_description">
-                  <h2>{game.gameName}</h2>
-                  <h3>{game.genre}</h3>
-                  <h3>{game.author}</h3>
-                  <p>{game.price} $</p>
+            <button className="content__card-btn" key={game._id}>
+              <Link to={`/selectedgame/${game._id}`} className='content__link link'>
+                <div className="link__card card">
+                  <img src={image} className="card__picture" alt={game.gameName}/>
+                  <div className="card_description">
+                    <h2>{game.gameName}</h2>
+                    <h3>{game.genre}</h3>
+                    <h3>{game.author}</h3>
+                    <p>{game.price} $</p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </button>
           );
-        })}
+        })
+        }
 
         <div></div>
       </div>
     </main>
   );
 };
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+      getAllGames: () => dispatch(getAllGames())
+    }
+}
+
+export default connect(null, mapDispatchToProps)(HomePage)
