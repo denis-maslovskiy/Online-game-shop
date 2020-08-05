@@ -67,6 +67,8 @@
     }
 
     .card {
+        min-width: 200px;
+        flex-direction: column;
         &__picture {
             margin: 3% auto;
             width: 90%;
@@ -74,3 +76,5 @@
         }
     }
 }
+
+// Test
