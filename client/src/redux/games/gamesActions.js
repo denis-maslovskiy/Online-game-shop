@@ -21,3 +21,13 @@ export const getGameInfo = (gameId) => {
     }
   };
 };
+
+export const updateGameData = (gameId, game) => {
+  return async () => {
+    try {
+      await axios.put(`/api/games/${gameId}`, game);
+    } catch (e) {
+      console.log(e.response.data.message);
+    }
+  };
+};
