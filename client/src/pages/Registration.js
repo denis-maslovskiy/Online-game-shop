@@ -4,9 +4,9 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
+import { useAuth } from '../hooks/authHook';
 import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { registerUser } from "../redux/authentication/authenticationActions";
-import { AuthContext } from "../context/AuthContext";
 import Notification from "../components/Notification";
 import "../styles/auth.scss";
 import "../styles/notification.scss";
@@ -24,9 +24,10 @@ const CustomTextInput = ({ label, ...props }) => {
 };
 
 const Registration = (props) => {
-  const auth = useContext(AuthContext);
+  const auth = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const history = useHistory();
+  const { isAuthenticated } = useAuth();
 
   const { errorMsg, successMsg, registerUser, clearErrorMessage } = props;
 
@@ -55,6 +56,11 @@ const Registration = (props) => {
     resetForm();
     setSubmitting(false);
   };
+
+  if(isAuthenticated) {
+    history.push('/');
+    return null;
+  }
 
   return (
     <>
