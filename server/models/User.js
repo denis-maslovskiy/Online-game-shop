@@ -5,6 +5,7 @@ const schema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   purchasedGames: { type: Array },
+  gamesInTheBasket: { type: Array },
   dateOfRegistration: { type: Date, required: true },
 });
 
