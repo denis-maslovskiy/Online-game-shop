@@ -14,12 +14,14 @@ import { useStyles } from "../hooks/useStyles";
 import { Link } from "react-router-dom";
 import "../styles/navbar.scss";
 import { AuthContext } from "../context/AuthContext";
+import { useHistory } from "react-router-dom";
 
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const classes = useStyles();
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const auth = useContext(AuthContext);
+  const history = useHistory();
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -31,7 +33,18 @@ export const Navbar = () => {
 
   const logoutHandler = () => {
     auth.logout();
+    history.push('/');
   };
+
+  const notLoggedIn_MobileMenu = [
+    { linkTo: "/authorization", linkName: "Log In", id: 1 },
+    { linkTo: "/registration", linkName: "Sign Up", id: 2 },
+  ];
+
+  const loggedIn_MobileMenu = [
+    { linkTo: "/account", linkName: "Account", id: 1 },
+    { linkTo: "/basket", linkName: "Basket", id: 2 },
+  ];
 
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
@@ -44,48 +57,61 @@ export const Navbar = () => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        {!auth.isAuthenticated && (
-          <IconButton>
-            <Badge>
-              <Link to="/authorization" className="mobile-menu-link">
-                Log In
-              </Link>
-            </Badge>
-          </IconButton>
-        )}
-      </MenuItem>
-      <MenuItem>
-        {!auth.isAuthenticated && (
-          <IconButton>
-            <Badge>
-              <Link to="/registration" className="mobile-menu-link">
-                Sign Up
-              </Link>
-            </Badge>
-          </IconButton>
-        )}
-      </MenuItem>
-      <MenuItem>
-        {auth.isAuthenticated && (
+      {!auth.isAuthenticated &&
+        notLoggedIn_MobileMenu.map((item) => {
+          return (
+            <MenuItem key={item.id}>
+              <IconButton>
+                <Badge>
+                  <Link to={item.linkTo} className="mobile-menu-link">
+                    {item.linkName}
+                  </Link>
+                </Badge>
+              </IconButton>
+            </MenuItem>
+          );
+        })}
+      {auth.isAuthenticated &&
+        loggedIn_MobileMenu.map((item) => {
+          return (
+            <MenuItem key={item.id}>
+              <IconButton>
+                <Badge>
+                  <Link to={item.linkTo} className="mobile-menu-link">
+                    {item.linkName}
+                  </Link>
+                </Badge>
+              </IconButton>
+            </MenuItem>
+          );
+        })}
+      {auth.isAuthenticated && (
+        <MenuItem>
           <IconButton onClick={logoutHandler}>
             <Badge>
-              <p className="mobile-menu-link">Log Out</p>
+              <Link to="#" className="mobile-menu-link">
+                Log Out
+              </Link>
             </Badge>
           </IconButton>
-        )}
-      </MenuItem>
+        </MenuItem>
+      )}
     </Menu>
   );
 
-  const navbarLinks = [
-    {linkName: 'Log In', path: '/authorization', id: '1'},
-    {linkName: 'Sign Up', path: '/registration', id: '2'}
-  ]
+  const notLoggedIn = [
+    { linkName: "Log In", path: "/authorization", id: "1" },
+    { linkName: "Sign Up", path: "/registration", id: "2" },
+  ];
+
+  const loggedIn = [
+    { linkName: "Account", path: "/account", id: "1" },
+    { linkName: "Basket", path: "/basket", id: "2" },
+  ];
 
   return (
     <div className={classes.grow}>
-      <AppBar id='navbar'>
+      <AppBar id="navbar">
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
             <Link to="/" className="navbar-links">
@@ -110,26 +136,36 @@ export const Navbar = () => {
           <div className={classes.sectionDesktop}>
             {!auth.isAuthenticated && (
               <>
-                {
-                  navbarLinks.map(item => {
-                    return (
-                      <IconButton key={item.id}>
-                        <Badge>
-                          <Link to={item.path} className='navbar-links'>
-                            {item.linkName}
-                          </Link>
-                        </Badge>
-                      </IconButton>
-                    )
-                  })
-                }
+                {notLoggedIn.map((item) => {
+                  return (
+                    <IconButton key={item.id}>
+                      <Badge>
+                        <Link to={item.path} className="navbar-links">
+                          {item.linkName}
+                        </Link>
+                      </Badge>
+                    </IconButton>
+                  );
+                })}
               </>
             )}
+            {auth.isAuthenticated &&
+              loggedIn.map((item) => {
+                return (
+                  <IconButton key={item.id}>
+                    <Badge>
+                      <Link to={item.path} className="navbar-links">
+                        {item.linkName}
+                      </Link>
+                    </Badge>
+                  </IconButton>
+                );
+              })}
             {auth.isAuthenticated && (
               <>
                 <IconButton onClick={logoutHandler}>
                   <Badge>
-                    <Link className="navbar-links">
+                    <Link to="#" className="navbar-links">
                       Log Out
                     </Link>
                   </Badge>
