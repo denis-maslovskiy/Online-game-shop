@@ -24,7 +24,7 @@ const HomePage = (props) => {
             <button className="content__card-btn" key={game._id}>
               <Link
                 to={`/selectedgame/${game._id}`}
-                className="content__link link"
+                className="link"
               >
                 <div className="link__card card">
                   <img
