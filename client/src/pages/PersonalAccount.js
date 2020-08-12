@@ -5,11 +5,9 @@ import image from "../img/3.jpg";
 import "../styles/personal-account.scss";
 
 import { useDispatch } from 'react-redux';
-import { moment } from 'moment';
 
 const PersonalAccount = (props) => {
   const dispatch = useDispatch()
-  //
   const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(
     false
   );
@@ -43,14 +41,12 @@ const PersonalAccount = (props) => {
   useEffect(() => {
     let userId = JSON.parse(localStorage.getItem("userData")).userId;
     (async function () {
-      // dispatch( getUserData(userId), )
       const user = await getUserData(userId);
       userData.map((item) => {
         if (item.fieldName === "dateOfRegistration") {
           console.log(item.value, user[item.fieldName]);
           return (item.value = user[item.fieldName].split("T")[0]);
         }
-        console.log(moment(user[item.fieldName]));
         if (item.fieldName === "personalDiscount") {
           if(user[item.fieldName]) {
             return (item.value = user[item.fieldName] + "%");
@@ -116,5 +112,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-// export default PersonalAccount
 export default connect(null, mapDispatchToProps)(PersonalAccount);
