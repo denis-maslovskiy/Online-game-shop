@@ -30,17 +30,17 @@ export const Filter = () => {
   };
 
   const sortValues = [
-    { value: "popular", label: "Popular" },
-    { value: "price", label: "Price" },
-    { value: "new", label: "New" },
-    { value: "discount", label: "Discount" },
+    { value: "popular", label: "Popular", id: 1 },
+    { value: "price", label: "Price", id: 2 },
+    { value: "new", label: "New", id: 3 },
+    { value: "discount", label: "Discount", id: 4 },
   ];
 
   const filterValues = [
-    { inputName: "Game Name:", inputLabel: "Game Name" },
-    { inputName: "Author:", inputLabel: "Author" },
-    { inputName: "Genre:", inputLabel: "Genre" },
-    { inputName: "Number of copies:", inputLabel: "Number of copies" },
+    { inputName: "Game Name:", inputLabel: "Game Name", id: 1 },
+    { inputName: "Author:", inputLabel: "Author", id: 2 },
+    { inputName: "Genre:", inputLabel: "Genre", id: 3 },
+    { inputName: "Number of copies:", inputLabel: "Number of copies", id: 4 },
   ];
 
   return (
@@ -69,13 +69,11 @@ export const Filter = () => {
       >
         <div className="filter-block">
           <div className="filter-block__filter filter">
-            <h2>Filter</h2>
-            {filterValues.map((item, index) => {
+            <h2 className="filter-block__section-name">Filter</h2>
+            {filterValues.map((item) => {
               return (
-                <div className="filter__option option" key={index}>
-                  <span className="option__title">
-                    {item.inputName}
-                  </span>
+                <div className="filter__option option" key={item.id}>
+                  <span className="option__title">{item.inputName}</span>
                   <FormControl className={classes.margin}>
                     <InputLabel htmlFor="demo-customized-textbox">
                       {item.inputLabel}
@@ -87,7 +85,7 @@ export const Filter = () => {
             })}
           </div>
           <div className="filter-block__sort">
-            <h2>Sorting</h2>
+            <h2 className="filter-block__section-name">Sorting</h2>
             <div className="filter__option option">
               <span className="option__title">Select sort:</span>
               <FormControl className={classes.margin}>
@@ -104,9 +102,9 @@ export const Filter = () => {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  {sortValues.map((item, index) => {
+                  {sortValues.map((item) => {
                     return (
-                      <MenuItem value={item.value} key={index}>
+                      <MenuItem value={item.value} key={item.id}>
                         {item.label}
                       </MenuItem>
                     );
