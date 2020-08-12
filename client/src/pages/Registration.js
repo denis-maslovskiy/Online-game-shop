@@ -11,6 +11,8 @@ import Notification from "../components/Notification";
 import "../styles/auth.scss";
 import "../styles/notification.scss";
 
+import login from '../redux/helpers/loginHelper';
+
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
 
@@ -29,7 +31,7 @@ const Registration = (props) => {
   const history = useHistory();
   const { isAuthenticated } = useAuth();
 
-  const { errorMsg, successMsg, registerUser, clearErrorMessage } = props;
+  const { errorMsg, successMsg, registerUser, clearErrorMessage, userId, token } = props;
 
   const schema = Yup.object({
     username: Yup.string()
@@ -47,14 +49,23 @@ const Registration = (props) => {
   };
 
   const submit = async (userData, { setSubmitting, resetForm }) => {
-    const data = await registerUser(userData);
-    if (data) {
-      auth.login(data.token, data.userId);
-      history.push("/");
+    try {
+      // const data = await registerUser(userData);
+      // auth.logout();
+      registerUser(userData);
+      console.log('token: ', token, 'userId: ', userId);
+      // auth.login(token, userId)
+      login(token, userId);
+      // if (data) {
+      //   auth.login(data.token, data.userId);
+      //   history.push("/");
+      // }
+      setIsSubmitting(true);
+      resetForm();
+      setSubmitting(false);
+    } catch (e) {
+      throw new Error(e);
     }
-    setIsSubmitting(true);
-    resetForm();
-    setSubmitting(false);
   };
 
   if(isAuthenticated) {
@@ -123,6 +134,8 @@ const mapStateToProps = (state) => {
   return {
     errorMsg: state.notification.errorMsg,
     successMsg: state.notification.successMsg,
+    token: state.authentication.token,
+    userId: state.authentication.userId
   };
 };
 

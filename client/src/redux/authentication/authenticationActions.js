@@ -22,12 +22,12 @@ export const registerUser = (userData) => {
       const loginResponse = await axios.post("/api/auth/login", {
         ...userData,
       });
-      dispatch(setCurrentUser(response.data.user));
+      dispatch(setCurrentUser(loginResponse.data));
 
-      return {
-        token: loginResponse.data.token,
-        userId: loginResponse.data.userId,
-      };
+      // return {
+      //   token: loginResponse.data.token,
+      //   userId: loginResponse.data.userId,
+      // };
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
     }
@@ -38,7 +38,7 @@ export const loginUser = (userData) => {
   return async (dispatch) => {
     try {
       const response = await axios.post("/api/auth/login", { ...userData });
-      dispatch(setCurrentUser(response.data.user));
+      dispatch(setCurrentUser(response.data));
       return response;
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));

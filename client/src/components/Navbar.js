@@ -16,6 +16,8 @@ import "../styles/navbar.scss";
 import { AuthContext } from "../context/AuthContext";
 import { useHistory } from "react-router-dom";
 
+import logout from '../redux/helpers/logoutHelper';
+
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const classes = useStyles();
@@ -32,11 +34,12 @@ export const Navbar = () => {
   };
 
   const logoutHandler = () => {
-    auth.logout();
+    // auth.logout();
+    logout();
     history.push('/');
   };
 
-  const notLoggedIn_MobileMenu = [
+  const notLoggedInMobileMenu = [
     { linkTo: "/authorization", linkName: "Log In", id: 1 },
     { linkTo: "/registration", linkName: "Sign Up", id: 2 },
   ];
@@ -58,7 +61,7 @@ export const Navbar = () => {
       onClose={handleMobileMenuClose}
     >
       {!auth.isAuthenticated &&
-        notLoggedIn_MobileMenu.map((item) => {
+        notLoggedInMobileMenu.map((item) => {
           return (
             <MenuItem key={item.id}>
               <IconButton>

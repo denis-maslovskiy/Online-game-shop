@@ -7,7 +7,10 @@ import {
   updateTheBasket,
   purchaseGame,
 } from "../redux/user/userActions";
-import { clearInfoMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
+import {
+  clearInfoMessage,
+  clearSuccessMessage,
+} from "../redux/notification/notificationActions";
 import { getGameInfo, updateGameData } from "../redux/games/gamesActions";
 import image from "../img/3.jpg";
 import "../styles/basket.scss";
@@ -48,36 +51,42 @@ const Basket = (props) => {
     clearSuccessMessage,
     updateTheBasket,
     getGameInfo,
-    updateGameData
+    updateGameData,
   } = props;
   let userId = JSON.parse(localStorage.getItem("userData")).userId;
 
   const removeGameHandler = async (gameName) => {
-    clearInfoMessage();
-    const newBasket = itemsInBasket.filter(
-      (item) => item.gameName !== gameName
-    );
-    setItemsInBasket(newBasket);
-    const user = await getUserData(userId);
-    user.gamesInTheBasket = newBasket;
-    await updateTheBasket(userId, user);
-    
-    const gameId = itemsInBasket.filter(item => item.gameName === gameName)[0].gameId;
-    const gameType = itemsInBasket.filter(item => item.gameName === gameName)[0].gameType;
-    const game = await getGameInfo(gameId);
-    if(gameType === 'Physical') {
-      game.numberOfPhysicalCopies = game.numberOfPhysicalCopies + 1;
-      await updateGameData(gameId, game);
+    try {
+      clearInfoMessage();
+      const newBasket = itemsInBasket.filter((item) => item.gameName !== gameName);
+      setItemsInBasket(newBasket);
+      const user = await getUserData(userId);
+      user.gamesInTheBasket = newBasket;
+      await updateTheBasket(userId, user);
+
+      const gameId = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameId;
+      const gameType = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameType;
+      const game = await getGameInfo(gameId);
+      if (gameType === "Physical") {
+        game.numberOfPhysicalCopies = game.numberOfPhysicalCopies + 1;
+        await updateGameData(gameId, game);
+      }
+    } catch (e) {
+      throw new Error(e);
     }
   };
 
   const purchaseClickHandler = async () => {
-    clearSuccessMessage()
-    const user = await getUserData(userId);
-    user.purchasedGames = user.purchasedGames.concat(itemsInBasket);
-    user.gamesInTheBasket = [];
-    setItemsInBasket([]);
-    await purchaseGame(userId, user);
+    try {
+      clearSuccessMessage();
+      const user = await getUserData(userId);
+      user.purchasedGames = user.purchasedGames.concat(itemsInBasket);
+      user.gamesInTheBasket = [];
+      setItemsInBasket([]);
+      await purchaseGame(userId, user);
+    } catch (e) {
+      throw new Error(e);
+    }
   };
 
   useEffect(() => {
@@ -89,12 +98,8 @@ const Basket = (props) => {
 
   return (
     <>
-      {infoMsg && (
-        <Notification values={{ infoMsg }} />
-      )}
-      {successMsg && (
-        <Notification values={{ successMsg }}/>
-      )}
+      {infoMsg && <Notification values={{ infoMsg }} />}
+      {successMsg && <Notification values={{ successMsg }} />}
       <div className="container">
         <div className="order">
           <h1 className="container__titles">Order</h1>
@@ -144,12 +149,14 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getUserData: (userId) => dispatch(getUserData(userId)),
-    updateTheBasket: (userId, gameData) => dispatch(updateTheBasket(userId, gameData)),
+    updateTheBasket: (userId, gameData) =>
+      dispatch(updateTheBasket(userId, gameData)),
     clearInfoMessage: () => dispatch(clearInfoMessage()),
     clearSuccessMessage: () => dispatch(clearSuccessMessage()),
-    purchaseGame: (userId, gameData) => dispatch(purchaseGame(userId, gameData)),
+    purchaseGame: (userId, gameData) =>
+      dispatch(purchaseGame(userId, gameData)),
     getGameInfo: (gameId) => dispatch(getGameInfo(gameId)),
-    updateGameData: (userId, game) => dispatch(updateGameData(userId, game))
+    updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
   };
 };
 

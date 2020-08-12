@@ -175,16 +175,14 @@ const SelectedGame = (props) => {
         {Carousel()}
         <div className="content-area__game-info game-info">
           {isReadyToDisplayGameInfo &&
-            textFields.map((item) => {
-              return (
-                <div key={item.title}>
-                  <span className="game-info__text-field-title">
-                    {item.title}
-                  </span>
-                  <p className="game-info__text-field-value">{item.value}</p>
-                </div>
-              );
-            })}
+            textFields.map((item) => (
+              <div key={item.title}>
+                <span className="game-info__text-field-title">
+                  {item.title}
+                </span>
+                <p className="game-info__text-field-value">{item.value}</p>
+              </div>
+            ))}
         </div>
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">

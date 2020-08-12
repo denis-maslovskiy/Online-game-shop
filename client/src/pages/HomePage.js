@@ -20,30 +20,28 @@ const HomePage = (props) => {
     <main className="container">
       <div className="content">
         {listOfGames &&
-          listOfGames.map((game) => {
-            return (
-              <button className="content__card-btn" key={game._id}>
-                <Link
-                  to={`/selectedgame/${game._id}`}
-                  className="content__link link"
-                >
-                  <div className="link__card card">
-                    <img
-                      src={image}
-                      className="card__picture"
-                      alt={game.gameName}
-                    />
-                    <div className="card_description">
-                      <h2>{game.gameName}</h2>
-                      <h3>{game.genre}</h3>
-                      <h3>{game.author}</h3>
-                      <p>{game.price} $</p>
-                    </div>
+          listOfGames.map((game) => (
+            <button className="content__card-btn" key={game._id}>
+              <Link
+                to={`/selectedgame/${game._id}`}
+                className="content__link link"
+              >
+                <div className="link__card card">
+                  <img
+                    src={image}
+                    className="card__picture"
+                    alt={game.gameName}
+                  />
+                  <div className="card_description">
+                    <h2>{game.gameName}</h2>
+                    <h3>{game.genre}</h3>
+                    <h3>{game.author}</h3>
+                    <p>{game.price} $</p>
                   </div>
-                </Link>
-              </button>
-            );
-          })}
+                </div>
+              </Link>
+            </button>
+          ))}
       </div>
     </main>
   );
