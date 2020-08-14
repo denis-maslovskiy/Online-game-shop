@@ -47,11 +47,7 @@ const Registration = (props) => {
   };
 
   const submit = async (userData, { setSubmitting, resetForm }) => {
-    const data = await registerUser(userData);
-    if (data) {
-      auth.login(data.token, data.userId);
-      history.push("/");
-    }
+    registerUser(userData);
     setIsSubmitting(true);
     resetForm();
     setSubmitting(false);
