@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory, Link } from "react-router-dom";
-import {AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu} from "@material-ui/core";
+import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { Filter } from "./Filter";
@@ -63,30 +63,33 @@ export const Navbar = () => {
             </MenuItem>
           );
         })}
-      {isAuthenticated &&
-        loggedIn_MobileMenu.map((item) => {
-          return (
-            <MenuItem key={item.id}>
-              <IconButton>
-                <Badge>
-                  <Link to={item.linkTo} className="mobile-menu-link">
-                    {item.linkName}
-                  </Link>
-                </Badge>
-              </IconButton>
-            </MenuItem>
-          );
-        })}
       {isAuthenticated && (
-        <MenuItem>
-          <IconButton onClick={logoutHandler}>
-            <Badge>
-              <Link to="#" className="mobile-menu-link">
-                Log Out
+        <div>
+          {
+            loggedIn_MobileMenu.map((item) => {
+              return (
+                <MenuItem key={item.id}>
+                  <IconButton>
+                    <Badge>
+                      <Link to={item.linkTo} className="mobile-menu-link">
+                        {item.linkName}
+                      </Link>
+                    </Badge>
+                  </IconButton>
+                </MenuItem>
+              );
+            })
+          }
+          <MenuItem>
+            <IconButton onClick={logoutHandler}>
+              <Badge>
+                <Link to="#" className="mobile-menu-link">
+                  Log Out
               </Link>
-            </Badge>
-          </IconButton>
-        </MenuItem>
+              </Badge>
+            </IconButton>
+          </MenuItem>
+        </div>
       )}
     </Menu>
   );
@@ -141,20 +144,19 @@ export const Navbar = () => {
                 })}
               </>
             )}
-            {isAuthenticated &&
-              loggedIn.map((item) => {
-                return (
-                  <IconButton key={item.id}>
-                    <Badge>
-                      <Link to={item.path} className="navbar-links">
-                        {item.linkName}
-                      </Link>
-                    </Badge>
-                  </IconButton>
-                );
-              })}
             {isAuthenticated && (
               <>
+                {loggedIn.map((item) => {
+                  return (
+                    <IconButton key={item.id}>
+                      <Badge>
+                        <Link to={item.path} className="navbar-links">
+                          {item.linkName}
+                        </Link>
+                      </Badge>
+                    </IconButton>
+                  );
+                })}
                 <IconButton onClick={logoutHandler}>
                   <Badge>
                     <Link to="#" className="navbar-links">
