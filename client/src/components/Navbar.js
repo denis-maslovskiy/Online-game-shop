@@ -25,7 +25,6 @@ export const Navbar = () => {
 
   const logoutHandler = () => {
     logout();
-    console.log(isAuthenticated);
     history.push('/');
   };
 
@@ -39,7 +38,6 @@ export const Navbar = () => {
     { linkTo: "/basket", linkName: "Basket", id: 2 },
   ];
 
-  console.log(isAuthenticated);
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu
