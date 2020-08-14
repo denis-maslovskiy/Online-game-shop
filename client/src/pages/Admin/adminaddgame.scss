@@ -1,0 +1,13 @@
+.container {
+    margin: 0 auto;
+}
+
+.input-fields {
+    display: flex;
+    flex-direction: column;
+
+    &__input, .MuiFormControl-root {
+        width: 30%;
+        margin: 1% 0;
+    }
+}
