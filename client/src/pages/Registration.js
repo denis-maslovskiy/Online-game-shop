@@ -24,7 +24,6 @@ const CustomTextInput = ({ label, ...props }) => {
 };
 
 const Registration = (props) => {
-  const auth = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const history = useHistory();
   const { isAuthenticated } = useAuth();

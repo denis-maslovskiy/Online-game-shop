@@ -4,6 +4,12 @@ export const useAuth = () => {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null);
 
+  const logout = ()=> {
+    localStorage.removeItem('userData');
+    setToken(null);
+    setUserId(null);
+  }
+  
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("userData"));
 
@@ -13,5 +19,5 @@ export const useAuth = () => {
     }
   }, []);
 
-  return { token, userId, isAuthenticated: !!token };
+  return { logout, token, userId, isAuthenticated: !!token };
 };

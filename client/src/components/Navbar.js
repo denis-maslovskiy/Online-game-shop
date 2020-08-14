@@ -1,26 +1,18 @@
-import React, { useState, useContext } from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
-import Badge from "@material-ui/core/Badge";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import React, { useState } from "react";
+import { useHistory, Link } from "react-router-dom";
+import {AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { Filter } from "./Filter";
+import { useAuth } from "../hooks/authHook";
 import { useStyles } from "../hooks/useStyles";
-import { Link } from "react-router-dom";
 import "../styles/navbar.scss";
-import { AuthContext } from "../context/AuthContext";
-import { useHistory } from "react-router-dom";
 
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const classes = useStyles();
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const auth = useContext(AuthContext);
+  const { isAuthenticated, logout } = useAuth();
   const history = useHistory();
 
   const handleMobileMenuClose = () => {
@@ -32,7 +24,8 @@ export const Navbar = () => {
   };
 
   const logoutHandler = () => {
-    localStorage.removeItem('userData');
+    logout();
+    console.log(isAuthenticated);
     history.push('/');
   };
 
@@ -46,6 +39,7 @@ export const Navbar = () => {
     { linkTo: "/basket", linkName: "Basket", id: 2 },
   ];
 
+  console.log(isAuthenticated);
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu
@@ -57,7 +51,7 @@ export const Navbar = () => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {!auth.isAuthenticated &&
+      {!isAuthenticated &&
         notLoggedIn_MobileMenu.map((item) => {
           return (
             <MenuItem key={item.id}>
@@ -71,7 +65,7 @@ export const Navbar = () => {
             </MenuItem>
           );
         })}
-      {auth.isAuthenticated &&
+      {isAuthenticated &&
         loggedIn_MobileMenu.map((item) => {
           return (
             <MenuItem key={item.id}>
@@ -85,7 +79,7 @@ export const Navbar = () => {
             </MenuItem>
           );
         })}
-      {auth.isAuthenticated && (
+      {isAuthenticated && (
         <MenuItem>
           <IconButton onClick={logoutHandler}>
             <Badge>
@@ -134,7 +128,7 @@ export const Navbar = () => {
           <Filter />
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            {!auth.isAuthenticated && (
+            {!isAuthenticated && (
               <>
                 {notLoggedIn.map((item) => {
                   return (
@@ -149,7 +143,7 @@ export const Navbar = () => {
                 })}
               </>
             )}
-            {auth.isAuthenticated &&
+            {isAuthenticated &&
               loggedIn.map((item) => {
                 return (
                   <IconButton key={item.id}>
@@ -161,7 +155,7 @@ export const Navbar = () => {
                   </IconButton>
                 );
               })}
-            {auth.isAuthenticated && (
+            {isAuthenticated && (
               <>
                 <IconButton onClick={logoutHandler}>
                   <Badge>
