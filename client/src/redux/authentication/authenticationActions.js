@@ -23,11 +23,6 @@ export const registerUser = (userData) => {
         ...userData,
       });
       dispatch(setCurrentUser(response.data.user));
-
-      return {
-        token: loginResponse.data.token,
-        userId: loginResponse.data.userId,
-      };
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
     }
@@ -39,7 +34,11 @@ export const loginUser = (userData) => {
     try {
       const response = await axios.post("/api/auth/login", { ...userData });
       dispatch(setCurrentUser(response.data.user));
-      return response;
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({ userId: response.data.userId, token: response.data.token })
+      );
+      window.location.href = "/";
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
     }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
@@ -24,7 +24,6 @@ const CustomTextInput = ({ label, ...props }) => {
 
 const Authorization = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const auth = useAuth();
   const { loginUser, clearErrorMessage, errorMsg } = props;
   const history = useHistory();
   const { isAuthenticated } = useAuth();
@@ -34,20 +33,17 @@ const Authorization = (props) => {
   };
 
   const submit = async (userData, { setSubmitting, resetForm }) => {
-    const response = await loginUser(userData);
-    if (response) {
-      auth.login(response.data.token, response.data.userId);
-      history.push("/");
-    }
+    loginUser(userData);
     setIsSubmitting(true);
     resetForm();
     setSubmitting(false);
   };
 
-  if (isAuthenticated) {
-    history.push("/");
-    return null;
-  }
+  useEffect(() => {
+    if(isAuthenticated){
+      history.push("/");
+    }
+  }, [isAuthenticated])
 
   return (
     <>

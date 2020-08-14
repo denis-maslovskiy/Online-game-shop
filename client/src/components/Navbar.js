@@ -32,7 +32,7 @@ export const Navbar = () => {
   };
 
   const logoutHandler = () => {
-    auth.logout();
+    localStorage.removeItem('userData');
     history.push('/');
   };
 
