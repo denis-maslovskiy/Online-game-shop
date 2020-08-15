@@ -1,13 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { getUserData } from "../redux/user/userActions";
 import image from "../img/3.jpg";
 import "../styles/personal-account.scss";
 
-export const PersonalAccount = () => {
-  const purchasedGames = [
-    { gameName: "Game Name", date: "06.07.2020", price: "10.99", id: "1" },
-    { gameName: "Game Name", date: "06.07.2020", price: "5.66", id: "2" },
-    { gameName: "Game Name", date: "06.07.2020", price: "24.99", id: "3" },
-  ];
+const PersonalAccount = (props) => {
+  const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(
+    false
+  );
+  const [userData, setUserDate] = useState([
+    { title: "Account name", value: "", id: 1, fieldName: "username" },
+    { title: "Email", value: "", id: 2, fieldName: "email" },
+    {
+      title: "Registration date",
+      value: "",
+      id: 3,
+      fieldName: "dateOfRegistration",
+    },
+    {
+      title: "Personal discount",
+      value: "",
+      id: 4,
+      fieldName: "personalDiscount",
+    },
+  ]);
+
+  const { getUserData } = props;
+  const [purchasedGames, setPurchasedGames] = useState([]);
 
   const achievements = [
     { achieveName: "Title of achievement", progress: 25, id: 1 },
@@ -16,32 +35,45 @@ export const PersonalAccount = () => {
     { achieveName: "Title of achievement", progress: 90, id: 4 },
   ];
 
-  const userData = [
-    { fieldName: "Account name", value: "John Bonbon" },
-    { fieldName: "Email", value: "john.bon@gmail.com" },
-    { fieldName: "Registration date", value: "28.05.2019" },
-    { fieldName: "Personal discount", value: 15 },
-  ];
+  useEffect(() => {
+    let userId = JSON.parse(localStorage.getItem("userData")).userId;
+    (async function () {
+      const user = await getUserData(userId);
+      userData.map((item) => {
+        if (item.fieldName === "dateOfRegistration") {
+          return (item.value = user[item.fieldName].split("T")[0]);
+        }
+        if (item.fieldName === "personalDiscount") {
+          return (item.value = user[item.fieldName] + "%");
+        }
+        return (item.value = user[item.fieldName]);
+      });
+      setPurchasedGames(user.purchasedGames);
+      setUserDate(userData);
+      setIsReadyToDisplayUserInfo(true);
+    })();
+  }, [getUserData, userData]);
 
   return (
     <div className="container">
       <h2 className="block-title">User Info</h2>
       <div className="user-info">
-        {userData.map((item) => {
-          return (
-            <h2 className="user-info__text">
-              <span className="user-info__title">{item.fieldName}: </span>
-              {item.value}
-            </h2>
-          );
-        })}
+        {isReadyToDisplayUserInfo &&
+          userData.map((item) => {
+            return (
+              <h2 className="user-info__text" key={item.id}>
+                <span className="user-info__title">{item.title}: </span>
+                {item.value}
+              </h2>
+            );
+          })}
       </div>
       <div className="account-info">
         <div className="account-info__orders orders">
           <h2 className="block-title">Orders</h2>
           {purchasedGames.map((item) => {
             return (
-              <div className="orders__game game" key={item.id}>
+              <div className="orders__game game" key={item.dateAddedToBasket}>
                 <img
                   className="game__picture"
                   src={image}
@@ -73,3 +105,11 @@ export const PersonalAccount = () => {
     </div>
   );
 };
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getUserData: (userId) => dispatch(getUserData(userId)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(PersonalAccount);

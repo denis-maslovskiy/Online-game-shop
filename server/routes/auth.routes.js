@@ -53,8 +53,13 @@ router.post(
 
       await newUser.save();
 
+      const token = jwt.sign({ userId: newUser.id }, config.get("jwtSecret"), {
+        expiresIn: "2000",
+      });
+
       res.status(201).json({
         message: "User created!",
+        token,
         user: {
           id: newUser._id,
           name: newUser.username,
@@ -63,7 +68,7 @@ router.post(
         },
       });
     } catch (e) {
-      res.status(500).json({ message: "Something wrong, try again..." });
+      res.status(500).json({ message: "Something wrong, try again later..." });
     }
   }
 );
@@ -105,7 +110,7 @@ router.post(
       }
 
       const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"), {
-        expiresIn: "1h",
+        expiresIn: "2000",
       });
 
       res.json({

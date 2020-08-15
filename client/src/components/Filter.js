@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import IconButton from "@material-ui/core/IconButton";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import { IconButton, MenuItem, Menu, InputLabel, FormControl, Select } from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
 import { CustomInput } from "./CustomInput";
 import { useStyles } from "../hooks/useStyles";
 import "../styles/navbar.scss";

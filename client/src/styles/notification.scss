@@ -17,6 +17,10 @@
         background-color: $dark-green-color;
     }
 
+    &-info {
+        background-color: #FFC300;
+    }
+
     &__close-btn {
         border: 2px solid white;
         background: none;
@@ -34,6 +38,12 @@
         &--success {
             &:hover {
                 background-color: $light-green-color;
+            }
+        }
+
+        &--info {
+            &:hover {
+                background-color: #F7DC6F;
             }
         }
     }

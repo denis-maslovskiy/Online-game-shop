@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
-import { AuthContext } from "../context/AuthContext";
 import Notification from "../components/Notification";
+import { useAuth } from "../hooks/authHook";
 import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { loginUser } from "../redux/authentication/authenticationActions";
 import "../styles/auth.scss";
@@ -24,24 +24,26 @@ const CustomTextInput = ({ label, ...props }) => {
 
 const Authorization = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const auth = useContext(AuthContext);
   const { loginUser, clearErrorMessage, errorMsg } = props;
   const history = useHistory();
+  const { isAuthenticated } = useAuth();
 
   const onInputClickHandler = () => {
     clearErrorMessage();
   };
 
   const submit = async (userData, { setSubmitting, resetForm }) => {
-    const response = await loginUser(userData);
-    if (response) {
-      auth.login(response.data.token, response.data.userId);
-      history.push("/");
-    }
+    loginUser(userData);
     setIsSubmitting(true);
     resetForm();
     setSubmitting(false);
   };
+
+  useEffect(() => {
+    if(isAuthenticated){
+      history.push("/");
+    }
+  }, [isAuthenticated, history])
 
   return (
     <>

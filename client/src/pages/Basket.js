@@ -1,5 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ClearIcon from "@material-ui/icons/Clear";
+import { connect } from "react-redux";
+import Notification from "../components/Notification";
+import {
+  getUserData,
+  updateTheBasket,
+  purchaseGame,
+} from "../redux/user/userActions";
+import { clearInfoMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
+import { getGameInfo, updateGameData } from "../redux/games/gamesActions";
 import image from "../img/3.jpg";
 import "../styles/basket.scss";
 
@@ -8,7 +17,7 @@ const itemsInBasketList = (itemsInBasket, removeGameHandler) => {
     <>
       {itemsInBasket.map((item) => {
         return (
-          <div className="order__game game" key={item.id}>
+          <div className="order__game game" key={item.dateAddedToBasket}>
             <img className="game__picture" src={image} alt={item.gameName} />
             <div className="game__text">
               <span>{item.gameName}</span>
@@ -16,7 +25,7 @@ const itemsInBasketList = (itemsInBasket, removeGameHandler) => {
             </div>
             <button
               className="remove-game"
-              onClick={removeGameHandler.bind(null, item.id)}
+              onClick={removeGameHandler.bind(null, item.gameName)}
             >
               <ClearIcon />
             </button>
@@ -27,51 +36,121 @@ const itemsInBasketList = (itemsInBasket, removeGameHandler) => {
   );
 };
 
-export const Basket = () => {
-  const [itemsInBasket, setItemsInBasket] = useState([
-    { gameName: "game name", price: 19.99, id: "1" },
-    { gameName: "game name", price: 22.99, id: "2" },
-    { gameName: "game name", price: 33, id: "3" },
-    { gameName: "game name", price: 9.99, id: "4" },
-  ]);
+const Basket = (props) => {
+  const [itemsInBasket, setItemsInBasket] = useState([]);
 
-  const removeGameHandler = (id) => {
-    setItemsInBasket(itemsInBasket.filter((item) => item.id !== id));
+  const {
+    getUserData,
+    purchaseGame,
+    infoMsg,
+    successMsg,
+    clearInfoMessage,
+    clearSuccessMessage,
+    updateTheBasket,
+    getGameInfo,
+    updateGameData
+  } = props;
+  let userId = JSON.parse(localStorage.getItem("userData")).userId;
+
+  const removeGameHandler = async (gameName) => {
+    clearInfoMessage();
+    const newBasket = itemsInBasket.filter(
+      (item) => item.gameName !== gameName
+    );
+    setItemsInBasket(newBasket);
+    const user = await getUserData(userId);
+    user.gamesInTheBasket = newBasket;
+    await updateTheBasket(userId, user);
+    
+    const gameId = itemsInBasket.filter(item => item.gameName === gameName)[0].gameId;
+    const gameType = itemsInBasket.filter(item => item.gameName === gameName)[0].gameType;
+    const game = await getGameInfo(gameId);
+    if(gameType === 'Physical') {
+      game.numberOfPhysicalCopies = game.numberOfPhysicalCopies + 1;
+      await updateGameData(gameId, game);
+    }
   };
 
+  const purchaseClickHandler = async () => {
+    clearSuccessMessage()
+    const user = await getUserData(userId);
+    user.purchasedGames = user.purchasedGames.concat(itemsInBasket);
+    user.gamesInTheBasket = [];
+    setItemsInBasket([]);
+    await purchaseGame(userId, user);
+  };
+
+  useEffect(() => {
+    (async function () {
+      const data = await getUserData(userId);
+      setItemsInBasket(data.gamesInTheBasket);
+    })();
+  }, [getUserData, userId]);
+
   return (
-    <div className="container">
-      <div className="order">
-        <h1 className="container__titles">Order</h1>
-        {itemsInBasket.length ? (
-          itemsInBasketList(itemsInBasket, removeGameHandler)
-        ) : (
-          <h1 className="order__empty-basket-text">Basket is empty</h1>
-        )}
-      </div>
-      <div className="payment">
-        <h1 className="container__titles">Payment</h1>
-        <div className="price-summary">
-          <span className="price-summary__text">
-            Total price:{" "}
-            {itemsInBasket
-              .reduce((prevValue, currValue) => {
-                return prevValue + currValue.price;
-              }, 0)
-              .toFixed(2)}{" "}
-            $
-          </span>
-          <span className="price-summary__text">Personal discount: </span>
-          <span className="price-summary__text">You will pay: </span>
+    <>
+      {infoMsg && (
+        <Notification values={{ infoMsg }} />
+      )}
+      {successMsg && (
+        <Notification values={{ successMsg }}/>
+      )}
+      <div className="container">
+        <div className="order">
+          <h1 className="container__titles">Order</h1>
+          {itemsInBasket.length ? (
+            itemsInBasketList(itemsInBasket, removeGameHandler)
+          ) : (
+            <h1 className="order__empty-basket-text">Basket is empty</h1>
+          )}
         </div>
-        {itemsInBasket.length ? (
-          <button className="purchase-btn">Purchase</button>
-        ) : (
-          <button className="purchase-btn purchase-btn_disabled" disabled>
-            Purchase
-          </button>
-        )}
+        <div className="payment">
+          <h1 className="container__titles">Payment</h1>
+          <div className="price-summary">
+            <span className="price-summary__text">
+              Total price:{" "}
+              {itemsInBasket
+                .reduce((prevValue, currValue) => {
+                  return prevValue + currValue.price;
+                }, 0)
+                .toFixed(2)}{" "}
+              $
+            </span>
+            <span className="price-summary__text">Personal discount: </span>
+            <span className="price-summary__text">You will pay: </span>
+          </div>
+          {itemsInBasket.length ? (
+            <button className="purchase-btn" onClick={purchaseClickHandler}>
+              Purchase
+            </button>
+          ) : (
+            <button className="purchase-btn purchase-btn_disabled" disabled>
+              Purchase
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
+
+const mapStateToProps = (state) => {
+  return {
+    infoMsg: state.notification.infoMsg,
+    successMsg: state.notification.successMsg,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getUserData: (userId) => dispatch(getUserData(userId)),
+    updateTheBasket: (userId, gameData) => dispatch(updateTheBasket(userId, gameData)),
+    clearInfoMessage: () => dispatch(clearInfoMessage()),
+    clearSuccessMessage: () => dispatch(clearSuccessMessage()),
+    purchaseGame: (userId, gameData) => dispatch(purchaseGame(userId, gameData)),
+    getGameInfo: (gameId) => dispatch(getGameInfo(gameId)),
+    updateGameData: (userId, game) => dispatch(updateGameData(userId, game))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Basket);

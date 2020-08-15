@@ -3,10 +3,16 @@
 
 .content-area {
     width: 90%;
-    margin: 0 auto;
+    margin: 3% auto;
     border-radius: 24px;
     background: $content-area-bg;
     @include flex-display(wrap);
+
+    &__game-name {
+        width: 100%;
+        text-align: center;
+        @include text-style(32px);
+    }
 
     &__carousel {
         width: 100%;
@@ -69,5 +75,15 @@
 
     &__button {
         @include custom-btn(18px);
+
+        &--disable {
+            @include custom-btn(18px);
+            border: 2px solid grey;
+
+            &:hover {
+            background: grey;
+            color: white;
+        }
+        }
     }
 }
