@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
@@ -24,8 +24,7 @@ const CustomTextInput = ({ label, ...props }) => {
 
 const Authorization = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const auth = useAuth();
-  const { loginUser, clearErrorMessage, errorMsg, token, userId } = props;
+  const { loginUser, clearErrorMessage, errorMsg } = props;
   const history = useHistory();
   const { isAuthenticated } = useAuth();
 
@@ -33,26 +32,18 @@ const Authorization = (props) => {
     clearErrorMessage();
   };
 
-  const submit = async (userData, { setSubmitting, resetForm }) => {
-    try {
-      const response = await loginUser(userData);
-      console.log('response: ', response);
-      if (response) {
-        auth.login(response.data.token, response.data.userId);
-        history.push("/");
-      }
-      setIsSubmitting(true);
-      resetForm();
-      setSubmitting(false);
-    } catch (e) {
-      throw new Error(e)
-    }
+  const submit = (userData, { setSubmitting, resetForm }) => {
+    loginUser(userData);
+    setIsSubmitting(true);
+    resetForm();
+    setSubmitting(false);
   };
 
-  if (isAuthenticated) {
-    history.push("/");
-    return null;
-  }
+  useEffect(() => {
+    if(isAuthenticated){
+      history.push("/");
+    }
+  }, [isAuthenticated])
 
   return (
     <>
@@ -105,16 +96,12 @@ const Authorization = (props) => {
   );
 };
 
-// useSelector
 const mapStateToProps = (state) => {
   return {
     errorMsg: state.notification.errorMsg,
-    token: state.authentication.token,
-    userId: state.authentication.userId,
   };
 };
 
-// useDispatch
 const mapDispatchToProps = (dispatch) => {
   return {
     loginUser: (userData) => dispatch(loginUser(userData)),

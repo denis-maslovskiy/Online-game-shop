@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
@@ -10,8 +10,6 @@ import { registerUser } from "../redux/authentication/authenticationActions";
 import Notification from "../components/Notification";
 import "../styles/auth.scss";
 import "../styles/notification.scss";
-
-import login from '../redux/helpers/loginHelper';
 
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -26,12 +24,11 @@ const CustomTextInput = ({ label, ...props }) => {
 };
 
 const Registration = (props) => {
-  const auth = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const history = useHistory();
   const { isAuthenticated } = useAuth();
 
-  const { errorMsg, successMsg, registerUser, clearErrorMessage, userId, token } = props;
+  const { errorMsg, successMsg, registerUser, clearErrorMessage } = props;
 
   const schema = Yup.object({
     username: Yup.string()
@@ -48,24 +45,11 @@ const Registration = (props) => {
     clearErrorMessage();
   };
 
-  const submit = async (userData, { setSubmitting, resetForm }) => {
-    try {
-      // const data = await registerUser(userData);
-      // auth.logout();
-      registerUser(userData);
-      console.log('token: ', token, 'userId: ', userId);
-      // auth.login(token, userId)
-      login(token, userId);
-      // if (data) {
-      //   auth.login(data.token, data.userId);
-      //   history.push("/");
-      // }
-      setIsSubmitting(true);
-      resetForm();
-      setSubmitting(false);
-    } catch (e) {
-      throw new Error(e);
-    }
+  const submit = (userData, { setSubmitting, resetForm }) => {
+    registerUser(userData);
+    setIsSubmitting(true);
+    resetForm();
+    setSubmitting(false);
   };
 
   if(isAuthenticated) {
@@ -134,8 +118,6 @@ const mapStateToProps = (state) => {
   return {
     errorMsg: state.notification.errorMsg,
     successMsg: state.notification.successMsg,
-    token: state.authentication.token,
-    userId: state.authentication.userId
   };
 };
 

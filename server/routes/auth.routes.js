@@ -53,8 +53,13 @@ router.post(
 
       await newUser.save();
 
+      const token = jwt.sign({ userId: newUser.id }, config.get("jwtSecret"), {
+        expiresIn: "2000",
+      });
+
       res.status(201).json({
         message: "User created!",
+        token,
         user: {
           id: newUser._id,
           name: newUser.username,

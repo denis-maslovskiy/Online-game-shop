@@ -15,19 +15,14 @@ export const setCurrentUser = (decoded) => {
 export const registerUser = (userData) => {
   return async (dispatch) => {
     try {
-      const response = await axios.post("/api/auth/registration", {
-        ...userData,
-      });
+      const response = await axios.post("/api/auth/registration", { ...userData});
       dispatch(successMessage(response.data.message));
-      const loginResponse = await axios.post("/api/auth/login", {
-        ...userData,
-      });
-      dispatch(setCurrentUser(loginResponse.data));
-
-      // return {
-      //   token: loginResponse.data.token,
-      //   userId: loginResponse.data.userId,
-      // };
+      dispatch(setCurrentUser(response.data.user));
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({ userId: response.data.user.id, token: response.data.token })
+      );
+      window.location.href = "/";
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
     }
@@ -39,9 +34,15 @@ export const loginUser = (userData) => {
     try {
       const response = await axios.post("/api/auth/login", { ...userData });
       dispatch(setCurrentUser(response.data));
-      return response;
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({ userId: response.data.userId, token: response.data.token })
+      );
+      window.location.href = "/";
+      console.log('response:', response);
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
+      console.log(e);
     }
   };
 };

@@ -1,28 +1,18 @@
-import React, { useState, useContext } from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
-import Badge from "@material-ui/core/Badge";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import React, { useState } from "react";
+import { useHistory, Link } from "react-router-dom";
+import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { Filter } from "./Filter";
+import { useAuth } from "../hooks/authHook";
 import { useStyles } from "../hooks/useStyles";
-import { Link } from "react-router-dom";
 import "../styles/navbar.scss";
-import { AuthContext } from "../context/AuthContext";
-import { useHistory } from "react-router-dom";
-
-import logout from '../redux/helpers/logoutHelper';
 
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const classes = useStyles();
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const auth = useContext(AuthContext);
+  const { isAuthenticated, logout } = useAuth();
   const history = useHistory();
 
   const handleMobileMenuClose = () => {
@@ -34,12 +24,11 @@ export const Navbar = () => {
   };
 
   const logoutHandler = () => {
-    // auth.logout();
     logout();
     history.push('/');
   };
 
-  const notLoggedInMobileMenu = [
+  const notLoggedIn_MobileMenu = [
     { linkTo: "/authorization", linkName: "Log In", id: 1 },
     { linkTo: "/registration", linkName: "Sign Up", id: 2 },
   ];
@@ -60,8 +49,8 @@ export const Navbar = () => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {!auth.isAuthenticated &&
-        notLoggedInMobileMenu.map((item) => {
+      {!isAuthenticated &&
+        notLoggedIn_MobileMenu.map((item) => {
           return (
             <MenuItem key={item.id}>
               <IconButton>
@@ -74,30 +63,33 @@ export const Navbar = () => {
             </MenuItem>
           );
         })}
-      {auth.isAuthenticated &&
-        loggedIn_MobileMenu.map((item) => {
-          return (
-            <MenuItem key={item.id}>
-              <IconButton>
-                <Badge>
-                  <Link to={item.linkTo} className="mobile-menu-link">
-                    {item.linkName}
-                  </Link>
-                </Badge>
-              </IconButton>
-            </MenuItem>
-          );
-        })}
-      {auth.isAuthenticated && (
-        <MenuItem>
-          <IconButton onClick={logoutHandler}>
-            <Badge>
-              <Link to="#" className="mobile-menu-link">
-                Log Out
+      {isAuthenticated && (
+        <div>
+          {
+            loggedIn_MobileMenu.map((item) => {
+              return (
+                <MenuItem key={item.id}>
+                  <IconButton>
+                    <Badge>
+                      <Link to={item.linkTo} className="mobile-menu-link">
+                        {item.linkName}
+                      </Link>
+                    </Badge>
+                  </IconButton>
+                </MenuItem>
+              );
+            })
+          }
+          <MenuItem>
+            <IconButton onClick={logoutHandler}>
+              <Badge>
+                <Link to="#" className="mobile-menu-link">
+                  Log Out
               </Link>
-            </Badge>
-          </IconButton>
-        </MenuItem>
+              </Badge>
+            </IconButton>
+          </MenuItem>
+        </div>
       )}
     </Menu>
   );
@@ -137,7 +129,7 @@ export const Navbar = () => {
           <Filter />
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            {!auth.isAuthenticated && (
+            {!isAuthenticated && (
               <>
                 {notLoggedIn.map((item) => {
                   return (
@@ -152,20 +144,19 @@ export const Navbar = () => {
                 })}
               </>
             )}
-            {auth.isAuthenticated &&
-              loggedIn.map((item) => {
-                return (
-                  <IconButton key={item.id}>
-                    <Badge>
-                      <Link to={item.path} className="navbar-links">
-                        {item.linkName}
-                      </Link>
-                    </Badge>
-                  </IconButton>
-                );
-              })}
-            {auth.isAuthenticated && (
+            {isAuthenticated && (
               <>
+                {loggedIn.map((item) => {
+                  return (
+                    <IconButton key={item.id}>
+                      <Badge>
+                        <Link to={item.path} className="navbar-links">
+                          {item.linkName}
+                        </Link>
+                      </Badge>
+                    </IconButton>
+                  );
+                })}
                 <IconButton onClick={logoutHandler}>
                   <Badge>
                     <Link to="#" className="navbar-links">
