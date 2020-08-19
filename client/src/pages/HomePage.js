@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import image from "../img/3.jpg";
 import { getAllGames } from "../redux/games/gamesActions";
 import "../styles/content.scss";
 
-const HomePage = (props) => {
-  const [listOfGames, setListOfGames] = useState([]);
-  const { getAllGames } = props;
-
+const HomePage = () => {
+  const dispatch = useDispatch();
+  const { allGames } = useSelector((state) => state.games);
   useEffect(() => {
-    (async function () {
-      const arrayOfGames = await getAllGames();
-      setListOfGames(arrayOfGames);
-    })();
-  }, [getAllGames]);
+    dispatch(getAllGames())
+  }, []);
 
   return (
     <main className="container">
       <div className="content">
-        {listOfGames &&
-          listOfGames.map((game) => (
+        {allGames &&
+          allGames.map((game) => (
             <button className="content__card-btn" key={game._id}>
               <Link
                 to={`/selectedgame/${game._id}`}
@@ -47,10 +43,4 @@ const HomePage = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getAllGames: () => dispatch(getAllGames()),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(HomePage);
+export default HomePage;
