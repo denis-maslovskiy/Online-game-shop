@@ -1,9 +1,17 @@
 import axios from "axios";
-import { SET_ALL_GAMES } from './gamesTypes'
+import { SET_ALL_GAMES,  SET_GAME_DATA } from './gamesTypes'
 
-export const setAllGames = (decoded) => {
+export const setAllGames = (games) => {
   return {
     type: SET_ALL_GAMES,
+    payload: games
+  }
+}
+
+// Should be using in the SelectedGame page
+export const setGameData = (decoded) => {
+  return {
+    type:  SET_GAME_DATA,
     payload: decoded
   }
 }
@@ -12,8 +20,7 @@ export const getAllGames = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get("/api/games/getAllGames");
-      // dispatch(setAllGames(response.data));
-      return response.data;
+      dispatch(setAllGames(response.data));
     } catch (e) {
       console.log(e.response.data.message);
     }
@@ -21,9 +28,10 @@ export const getAllGames = () => {
 };
 
 export const getGameInfo = (gameId) => {
-  return async () => {
+  return async (dispatch) => {
     try {
       const response = await axios.get(`/api/games/${gameId}`);
+      // dispatch(setGameData(response.data));
       return response.data;
     } catch (e) {
       console.log(e.response.data.message);
@@ -40,3 +48,13 @@ export const updateGameData = (gameId, game) => {
     }
   };
 };
+
+export const deleteGame = (gameId) => {
+  return async () => {
+    try {
+      await axios.delete(`/api/games/${gameId}`);
+    } catch (e) {
+      console.log(e.response.data.message);
+    }
+  }
+}

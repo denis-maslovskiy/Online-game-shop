@@ -98,4 +98,13 @@ router.put('/:id', async (req,res) => {
   }
 })
 
+router.delete('/:id', async (req, res) => {
+  try {
+    await Game.remove({ _id: req.params.id })
+    res.status(200).json({ message: "Game was deleted" })
+  } catch (e) { 
+    res.status(500).json({ message: e.message })
+  }
+})
+
 module.exports = router;

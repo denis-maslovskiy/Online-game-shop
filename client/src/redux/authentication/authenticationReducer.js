@@ -13,7 +13,6 @@ const setCurrentUser = (state, action) => {
 };
 
 const authenticationReducer = (state = initialState, action) => {
-  console.log(action);
   switch (action.type) {
     case SET_CURRENT_USER:
       return setCurrentUser(state, action);
