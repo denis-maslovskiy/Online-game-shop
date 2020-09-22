@@ -4,7 +4,7 @@
 import React, { useState, useEffect, lazy } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FieldProps } from "formik";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -12,7 +12,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { getGameInfo, getAllGames, deleteGame } from "../../redux/games/gamesActions";
+import { updateGameData, getAllGames, deleteGame } from "../../redux/games/gamesActions";
+import { RootState } from "../../redux/rootReducer";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
 
@@ -27,6 +28,12 @@ interface FormValues {
   price: number;
   isPhysical: boolean;
   isDigital: boolean;
+  _id: string;
+}
+
+interface IProps{
+  initialGameData: FormValues;
+  deleteGameClickHandler: (id: string) => void;
 }
 
 const validationSchema = Yup.object().shape({
@@ -61,9 +68,9 @@ const inputs = [
   { label: "Price", name: "price" },
 ];
 
-const RenderGameForm = ({initialGameData, deleteGameClickHandler}) => {
+const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
   console.log(initialGameData);
-  
+  const dispatch = useDispatch();
   return (
     <>
       <Formik
@@ -77,13 +84,13 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}) => {
           numberOfPhysicalCopies: initialGameData.numberOfPhysicalCopies,
           price: initialGameData.price,
           isPhysical: initialGameData.isPhysical,
-          isDigital: initialGameData.isDigital
+          isDigital: initialGameData.isDigital,
+          _id: initialGameData._id,
         }}
-        // onSubmit={(values, { resetForm }) => {
-        //   dispatch(addGame(values));
-        //   resetForm();
-        // }}
-        onSubmit={() => console.log("changes saved")}
+        onSubmit={(values, { resetForm }) => {
+          console.log(values);
+          dispatch(updateGameData(values._id, values));
+        }}
         validationSchema={validationSchema}
       >
         {({
@@ -95,7 +102,7 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}) => {
           <Form className="form">
             <Field
               name="isPhysical"
-              render={({ field }) => (
+              render={({ field }: FieldProps<FormValues>) => (
                 <FormControlLabel
                   {...field}
                   control={
@@ -111,7 +118,7 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}) => {
 
             <Field
               name="isDigital"
-              render={({ field }) => (
+              render={({ field }: FieldProps<FormValues>) => (
                 <FormControlLabel
                   {...field}
                   control={
@@ -129,7 +136,7 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}) => {
               return (
                 <Field
                   name={input.name}
-                  render={({ field }) => (
+                  render={({ field }: FieldProps<FormValues>) => (
                     <div className="form__div">
                       <TextField
                         {...field}
@@ -143,106 +150,6 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}) => {
                 />
               )
             })}
-
-            {/* <Field
-              name='gameName'
-              render={({ field }) => (
-                <div className='form__div'>
-                  <TextField
-                    {...field}
-                    className='form__input'
-                    required
-                    label='game name'
-                    variant='outlined'
-                  />
-                </div>
-              )}
-            /> */}
-
-            //? Пока не удалять
-            {/* <Field
-              name="gameName"
-              render={({ field }) => (
-                
-                  <div>
-                    <TextField
-                      {...field}
-                      className='form__input'
-                      required
-                      label='game name'
-                      variant="outlined"
-                    />
-                  </div>
-              
-              )
-              }
-            /> */}
-            
-            {/* {inputs.map((input) => {
-              if (input.name === "gameDescription") {
-                return (
-                  <div className="form__div" key={input.name}>
-                    <TextField
-                      className="form__input"
-                      required
-                      label={input.label}
-                      variant="outlined"
-                      multiline
-                      name={input.name}
-                      // defaultValue={initialGameData[input.name]}
-                    />
-                  </div>
-                );
-              }
-              if (
-                input.name === "numberOfPhysicalCopies" &&
-                !values.isPhysical
-              ) {
-                return (
-                  <div className="form__div" key={input.name}>
-                    <TextField
-                      disabled
-                      className="form__input"
-                      required
-                      label={input.label}
-                      variant="outlined"
-                      name={input.name}
-                      // defaultValue={0}
-                    />
-                  </div>
-                );
-              }
-              if (
-                input.name === "numberOfPhysicalCopies" ||
-                input.name === "rating" ||
-                input.name === "price"
-              ) {
-                return (
-                  <div className="form__div" key={input.name}>
-                    <TextField
-                      className="form__input"
-                      required
-                      label={input.label}
-                      variant="outlined"
-                      name={input.name}
-                      type="number"
-                    />
-                  </div>
-                );
-              }
-              return (
-                <div className="form__div" key={input.name}>
-                  <TextField
-                    className="form__input"
-                    required
-                    label={input.label}
-                    variant="outlined"
-                    name={input.name}
-                    // defaultValue={initialGameData[input.name]}
-                  />
-                </div>
-              );
-            })} */}
             <button
               type="submit"
               className="add-game-button"
@@ -264,15 +171,16 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}) => {
   );
 };
 
+
 const AdminAddGame: React.FC = () => {
   const dispatch = useDispatch();
-  const { allGames } = useSelector((state) => state.games);
-  const [initialGameData, setInitialGameData] = useState(null);
+  const { allGames } = useSelector((state: RootState) => state.games);
+  const [initialGameData, setInitialGameData] = useState<FormValues | null>(null)
 
   useEffect(() => {
     dispatch(getAllGames());
   }, []);
-
+  // @ts-ignore
   const gamesOptions = allGames.map((game) => {
     return (
       <MenuItem value={game._id} key={game._id}>
@@ -282,8 +190,9 @@ const AdminAddGame: React.FC = () => {
   });
 
   const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
+    // @ts-ignore
     const gameId = event.target.value;
-
+  // @ts-ignore
     const gameData = allGames.find((game) => {
       return game._id === gameId;
     });
@@ -302,6 +211,7 @@ const AdminAddGame: React.FC = () => {
     <>
       <FormControl>
         <InputLabel>Select game</InputLabel>
+        {/* @ts-ignore */}
         <Select value={gamesOptions} onChange={selectHandleChange}>{gamesOptions}</Select>
       </FormControl>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { withFormik, FormikProps } from "formik";
 import * as Yup from "yup";
 
@@ -6,9 +6,9 @@ import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import "./adminaddgame.scss";
-import axios from "axios";
-// import { connect } from "react-redux";
-import { useDispatch } from "react-redux";
+// import axios from "axios";
+// // import { connect } from "react-redux";
+// import { useDispatch } from "react-redux";
 
 
 interface FormValues {
@@ -213,7 +213,7 @@ const AdminAddGame = withFormik<MyFormProps, FormValues>({
       isPhysical,
       isDigital,
     }: FormValues,
-    { props, setSubmitting, setErrors }
+    { setSubmitting }
   ) {
     console.log("test");
 
