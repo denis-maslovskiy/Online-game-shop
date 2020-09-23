@@ -83,7 +83,7 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
           genre: initialGameData.genre,
           numberOfPhysicalCopies: initialGameData.numberOfPhysicalCopies,
           price: initialGameData.price,
-          isPhysical: initialGameData.isPhysical,
+          isPhysical: true,
           isDigital: initialGameData.isDigital,
           _id: initialGameData._id,
         }}
@@ -101,14 +101,14 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
         }) => (
           <Form className="form">
             <Field
-              name="isPhysical"
+              // name="isPhysical"
               render={({ field }: FieldProps<FormValues>) => (
                 <FormControlLabel
-                  {...field}
                   control={
                     <Checkbox
-                      name="isPhysical"
+                      // name="isPhysical"
                       color="primary"
+                      {...field}
                     />
                   }
                   label="Is Physical"

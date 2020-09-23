@@ -27,19 +27,18 @@ export const getAllGames = () => {
   };
 };
 
-export const getGameInfo = (gameId) => {
-  return async (dispatch) => {
+export const getGameInfo = async (gameId) => { // убрать из редакса
+
     try {
       const response = await axios.get(`/api/games/${gameId}`);
       // dispatch(setGameData(response.data));
-      return response.data;
+      return response.data; //
     } catch (e) {
       console.log(e.response.data.message);
     }
-  };
 };
 
-export const updateGameData = (gameId, game) => {
+export const updateGameData = (gameId, game) => { // dispatch, обновить массив игр в сторе
   return async () => {
     try {
       await axios.put(`/api/games/${gameId}`, game);
