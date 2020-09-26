@@ -11,7 +11,8 @@ import {
   clearInfoMessage,
   clearSuccessMessage,
 } from "../redux/notification/notificationActions";
-import { getGameInfo, updateGameData } from "../redux/games/gamesActions";
+import { updateGameData } from "../redux/games/gamesActions";
+import { getGameInfo } from '../helpers/gameHelpers';
 import image from "../img/3.jpg";
 import "../styles/basket.scss";
 
@@ -50,7 +51,6 @@ const Basket = (props) => {
     clearInfoMessage,
     clearSuccessMessage,
     updateTheBasket,
-    getGameInfo,
     updateGameData,
   } = props;
   let userId = JSON.parse(localStorage.getItem("userData")).userId;
@@ -155,7 +155,6 @@ const mapDispatchToProps = (dispatch) => {
     clearSuccessMessage: () => dispatch(clearSuccessMessage()),
     purchaseGame: (userId, gameData) =>
       dispatch(purchaseGame(userId, gameData)),
-    getGameInfo: (gameId) => dispatch(getGameInfo(gameId)),
     updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
   };
 };
