@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SET_ALL_GAMES,  SET_GAME_DATA } from './gamesTypes'
+import { SET_ALL_GAMES,  SET_GAME_DATA, UPDATE_GAME_ARRAY } from './gamesTypes'
 
 export const setAllGames = (games) => {
   return {
@@ -16,6 +16,13 @@ export const setGameData = (decoded) => {
   }
 }
 
+export const updateGameArray = (updatedGame) => {
+  return {
+    type: UPDATE_GAME_ARRAY,
+    payload: updatedGame
+  }
+}
+
 export const getAllGames = () => {
   return async (dispatch) => {
     try {
@@ -27,33 +34,14 @@ export const getAllGames = () => {
   };
 };
 
-export const getGameInfo = async (gameId) => { // убрать из редакса
-
-    try {
-      const response = await axios.get(`/api/games/${gameId}`);
-      // dispatch(setGameData(response.data));
-      return response.data; //
-    } catch (e) {
-      console.log(e.response.data.message);
-    }
-};
-
 export const updateGameData = (gameId, game) => { // dispatch, обновить массив игр в сторе
-  return async () => {
+  return async (dispatch) => {
     try {
       await axios.put(`/api/games/${gameId}`, game);
+      dispatch(updateGameArray(game))
+      console.log('test...');
     } catch (e) {
       console.log(e.response.data.message);
     }
   };
 };
-
-export const deleteGame = (gameId) => {
-  return async () => {
-    try {
-      await axios.delete(`/api/games/${gameId}`);
-    } catch (e) {
-      console.log(e.response.data.message);
-    }
-  }
-}
