@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { getGameInfo, updateGameData } from "../redux/games/gamesActions";
+import { updateGameData } from "../redux/games/gamesActions";
 import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
+import { getGameInfo } from '../helpers/gameHelpers';
 import img1 from "../img/1.jpg";
 import img2 from "../img/2.jpg";
 import img3 from "../img/3.jpg";
@@ -42,7 +43,6 @@ const SelectedGame = (props) => {
   const history = useHistory();
 
   const {
-    getGameInfo,
     getUserData,
     updateGameData,
     addGameInTheBasket,
@@ -203,7 +203,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getGameInfo: (gameId) => dispatch(getGameInfo(gameId)),
     getUserData: (userId) => dispatch(getUserData(userId)),
     updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
     addGameInTheBasket: (userId, gameData) =>
