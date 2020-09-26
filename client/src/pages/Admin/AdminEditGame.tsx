@@ -1,5 +1,5 @@
-// TODO: после загрузки формы в нее не вносятся изменения ||  Update: 16.09 - похоже что пофикшено
 // Update: 16.09 - Игра не обновляется(в onSubmit ничего нет).
+// TODO: 26.09 - Не отображается контент в чекбоксах
 
 import React, { useState, useEffect, lazy } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,8 +12,9 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { updateGameData, getAllGames, deleteGame } from "../../redux/games/gamesActions";
+import { updateGameData, getAllGames } from "../../redux/games/gamesActions";
 import { RootState } from "../../redux/rootReducer";
+import { deleteGame } from "../../helpers/gameHelpers";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
 
@@ -31,7 +32,7 @@ interface FormValues {
   _id: string;
 }
 
-interface IProps{
+interface IProps {
   initialGameData: FormValues;
   deleteGameClickHandler: (id: string) => void;
 }
@@ -68,8 +69,10 @@ const inputs = [
   { label: "Price", name: "price" },
 ];
 
-const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
-  console.log(initialGameData);
+const RenderGameForm = ({
+  initialGameData,
+  deleteGameClickHandler,
+}: IProps) => {
   const dispatch = useDispatch();
   return (
     <>
@@ -88,21 +91,19 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
           _id: initialGameData._id,
         }}
         onSubmit={(values, { resetForm }) => {
+          console.log("Game has been edited...");
           console.log(values);
+
           dispatch(updateGameData(values._id, values));
         }}
         validationSchema={validationSchema}
       >
-        {({
-          errors,
-          touched,
-          values,
-          isSubmitting,
-        }) => (
+        {({ errors, touched, values, isSubmitting }) => (
           <Form className="form">
             <Field
-              // name="isPhysical"
-              render={({ field }: FieldProps<FormValues>) => (
+            // name="isPhysical"
+            >
+              {({ field }: FieldProps<FormValues>) => (
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -114,29 +115,22 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
                   label="Is Physical"
                 />
               )}
-            />
+            </Field>
 
-            <Field
-              name="isDigital"
-              render={({ field }: FieldProps<FormValues>) => (
+            <Field name="isDigital">
+              {({ field }: FieldProps<FormValues>) => (
                 <FormControlLabel
                   {...field}
-                  control={
-                    <Checkbox
-                      name="isDigital"
-                      color="primary"
-                    />
-                  }
+                  control={<Checkbox name="isDigital" color="primary" />}
                   label="Is Digital"
                 />
               )}
-            />
+            </Field>
 
-            {inputs.map(input => {
+            {inputs.map((input) => {
               return (
-                <Field
-                  name={input.name}
-                  render={({ field }: FieldProps<FormValues>) => (
+                <Field key={input.name} name={input.name}>
+                  {({ field }: FieldProps<FormValues>) => (
                     <div className="form__div">
                       <TextField
                         {...field}
@@ -146,9 +140,9 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
                         variant="outlined"
                       />
                     </div>
-                  )} 
-                />
-              )
+                  )}
+                </Field>
+              );
             })}
             <button
               type="submit"
@@ -161,7 +155,10 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
             >
               Save changes
             </button>
-            <button className="delete-game-button" onClick={() => deleteGameClickHandler(values._id)}>
+            <button
+              className="delete-game-button"
+              onClick={() => deleteGameClickHandler(values._id)}
+            >
               Delete game
             </button>
           </Form>
@@ -171,11 +168,12 @@ const RenderGameForm = ({initialGameData, deleteGameClickHandler}: IProps) => {
   );
 };
 
-
 const AdminAddGame: React.FC = () => {
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
-  const [initialGameData, setInitialGameData] = useState<FormValues | null>(null)
+  const [initialGameData, setInitialGameData] = useState<FormValues | null>(
+    null
+  );
 
   useEffect(() => {
     dispatch(getAllGames());
@@ -192,30 +190,34 @@ const AdminAddGame: React.FC = () => {
   const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
     // @ts-ignore
     const gameId = event.target.value;
-  // @ts-ignore
+    // @ts-ignore
     const gameData = allGames.find((game) => {
       return game._id === gameId;
     });
 
-    console.log("gameData", gameData);
     setInitialGameData(gameData);
   };
 
-  const deleteGameClickHandler = (gameId: string) => {
-    console.log('game deleted');
-    console.log(gameId);
-    dispatch(deleteGame(gameId))
-  }
+  const deleteGameClickHandler = async (gameId: string) => {
+    deleteGame(gameId);
+  };
 
   return (
     <>
       <FormControl>
         <InputLabel>Select game</InputLabel>
         {/* @ts-ignore */}
-        <Select value={gamesOptions} onChange={selectHandleChange}>{gamesOptions}</Select>
+        <Select value={initialGameData?.gameName} onChange={selectHandleChange}>
+          {gamesOptions}
+        </Select>
       </FormControl>
 
-      {initialGameData && <RenderGameForm initialGameData={initialGameData} deleteGameClickHandler={deleteGameClickHandler}/>}
+      {initialGameData && (
+        <RenderGameForm
+          initialGameData={initialGameData}
+          deleteGameClickHandler={deleteGameClickHandler}
+        />
+      )}
     </>
   );
 };
