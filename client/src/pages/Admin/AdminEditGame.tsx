@@ -1,4 +1,3 @@
-// Update: 16.09 - Игра не обновляется(в onSubmit ничего нет).
 // TODO: 26.09 - Не отображается контент в чекбоксах
 
 import React, { useState, useEffect, lazy } from "react";
@@ -12,9 +11,12 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { updateGameData, getAllGames } from "../../redux/games/gamesActions";
+import {
+  updateGameData,
+  getAllGames,
+  deleteGame,
+} from "../../redux/games/gamesActions";
 import { RootState } from "../../redux/rootReducer";
-import { deleteGame } from "../../helpers/gameHelpers";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
 
@@ -92,8 +94,6 @@ const RenderGameForm = ({
         }}
         onSubmit={(values) => {
           console.log("Game has been edited...");
-          console.log(values);
-
           dispatch(updateGameData(values._id, values));
         }}
         validationSchema={validationSchema}
@@ -199,7 +199,7 @@ const AdminAddGame: React.FC = () => {
   };
 
   const deleteGameClickHandler = async (gameId: string) => {
-    deleteGame(gameId);
+    dispatch(deleteGame(gameId));
   };
 
   return (
