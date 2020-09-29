@@ -39,9 +39,8 @@ export const updateGameData = (gameId, game) => { // dispatch, обновить 
     try {
       await axios.put(`/api/games/${gameId}`, game);
       dispatch(updateGameArray(game))
-      console.log('test...');
     } catch (e) {
-      console.log(e.response.data.message);
+      console.log(e);
     }
   };
 };

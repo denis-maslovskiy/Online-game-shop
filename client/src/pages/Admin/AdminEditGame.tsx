@@ -90,7 +90,7 @@ const RenderGameForm = ({
           isDigital: initialGameData.isDigital,
           _id: initialGameData._id,
         }}
-        onSubmit={(values, { resetForm }) => {
+        onSubmit={(values) => {
           console.log("Game has been edited...");
           console.log(values);
 

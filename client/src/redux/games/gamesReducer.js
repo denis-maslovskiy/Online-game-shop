@@ -20,7 +20,8 @@ const setGameData = (action, state) => {
 const updateGameArray = (action, state) => {
     const game = action.payload;
     console.log('game: ', game);
-    updateObject(state, { ...game })
+    // в массиве найти эту игру по id и заменить на новую
+    // updateObject(state, { ...game })
 }
 
 const gamesReducer = (state = initialState, action) => {
