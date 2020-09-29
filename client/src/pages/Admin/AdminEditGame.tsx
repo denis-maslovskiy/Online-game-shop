@@ -147,11 +147,6 @@ const RenderGameForm = ({
             <button
               type="submit"
               className="add-game-button"
-              disabled={
-                isSubmitting ||
-                !!(errors.gameName && touched.gameName) ||
-                !!(errors.gameDescription && touched.gameDescription)
-              }
             >
               Save changes
             </button>
