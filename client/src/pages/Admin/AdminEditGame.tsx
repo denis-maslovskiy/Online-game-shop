@@ -55,6 +55,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const inputs = [
+  { label: "Digital", name: "isDigital" },
+  { label: "Physical", name: "isPhysical" },
   { label: "Game Name", name: "gameName" },
   {
     label: "Game Description",
@@ -88,7 +90,7 @@ const RenderGameForm = ({
           genre: initialGameData.genre,
           numberOfPhysicalCopies: initialGameData.numberOfPhysicalCopies,
           price: initialGameData.price,
-          isPhysical: true,
+          isPhysical: initialGameData.isPhysical,
           isDigital: initialGameData.isDigital,
           _id: initialGameData._id,
         }}
@@ -100,34 +102,26 @@ const RenderGameForm = ({
       >
         {({ errors, touched, values, isSubmitting }) => (
           <Form className="form">
-            <Field
-            // name="isPhysical"
-            >
-              {({ field }: FieldProps<FormValues>) => (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      // name="isPhysical"
-                      color="primary"
-                      {...field}
-                    />
-                  }
-                  label="Is Physical"
-                />
-              )}
-            </Field>
-
-            <Field name="isDigital">
-              {({ field }: FieldProps<FormValues>) => (
-                <FormControlLabel
-                  {...field}
-                  control={<Checkbox name="isDigital" color="primary" />}
-                  label="Is Digital"
-                />
-              )}
-            </Field>
-
             {inputs.map((input) => {
+              if (input.name === "isDigital" || input.name === "isPhysical") {
+                return (
+                  <Field key={input.name} name={input.name} label={input.label}>
+                    {({ field }) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            {...field}
+                            color="primary"
+                            checked={values[`${input.name}`]}
+                          />
+                        }
+                        label={input.label}
+                      />
+                    )}
+                  </Field>
+                );
+              }
+
               return (
                 <Field key={input.name} name={input.name}>
                   {({ field }: FieldProps<FormValues>) => (
@@ -144,10 +138,7 @@ const RenderGameForm = ({
                 </Field>
               );
             })}
-            <button
-              type="submit"
-              className="add-game-button"
-            >
+            <button type="submit" className="add-game-button">
               Save changes
             </button>
             <button
