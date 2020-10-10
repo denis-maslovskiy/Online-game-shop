@@ -8,12 +8,3 @@ export const getGameInfo = async (gameId) => {
     console.log(e.response.data.message);
   }
 };
-
-export const deleteGame = async (gameId) => {
-    try {
-      await axios.delete(`/api/games/${gameId}`);
-      // "game deleted" popup message can be added
-    } catch (e) {
-      console.log(e.response.data.message);
-    }
-}
