@@ -4,11 +4,9 @@ import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-// import AdminEditGame from "./AdminEditGame";
-import "./admin.scss";
-
 import AdminAddGame from "./AdminAddGame";
-import AdminEditGame from "./test";
+import AdminEditGame from "./AdminEditGame";
+import "./admin.scss";
 
 type Anchor = "left";
 
@@ -72,7 +70,8 @@ const Admin = () => {
         ))}
       </div>
       {adminOption === "Add new game" && <AdminAddGame />}
-      {adminOption === 'Edit game' && <AdminEditGame/>}
+      {/* {adminOption === 'Edit game' && <AdminEditGame/>} */}
+      {adminOption === "Edit game" && <AdminEditGame />}
     </>
   );
 };
