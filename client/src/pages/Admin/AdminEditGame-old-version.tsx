@@ -168,7 +168,7 @@ const RenderGameForm = ({
   );
 };
 
-const AdminAddGame: React.FC = () => {
+const AdminEditGame: React.FC = () => {
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
   const [initialGameData, setInitialGameData] = useState(
@@ -220,4 +220,4 @@ const AdminAddGame: React.FC = () => {
   );
 };
 
-export default AdminAddGame;
+export default AdminEditGame;
