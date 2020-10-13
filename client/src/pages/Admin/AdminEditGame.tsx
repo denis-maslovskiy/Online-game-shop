@@ -1,5 +1,3 @@
-// TODO: 26.09 - Не отображается контент в чекбоксах
-
 import React, { useState, useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
@@ -73,7 +71,7 @@ const inputs = [
   { label: "Price", name: "price" },
 ];
 
-const initialValues = {
+const initialEmptyForm = {
   gameName: "",
   gameDescription: "",
   rating: 0,
@@ -91,6 +89,8 @@ const RenderGameForm = ({
   initialGameData,
   deleteGameClickHandler,
 }: IProps) => {
+  console.log("initialGameData: ", initialGameData);
+  
   const dispatch = useDispatch();
   return (
     <>
@@ -112,6 +112,7 @@ const RenderGameForm = ({
           console.log("Game has been edited...");
           dispatch(updateGameData(values._id, values));
         }}
+        enableReinitialize={true}
         validationSchema={validationSchema}
       >
         {({ values }) => (
@@ -168,11 +169,11 @@ const RenderGameForm = ({
   );
 };
 
-const AdminAddGame: React.FC = () => {
+const AdminEditGame: React.FC = () => {
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
   const [initialGameData, setInitialGameData] = useState(
-    initialValues
+    initialEmptyForm
   );
 
   useEffect(() => {
@@ -220,4 +221,4 @@ const AdminAddGame: React.FC = () => {
   );
 };
 
-export default AdminAddGame;
+export default AdminEditGame;
