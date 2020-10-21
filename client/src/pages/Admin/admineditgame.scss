@@ -2,8 +2,11 @@
 @import '../../styles/variables.scss';
 
 .MuiFormControl-root {
-    width: 200px;
-    margin: 0 5%;
+    width: 20%;
+}
+
+#test {
+    margin-left: 0.5%;
 }
 
 .delete-game-button {
@@ -13,3 +16,4 @@
         font-weight: bold;
     }
 }
+

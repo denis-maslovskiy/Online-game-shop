@@ -1,31 +1,16 @@
 // TODO: Не работает отчистка формы
 // TODO: Сделать кнопку недоступной до тех пор, пока все поля не буду заполнены
-// Update: 16.09 - форма создает новую игру. TODO актуальны.
 
-import React, { useState } from "react";
+import React from "react";
 import * as Yup from "yup";
 
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import "./adminaddgame.scss";
-import { useDispatch } from "react-redux";
-import { Field, Form, Formik } from "formik";
-import { addGame } from "../../redux/admin/adminActions";
+import { Form, Formik } from "formik";
+import { addGame } from "../../helpers/gameHelpers";
 import "./adminaddgame.scss";
-
-interface FormValues {
-  gameName: string;
-  gameDescription: string;
-  rating: number;
-  releaseDate: string;
-  author: string;
-  genre: string;
-  numberOfPhysicalCopies: number;
-  price: number;
-  isPhysical: boolean;
-  isDigital: boolean;
-}
 
 const validationSchema = Yup.object().shape({
   gameName: Yup.string().required("Game name is required"),
@@ -73,23 +58,16 @@ const initialValues = {
 };
 
 const AdminAddGame: React.FC = () => {
-  const dispatch = useDispatch();
-
-  // const submit = (values: FormValues, resetForm: (nextInitialState?: FormikState<FormValues>) => void) => {
-  //     dispatch(addGame(values))
-  //     resetForm();
-  // }
-
   return (
     <>
       <h2 className="title">Add new game</h2>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values, { resetForm }) => {
-          dispatch(addGame(values));
-          resetForm();
+        onSubmit={(values, {resetForm}) => {
+          addGame(values);
         }}
         validationSchema={validationSchema}
+        enableReinitialize={true}
       >
         {({
           errors,

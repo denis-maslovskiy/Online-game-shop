@@ -41,7 +41,7 @@ const Admin = () => {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {["Add new game", "Edit game", "Edit achievements"].map((text) => (
+        {["Add new game", "Edit game"].map((text) => (
           <ListItem button key={text} onClick={() => clickHandler(text)}>
             <ListItemText primary={text} />
           </ListItem>

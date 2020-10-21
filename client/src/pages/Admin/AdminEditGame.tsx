@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps } from "formik";
@@ -82,18 +82,17 @@ const initialEmptyForm = {
   price: 0,
   isPhysical: false,
   isDigital: false,
-  _id: ""
+  _id: "",
 };
 
 const RenderGameForm = ({
   initialGameData,
   deleteGameClickHandler,
 }: IProps) => {
-  console.log("initialGameData: ", initialGameData);
-  
   const dispatch = useDispatch();
   return (
     <>
+      <h2 className="title">Edit Game</h2>
       <Formik
         initialValues={{
           gameName: initialGameData.gameName,
@@ -121,7 +120,7 @@ const RenderGameForm = ({
               if (input.name === "isDigital" || input.name === "isPhysical") {
                 return (
                   <Field key={input.name} name={input.name} label={input.label}>
-                    {({ field }) => (
+                    {({ field }: FieldProps<FormValues>) => (
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -143,7 +142,6 @@ const RenderGameForm = ({
                     <div className="form__div">
                       <TextField
                         {...field}
-                        className="form__input"
                         required
                         label={input.label}
                         variant="outlined"
@@ -172,9 +170,7 @@ const RenderGameForm = ({
 const AdminEditGame: React.FC = () => {
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
-  const [initialGameData, setInitialGameData] = useState(
-    initialEmptyForm
-  );
+  const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
 
   useEffect(() => {
     dispatch(getAllGames());
@@ -197,11 +193,11 @@ const AdminEditGame: React.FC = () => {
 
   return (
     <>
-      <FormControl>
+      <FormControl id="test">
         <InputLabel>Select game</InputLabel>
         {/* @ts-ignore */}
         <Select value={initialGameData?._id} onChange={selectHandleChange}>
-          { allGames.map((game: FormValues) => {
+          {allGames.map((game: FormValues) => {
             return (
               <MenuItem value={game._id} key={game._id}>
                 {game.gameName}
