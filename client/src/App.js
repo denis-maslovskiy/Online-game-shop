@@ -4,6 +4,7 @@ import { useRoutes } from "./routes";
 import { Navbar } from "./components/Navbar";
 import { useAuth } from "./hooks/authHook";
 import { AuthContext } from "./context/AuthContext";
+import "./styles/body.scss";
 
 function App() {
   const { token, login, logout, userId } = useAuth();

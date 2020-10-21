@@ -1,0 +1,1 @@
+export const ADD_NEW_GAME = 'ADD_NEW_GAME';

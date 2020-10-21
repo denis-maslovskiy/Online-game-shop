@@ -1,16 +1,15 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { getGameInfo, updateGameData } from "../redux/games/gamesActions";
+import { updateGameData } from "../redux/games/gamesActions";
 import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
+import { getGameInfo } from '../helpers/gameHelpers';
 import img1 from "../img/1.jpg";
 import img2 from "../img/2.jpg";
 import img3 from "../img/3.jpg";
 import img4 from "../img/4.jpg";
 import img5 from "../img/5.jpg";
 import img6 from "../img/6.jpg";
-import img7 from "../img/7.jpg";
-import img8 from "../img/8.jpg";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
 
@@ -19,70 +18,6 @@ import {
   clearErrorMessage,
   clearSuccessMessage,
 } from "../redux/notification/notificationActions";
-
-const Carousel = () => {
-  const ul = useRef();
-  const li = useRef();
-
-  let width;
-  window.innerWidth > 504 ? (width = 320) : (width = 200);
-  let count = 1;
-
-  let position = 0;
-
-  const onClickPrevHandler = () => {
-    position += width * count;
-    position = Math.min(position, 0);
-    ul.current.style.marginLeft = position + "px";
-  };
-
-  const onClickNextHandler = () => {
-    position -= width * count;
-    width === 320
-      ? (position = Math.max(position, -2240))
-      : (position = Math.max(position, -1400));
-    ul.current.style.marginLeft = position + "px";
-  };
-
-  const arrayOfImgs = [
-    { img: img1, id: 1 },
-    { img: img2, id: 2 },
-    { img: img3, id: 3 },
-    { img: img4, id: 4 },
-    { img: img5, id: 5 },
-    { img: img6, id: 6 },
-    { img: img7, id: 7 },
-    { img: img8, id: 8 },
-  ];
-
-  return (
-    <div className="carousel">
-      <button
-        className="carousel__arrow carousel__arrow_prev"
-        onClick={onClickPrevHandler}
-      >
-        ⇦
-      </button>
-      <div className="carousel__gallery gallery">
-        <ul className="gallery__images images" ref={ul}>
-          {arrayOfImgs.map((item) => {
-            return (
-              <li ref={li} className="images__li" key={item.id}>
-                <img src={item.img} alt="pic" className="images__img" />
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <button
-        className="carousel__arrow carousel__arrow_next"
-        onClick={onClickNextHandler}
-      >
-        ⇨
-      </button>
-    </div>
-  );
-};
 
 const SelectedGame = (props) => {
   const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(
@@ -108,7 +43,6 @@ const SelectedGame = (props) => {
   const history = useHistory();
 
   const {
-    getGameInfo,
     getUserData,
     updateGameData,
     addGameInTheBasket,
@@ -163,28 +97,61 @@ const SelectedGame = (props) => {
     }
   };
 
+  const arrayOfImgs = [
+    { img: img1, id: "r1" },
+    { img: img2, id: "r2" },
+    { img: img3, id: "r3" },
+    { img: img4, id: "r4" },
+    { img: img5, id: "r5" },
+    { img: img6, id: "r6" },
+  ];
+
   return (
     <>
-      {errorMsg && <Notification values={{ errorMsg }} />}
-      {successMsg && <Notification values={{ successMsg }} />}
-
-      <div className="content-area">
-        {isReadyToDisplayGameInfo && (
-          <h2 className="content-area__game-name">{textFields[5].value}</h2>
-        )}
-        {Carousel()}
-        <div className="content-area__game-info game-info">
-          {isReadyToDisplayGameInfo &&
-            textFields.map((item) => {
+      {isReadyToDisplayGameInfo && (
+        <div>
+          <h2 className="game-name">{textFields[5].value}</h2>
+        </div>
+      )}
+      <div className="slidershow middle">
+        <div className="slides">
+          {arrayOfImgs.map((item) => (
+            <input type="radio" name="r" id={item.id} key={item.id} />
+          ))}
+          {arrayOfImgs.map((item, index) => {
+            if (index === 0) {
               return (
-                <div key={item.title}>
-                  <span className="game-info__text-field-title">
-                    {item.title}
-                  </span>
-                  <p className="game-info__text-field-value">{item.value}</p>
+                <div className="slide s1" key={item.id}>
+                  <img src={item.img} alt="GameImage" />
                 </div>
               );
-            })}
+            }
+            return (
+              <div className="slide" key={item.id}>
+                <img src={item.img} alt="GameImage" />
+              </div>
+            );
+          })}
+        </div>
+        <div className="navigation">
+          {arrayOfImgs.map((item) => (
+            <label htmlFor={item.id} className="bar" key={item.id} />
+          ))}
+        </div>
+      </div>
+      {errorMsg && <Notification values={{ errorMsg }} />}
+      {successMsg && <Notification values={{ successMsg }} />}
+      <div className="content-area">
+        <div className="content-area__game-info game-info">
+          {isReadyToDisplayGameInfo &&
+            textFields.map((item) => (
+              <div key={item.title}>
+                <span className="game-info__text-field-title">
+                  {item.title}
+                </span>
+                <p className="game-info__text-field-value">{item.value}</p>
+              </div>
+            ))}
         </div>
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
@@ -236,7 +203,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getGameInfo: (gameId) => dispatch(getGameInfo(gameId)),
     getUserData: (userId) => dispatch(getUserData(userId)),
     updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
     addGameInTheBasket: (userId, gameData) =>

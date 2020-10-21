@@ -32,7 +32,7 @@ const Authorization = (props) => {
     clearErrorMessage();
   };
 
-  const submit = async (userData, { setSubmitting, resetForm }) => {
+  const submit = (userData, { setSubmitting, resetForm }) => {
     loginUser(userData);
     setIsSubmitting(true);
     resetForm();
@@ -43,7 +43,7 @@ const Authorization = (props) => {
     if(isAuthenticated){
       history.push("/");
     }
-  }, [isAuthenticated, history])
+  }, [isAuthenticated])
 
   return (
     <>

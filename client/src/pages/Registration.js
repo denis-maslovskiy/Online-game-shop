@@ -45,7 +45,7 @@ const Registration = (props) => {
     clearErrorMessage();
   };
 
-  const submit = async (userData, { setSubmitting, resetForm }) => {
+  const submit = (userData, { setSubmitting, resetForm }) => {
     registerUser(userData);
     setIsSubmitting(true);
     resetForm();

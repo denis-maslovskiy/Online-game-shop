@@ -5,14 +5,7 @@
     width: 90%;
     margin: 3% auto;
     border-radius: 24px;
-    background: $content-area-bg;
     @include flex-display(wrap);
-
-    &__game-name {
-        width: 100%;
-        text-align: center;
-        @include text-style(32px);
-    }
 
     &__carousel {
         width: 100%;
@@ -33,7 +26,7 @@
             @include flex-display(nowrap, column, flex-start, center);
             margin-bottom: 5%;
             @media (max-width: 382px) {
-                border-bottom: 2px solid $light-green-color;
+                border-bottom: 2px solid $blue-color;
             }
         }
     }
@@ -45,9 +38,16 @@
 
         &__buy-game {
             width: 100%;
-            border-top: 2px solid $light-green-color;
+            border-top: 2px solid $blue-color;
         }
     }
+}
+
+.game-name {
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+    @include text-style(32px);
 }
 
 .game-info {
@@ -86,4 +86,104 @@
         }
         }
     }
+}
+
+.slidershow {
+    width: 700px;
+    height: 400px;
+    overflow: hidden;
+
+    
+    @media (max-width: 700px) {
+        width: 400px;
+        height: 200px;
+    }
+    @media (max-width: 400px) {
+        width: 300px;
+        height: 150px;
+    }
+    @media (min-width: 2000px) {
+        width: 1000px;
+        height: 500px;
+    }
+}
+
+.middle {
+    margin: 0 auto;
+}
+
+.navigation {
+    position: relative;
+    bottom: 10%;
+    left: 20%;
+    display: flex;
+
+    
+    @media (max-width: 700px) {
+        bottom: 12%;
+        left: 2%;
+    }
+    @media (max-width: 400px) {
+        bottom: 14%;
+        left: 0;
+    }
+    @media (min-width: 2000px) {
+        left: 30%;
+    }
+}
+.bar {
+    width: 50px;
+    height: 10px;
+    border: 2px solid #fff;
+    margin: 6px;
+    cursor: pointer;
+    transition: 0.4s;
+
+    &:hover {
+        background: #fff;
+    }
+
+    @media (max-width: 700px) {
+        border: 1px solid #fff;
+    }
+}
+
+input[name="r"]{
+    position: absolute;
+    visibility: hidden;
+}
+
+.slides{
+    width: 600%;
+    height: 100%;
+    display: flex;
+}
+
+.slide {
+    width: 20%;
+    transition: 0.6s;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+}
+
+#r1:checked ~ .s1 {
+    margin-left: 0;
+}
+#r2:checked ~ .s1 {
+    margin-left: -20%;
+}
+#r3:checked ~ .s1 {
+    margin-left: -40%;
+}
+#r4:checked ~ .s1 {
+    margin-left: -60%;
+}
+#r5:checked ~ .s1 {
+    margin-left: -80%;
+}
+#r6:checked ~ .s1 {
+    margin-left: -100%;
 }

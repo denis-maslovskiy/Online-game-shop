@@ -120,7 +120,7 @@ router.post(
           id: user._id,
           name: user.username,
           email: user.email,
-          dateOfRegistration: user.dateOfRegistration,
+          dateOfRegistration: user.dateOfRegistration
         },
       });
     } catch (e) {

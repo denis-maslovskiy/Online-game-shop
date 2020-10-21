@@ -33,14 +33,16 @@ export const loginUser = (userData) => {
   return async (dispatch) => {
     try {
       const response = await axios.post("/api/auth/login", { ...userData });
-      dispatch(setCurrentUser(response.data.user));
+      dispatch(setCurrentUser(response.data));
       localStorage.setItem(
         "userData",
         JSON.stringify({ userId: response.data.userId, token: response.data.token })
       );
       window.location.href = "/";
+      console.log('response:', response);
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
+      console.log(e);
     }
   };
 };

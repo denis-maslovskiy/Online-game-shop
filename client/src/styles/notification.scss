@@ -49,7 +49,7 @@
     }
 }
 
-.alert.show {
+.alert--show {
     animation: show_slide 1s ease forwards;
 }
 
@@ -68,7 +68,7 @@
     }
 }
 
-.alert.hide {
+.alert--hide {
     animation: hide_slide 1s ease forwards;
 } 
 

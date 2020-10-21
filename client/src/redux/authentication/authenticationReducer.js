@@ -2,20 +2,14 @@ import { SET_CURRENT_USER } from "./authenticationTypes";
 import { updateObject } from "../reducerHelpers";
 
 const initialState = {
-  username: "",
-  email: "",
-  userId: "",
-  purchasedGames: [],
-  dateOfRegistration: "",
+  user: {},
+  token: JSON.parse(localStorage.getItem('userData')) ? JSON.parse(localStorage.getItem('userData')).token : ""
 };
 
 const setCurrentUser = (state, action) => {
-  const username = action.payload.name,
-    email = action.payload.email,
-    userId = action.payload.id,
-    dateOfRegistration = action.payload.dateOfRegistration;
+  const { user, token } = action.payload;
 
-  return updateObject(state, { username, email, userId, dateOfRegistration });
+  return updateObject(state, { ...user, token });
 };
 
 const authenticationReducer = (state = initialState, action) => {

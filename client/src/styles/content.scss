@@ -12,7 +12,6 @@
 }
 
 .content {
-
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -21,37 +20,48 @@
         border: none;
         background: none;
         outline: none;
-        border-radius: 24px;
+        border-radius: 40px;
         cursor: pointer;
-
-        &:active, &:focus {
-            .content__card {
-                background-color: $custom-light-blue;
-            }
-        }
     }
 }
 
 .link {
+    position: relative;
+    display: inline-block;
+    margin: 3%;
+    padding: 5px 15px;
     text-decoration: none;
+    text-transform: uppercase;
+    border-radius: 40px;
+    box-shadow: -2px -2px 8px rgb(255, 255, 255), 
+                -2px -2px 12px rgba(255,255,255,0.5),
+                inset -2px -2px 4px rgba(255,255,255,0.1),
+                2px 2px 8px rgba(0,0,0,0.15);
+    &:hover {
+        display: inline-block;
+        transform: scale(0.98);
+        box-shadow: inset -2px -2px 8px rgba(255,255,255,1), 
+                    inset -2px -2px 12px rgba(255,255,255,0.5),
+                    inset -2px -2px 4px rgba(255,255,255,0.1),
+                    inset 2px 2px 8px rgba(0,0,0,0.15);
+    }
 }
 
 .card {
     display: flex;
     justify-content: space-around;
     min-width: 350px;
-    max-width: 600px;
+    max-width: 400px;
     background-color: white;
     color: $custom-grey;
-    font-family: sans-serif;
     margin: 1% 1%;
     border-radius: 24px;
+    @include text-style(16px);
 
     &__picture {
         width: 150px;
         height: 180px;
         margin: 10px;
-        background-color: salmon;   
     }
 }
 
@@ -72,9 +82,7 @@
         &__picture {
             margin: 3% auto;
             width: 90%;
-            height: 200px;
+            height: 150px;
         }
     }
 }
-
-// Test

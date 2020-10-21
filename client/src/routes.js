@@ -8,6 +8,7 @@ import PersonalAccount from "./pages/PersonalAccount";
 import Authorization from "./pages/Authorization";
 import PrivateRoute from "./PrivateRoute";
 import { useAuth } from "./hooks/authHook";
+import Admin from "./pages/Admin/Admin";
 
 export const useRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -17,6 +18,7 @@ export const useRoutes = () => {
       <Route path="/registration" component={Registration} exact />
       <Route path="/authorization" component={Authorization} exact />
       <Route path="/selectedgame/:id" component={SelectedGame} exact />
+      <Route path="/admin-panel" component={Admin}/>
       <PrivateRoute
         path="/basket"
         isAuthenticated={isAuthenticated}

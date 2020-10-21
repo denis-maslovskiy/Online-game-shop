@@ -1,0 +1,56 @@
+@import '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.form {
+    text-align: center;
+
+    &__checkboxes {
+        display: flex;
+        justify-content: center;
+    }
+
+    &__input {
+        background: white;
+        width: 400px;
+    
+        @media(max-width: 420px) {
+            width: 300px;
+        }
+    }
+
+    &__div {
+        margin: 1% 0;
+    }
+}
+
+.input-fields {
+    display: flex;
+    flex-direction: column;
+
+    &__input, .MuiFormControl-root {
+        width: 30%;
+        margin: 1% 0;
+    }
+}
+
+// **New**
+.add-game-button {
+    @include custom-btn(24px);
+
+    &:hover {
+        font-weight: bold;
+    }
+
+    &_disabled {
+        border: 2px solid grey;
+
+        &:hover {
+            background: grey;
+            color: white;
+        }
+    }
+}
+
+.title {
+    text-align: center;
+}

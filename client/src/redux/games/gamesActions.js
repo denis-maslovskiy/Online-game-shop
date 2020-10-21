@@ -1,21 +1,32 @@
 import axios from "axios";
+import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME } from "./gamesTypes";
 
-export const getAllGames = () => {
-  return async () => {
-    try {
-      const response = await axios.get("/api/games/getAllGames");
-      return response.data;
-    } catch (e) {
-      console.log(e.response.data.message);
-    }
+export const setAllGames = (games) => {
+  return {
+    type: SET_ALL_GAMES,
+    payload: games,
   };
 };
 
-export const getGameInfo = (gameId) => {
-  return async () => {
+export const updateGameArray = (updatedGame) => {
+  return {
+    type: UPDATE_GAME_ARRAY,
+    payload: updatedGame,
+  };
+};
+
+export const updateGameArrayAfterDeletingTheGame = (deletedGame) => {
+  return {
+    type: DELETE_GAME,
+    payload: deletedGame,
+  };
+};
+
+export const getAllGames = () => {
+  return async (dispatch) => {
     try {
-      const response = await axios.get(`/api/games/${gameId}`);
-      return response.data;
+      const response = await axios.get("/api/games/getAllGames");
+      dispatch(setAllGames(response.data));
     } catch (e) {
       console.log(e.response.data.message);
     }
@@ -23,11 +34,23 @@ export const getGameInfo = (gameId) => {
 };
 
 export const updateGameData = (gameId, game) => {
-  return async () => {
+  return async (dispatch) => {
     try {
       await axios.put(`/api/games/${gameId}`, game);
+      dispatch(updateGameArray(game));
     } catch (e) {
-      console.log(e.response.data.message);
+      console.log(e);
+    }
+  };
+};
+
+export const deleteGame = (gameId) => {
+  return async (dispatch) => {
+    try {
+      await axios.delete(`/api/games/${gameId}`);
+      dispatch(updateGameArrayAfterDeletingTheGame(gameId));
+    } catch (e) {
+      console.log(e);
     }
   };
 };

@@ -8,21 +8,21 @@ import {
 } from "../redux/notification/notificationActions";
 import "../styles/notification.scss";
 
-const Notification = (props) => {
+const Notification = ({clearErrorMessage, clearSuccessMessage, clearInfoMessage, values}) => {
   const alertRef = useRef();
 
   const clickHandler = () => {
-    alertRef.current.classList.remove("show");
-    alertRef.current.classList.add("hide");
-    props.clearErrorMessage();
-    props.clearSuccessMessage();
-    props.clearInfoMessage();
+    alertRef.current.classList.remove("alert--show");
+    alertRef.current.classList.add("alert--hide");
+    clearErrorMessage();
+    clearSuccessMessage();
+    clearInfoMessage();
   };
 
-  if (props.values.successMsg) {
+  if (values.successMsg) {
     return (
-      <div ref={alertRef} className="alert alert-success show">
-        <span className="alert__text">{props.values.successMsg}</span>
+      <div ref={alertRef} className="alert alert-success alert--show">
+        <span className="alert__text">{values.successMsg}</span>
         <button
           className="alert__close-btn alert__close-btn--success"
           onClick={clickHandler}
@@ -32,10 +32,10 @@ const Notification = (props) => {
       </div>
     );
   }
-  if (props.values.errorMsg) {
+  if (values.errorMsg) {
     return (
-      <div ref={alertRef} className="alert alert-error show">
-        <span className="alert__text">{props.values.errorMsg}</span>
+      <div ref={alertRef} className="alert alert-error alert--show">
+        <span className="alert__text">{values.errorMsg}</span>
         <button
           className="alert__close-btn alert__close-btn--error"
           onClick={clickHandler}
@@ -45,10 +45,10 @@ const Notification = (props) => {
       </div>
     );
   }
-  if (props.values.infoMsg) {
+  if (values.infoMsg) {
     return (
-      <div ref={alertRef} className="alert alert-info show">
-        <span className="alert__text">{props.values.infoMsg}</span>
+      <div ref={alertRef} className="alert alert-info alert--show">
+        <span className="alert__text">{values.infoMsg}</span>
         <button
           className="alert__close-btn alert__close-btn--info"
           onClick={clickHandler}

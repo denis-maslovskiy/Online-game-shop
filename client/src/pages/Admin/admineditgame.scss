@@ -1,0 +1,19 @@
+@import '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.MuiFormControl-root {
+    width: 20%;
+}
+
+#test {
+    margin-left: 0.5%;
+}
+
+.delete-game-button {
+    @include custom-btn(24px, $border: 2px solid $red-color, $bg-hover: $red-color);
+
+    &:hover {
+        font-weight: bold;
+    }
+}
+
