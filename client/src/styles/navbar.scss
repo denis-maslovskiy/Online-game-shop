@@ -19,33 +19,6 @@
     font-weight: normal;
 }
 
-.filter-block {
-    width: 400px;
-    height: 300px;
-
-    &__filter, &__sort {
-        padding: 10px;
-        background-color: $app-bg;
-    }
-
-    &__filter {
-        border-bottom: 2px solid $blue-color;
-    }
-
-    &__section-name {
-        @include text-style(24px);
-        position: relative;
-        left: 30%;
-    }
-}
-
-.filter {
-    &__option {
-        display: flex;
-        align-items: center;
-    }
-}
-
 .option {
     &__title {
         @include text-style(18px);
