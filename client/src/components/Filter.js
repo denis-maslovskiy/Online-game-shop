@@ -1,20 +1,27 @@
-import React, { useState } from "react";
-import { IconButton, MenuItem, Menu, InputLabel, FormControl, Select } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { IconButton, Menu } from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { CustomInput } from "./CustomInput";
-import { useStyles } from "../hooks/useStyles";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { useSelector, useDispatch } from "react-redux";
+import { setFilteredArray } from "../redux/games/gamesActions";
 import "../styles/navbar.scss";
+import "./filter.scss";
 
 export const Filter = () => {
-  const [age, setAge] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
+  const [authorsArray, setAuthorsArray] = useState([]);
+  const [genresArray, setGenresArray] = useState([]);
+  const [gameNamesArray, setGameNamesArray] = useState([]);
+  const [resultObject, setResultObject] = useState({
+    gameNamesArray: [],
+    authorsArray: [],
+    genresArray: [],
+    numberOfCopies: null,
+  });
+  const dispatch = useDispatch();
 
-  const classes = useStyles();
   const open = Boolean(anchorEl);
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,12 +31,78 @@ export const Filter = () => {
     setAnchorEl(null);
   };
 
-  const sortValues = [
-    { value: "popular", label: "Popular", id: 1 },
-    { value: "price", label: "Price", id: 2 },
-    { value: "new", label: "New", id: 3 },
-    { value: "discount", label: "Discount", id: 4 },
-  ];
+  const { allGames } = useSelector((state) => state.games);
+
+  // Create options for Autocomplete
+  useEffect(() => {
+    const tempAuthorsArray = [],
+      tempGenresArray = [],
+      tempGameNamesArray = [];
+    if (allGames.length) {
+      allGames.forEach((item) => {
+        if (tempAuthorsArray.indexOf(item.author) === -1) {
+          tempAuthorsArray.push(item.author);
+        }
+        if (tempGenresArray.indexOf(item.genre) === -1) {
+          tempGenresArray.push(item.genre);
+        }
+        tempGameNamesArray.push(item.gameName);
+      });
+      setAuthorsArray(tempAuthorsArray);
+      setGenresArray(tempGenresArray);
+      setGameNamesArray(tempGameNamesArray);
+    }
+  }, [allGames]);
+
+  const onGameNameChangeHandler = (e, value) => {
+    setResultObject({ ...resultObject, gameNamesArray: value });
+  };
+  const onAuthorChangeHandler = (e, value) => {
+    setResultObject({ ...resultObject, authorsArray: value });
+  };
+  const onGenreChangeHandler = (e, value) => {
+    setResultObject({ ...resultObject, genresArray: value });
+  };
+  const onNumberOfCopiesChangeHandler = (e) => {
+    setResultObject({ ...resultObject, numberOfCopies: e.target.value });
+  };
+
+  const resultArray = [];
+  const onDone = () => {
+    allGames.map((item) => {
+      if (
+        resultObject.gameNamesArray.includes(item.gameName) ||
+        resultObject.authorsArray.includes(item.author) ||
+        resultObject.genresArray.includes(item.genre)
+      ) {
+        resultArray.push(item);
+      }
+      if (
+        item.isPhysical &&
+        resultObject.numberOfCopies &&
+        item.numberOfPhysicalCopies >= resultObject.numberOfCopies
+      ) {
+        resultArray.push(item);
+      }
+    });
+    handleClose();
+    console.log(resultObject);
+    console.log(resultArray);
+    if (!resultArray.length) {
+      if (
+        !!resultObject.authorsArray.length ||
+        !!resultObject.gameNamesArray.length ||
+        !!resultObject.genresArray.length ||
+        !!resultObject.numberOfCopies
+      ) {
+        resultArray.push("No matches found.");
+        dispatch(setFilteredArray(resultArray));
+      }
+      dispatch(setFilteredArray(resultArray));
+    } else {
+      dispatch(setFilteredArray(resultArray));
+    }
+  };
 
   const filterValues = [
     { inputName: "Game Name:", inputLabel: "Game Name", id: 1 },
@@ -38,78 +111,109 @@ export const Filter = () => {
     { inputName: "Number of copies:", inputLabel: "Number of copies", id: 4 },
   ];
 
-  return (
-    <>
-      <IconButton
-        aria-controls="menu-appbar"
-        color="inherit"
-        onClick={handleMenu}
-      >
-        <FilterListIcon />
-      </IconButton>
-      <Menu
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        open={open}
-        onClose={handleClose}
-      >
-        <div className="filter-block">
-          <div className="filter-block__filter filter">
-            <h2 className="filter-block__section-name">Filter</h2>
-            {filterValues.map((item) => {
-              return (
-                <div className="filter__option option" key={item.id}>
-                  <span className="option__title">{item.inputName}</span>
-                  <FormControl className={classes.margin}>
-                    <InputLabel htmlFor="demo-customized-textbox">
-                      {item.inputLabel}
-                    </InputLabel>
-                    <CustomInput className="demo-customized-textbox" />
-                  </FormControl>
-                </div>
-              );
-            })}
-          </div>
-          <div className="filter-block__sort">
-            <h2 className="filter-block__section-name">Sorting</h2>
-            <div className="filter__option option">
-              <span className="option__title">Select sort:</span>
-              <FormControl className={classes.margin}>
-                <InputLabel id="demo-customized-select-label">
-                  Sorting
-                </InputLabel>
-                <Select
-                  labelId="demo-customized-select-label"
-                  id="demo-customized-select"
-                  value={age}
-                  onChange={handleChange}
-                  input={<CustomInput />}
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {sortValues.map((item) => {
+  if (authorsArray.length && genresArray.length && gameNamesArray.length) {
+    return (
+      <section className="">
+        <IconButton
+          aria-controls="menu-appbar"
+          color="inherit"
+          onClick={handleMenu}
+        >
+          <FilterListIcon />
+        </IconButton>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          open={open}
+          onClose={handleClose}
+        >
+          <div className="filter-block">
+            <div className="filter-block__filter filter">
+              <h2 className="filter-block__section-name">Filter</h2>
+              {filterValues.map((item) => {
+                switch (item.inputLabel) {
+                  case "Game Name":
                     return (
-                      <MenuItem value={item.value} key={item.id}>
-                        {item.label}
-                      </MenuItem>
+                      <div className="filter__option option" key={item.id}>
+                        <span className="option__title">{item.inputName}</span>
+                        <Autocomplete
+                          multiple
+                          id={`${item.id}`}
+                          options={gameNamesArray}
+                          getOptionLabel={(option) => option}
+                          style={{ width: "50%", marginBottom: "2%" }}
+                          onChange={onGameNameChangeHandler}
+                          renderInput={(params) => (
+                            <TextField {...params} label={item.inputLabel} />
+                          )}
+                        />
+                      </div>
                     );
-                  })}
-                </Select>
-              </FormControl>
+                  case "Author":
+                    return (
+                      <div className="filter__option option" key={item.id}>
+                        <span className="option__title">{item.inputName}</span>
+                        <Autocomplete
+                          multiple
+                          id={`${item.id}`}
+                          options={authorsArray}
+                          getOptionLabel={(option) => option}
+                          style={{ width: "50%", marginBottom: "2%" }}
+                          onChange={onAuthorChangeHandler}
+                          renderInput={(params) => (
+                            <TextField {...params} label={item.inputLabel} />
+                          )}
+                        />
+                      </div>
+                    );
+                  case "Genre":
+                    return (
+                      <div className="filter__option option" key={item.id}>
+                        <span className="option__title">{item.inputName}</span>
+                        <Autocomplete
+                          multiple
+                          id={`${item.id}`}
+                          options={genresArray}
+                          getOptionLabel={(option) => option}
+                          style={{ width: "50%", marginBottom: "2%" }}
+                          onChange={onGenreChangeHandler}
+                          renderInput={(params) => (
+                            <TextField {...params} label={item.inputLabel} />
+                          )}
+                        />
+                      </div>
+                    );
+                  case "Number of copies":
+                    return (
+                      <div className="filter__option option" key={item.id}>
+                        <span className="option__title">{item.inputName}</span>
+                        <TextField
+                          type="number"
+                          label={item.inputLabel}
+                          style={{ width: "50%", marginBottom: "2%" }}
+                          onChange={onNumberOfCopiesChangeHandler}
+                          InputProps={{ inputProps: { min: 0 } }}
+                        />
+                      </div>
+                    );
+                }
+              })}
             </div>
+            <button className="filter-block__button" onClick={() => onDone()}>
+              Done
+            </button>
           </div>
-        </div>
-      </Menu>
-    </>
-  );
+        </Menu>
+      </section>
+    );
+  } else return null;
 };
