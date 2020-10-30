@@ -86,8 +86,6 @@ export const Filter = () => {
       }
     });
     handleClose();
-    console.log(resultObject);
-    console.log(resultArray);
     if (!resultArray.length) {
       if (
         !!resultObject.authorsArray.length ||
@@ -113,7 +111,7 @@ export const Filter = () => {
 
   if (authorsArray.length && genresArray.length && gameNamesArray.length) {
     return (
-      <section className="">
+      <section>
         <IconButton
           aria-controls="menu-appbar"
           color="inherit"
