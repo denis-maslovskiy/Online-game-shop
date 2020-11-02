@@ -95,8 +95,9 @@ export const Filter = () => {
       ) {
         resultArray.push("No matches found.");
         dispatch(setFilteredArray(resultArray));
+      } else {
+        dispatch(setFilteredArray(resultArray));
       }
-      dispatch(setFilteredArray(resultArray));
     } else {
       dispatch(setFilteredArray(resultArray));
     }
