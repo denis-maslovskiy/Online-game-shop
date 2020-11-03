@@ -23,9 +23,9 @@ const HomePage = () => {
     );
   }
 
-  if (filteredGames.length && filteredGames[0] !== "No matches found.") {
-    return (
-      <main className="container">
+  return (
+    <main className="container">
+      {filteredGames.length && filteredGames[0] !== "No matches found." ? (
         <div className="content">
           {filteredGames &&
             filteredGames.map((game) => (
@@ -48,11 +48,7 @@ const HomePage = () => {
               </button>
             ))}
         </div>
-      </main>
-    );
-  } else {
-    return (
-      <main className="container">
+      ) : (
         <div className="content">
           {allGames &&
             allGames.map((game) => (
@@ -75,9 +71,9 @@ const HomePage = () => {
               </button>
             ))}
         </div>
-      </main>
-    );
-  }
+      )}
+    </main>
+  );
 };
 
 export default HomePage;
