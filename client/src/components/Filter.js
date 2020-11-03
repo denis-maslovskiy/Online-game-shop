@@ -110,109 +110,119 @@ export const Filter = () => {
     { inputName: "Number of copies:", inputLabel: "Number of copies", id: 4 },
   ];
 
-  if (authorsArray.length && genresArray.length && gameNamesArray.length) {
-    return (
-      <section>
-        <IconButton
-          aria-controls="menu-appbar"
-          color="inherit"
-          onClick={handleMenu}
-        >
-          <FilterListIcon />
-        </IconButton>
-        <Menu
-          id="menu-appbar"
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          open={open}
-          onClose={handleClose}
-        >
-          <div className="filter-block">
-            <div className="filter-block__filter filter">
-              <h2 className="filter-block__section-name">Filter</h2>
-              {filterValues.map((item) => {
-                switch (item.inputLabel) {
-                  case "Game Name":
-                    return (
-                      <div className="filter__option option" key={item.id}>
-                        <span className="option__title">{item.inputName}</span>
-                        <Autocomplete
-                          multiple
-                          id={`${item.id}`}
-                          options={gameNamesArray}
-                          getOptionLabel={(option) => option}
-                          style={{ width: "50%", marginBottom: "2%" }}
-                          onChange={onGameNameChangeHandler}
-                          renderInput={(params) => (
-                            <TextField {...params} label={item.inputLabel} />
-                          )}
-                        />
-                      </div>
-                    );
-                  case "Author":
-                    return (
-                      <div className="filter__option option" key={item.id}>
-                        <span className="option__title">{item.inputName}</span>
-                        <Autocomplete
-                          multiple
-                          id={`${item.id}`}
-                          options={authorsArray}
-                          getOptionLabel={(option) => option}
-                          style={{ width: "50%", marginBottom: "2%" }}
-                          onChange={onAuthorChangeHandler}
-                          renderInput={(params) => (
-                            <TextField {...params} label={item.inputLabel} />
-                          )}
-                        />
-                      </div>
-                    );
-                  case "Genre":
-                    return (
-                      <div className="filter__option option" key={item.id}>
-                        <span className="option__title">{item.inputName}</span>
-                        <Autocomplete
-                          multiple
-                          id={`${item.id}`}
-                          options={genresArray}
-                          getOptionLabel={(option) => option}
-                          style={{ width: "50%", marginBottom: "2%" }}
-                          onChange={onGenreChangeHandler}
-                          renderInput={(params) => (
-                            <TextField {...params} label={item.inputLabel} />
-                          )}
-                        />
-                      </div>
-                    );
-                  case "Number of copies":
-                    return (
-                      <div className="filter__option option" key={item.id}>
-                        <span className="option__title">{item.inputName}</span>
-                        <TextField
-                          type="number"
-                          label={item.inputLabel}
-                          style={{ width: "50%", marginBottom: "2%" }}
-                          onChange={onNumberOfCopiesChangeHandler}
-                          InputProps={{ inputProps: { min: 0 } }}
-                        />
-                      </div>
-                    );
-                }
-              })}
+  return (
+    <>
+      {authorsArray.length && genresArray.length && gameNamesArray.length && (
+        <section>
+          <IconButton
+            aria-controls="menu-appbar"
+            color="inherit"
+            onClick={handleMenu}
+          >
+            <FilterListIcon />
+          </IconButton>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            open={open}
+            onClose={handleClose}
+          >
+            <div className="filter-block">
+              <div className="filter-block__filter filter">
+                <h2 className="filter-block__section-name">Filter</h2>
+                {filterValues.map((item) => {
+                  switch (item.inputLabel) {
+                    case "Game Name":
+                      return (
+                        <div className="filter__option option" key={item.id}>
+                          <span className="option__title">
+                            {item.inputName}
+                          </span>
+                          <Autocomplete
+                            multiple
+                            className="filter__input"
+                            id={`${item.id}`}
+                            options={gameNamesArray}
+                            getOptionLabel={(option) => option}
+                            onChange={onGameNameChangeHandler}
+                            renderInput={(params) => (
+                              <TextField {...params} label={item.inputLabel} />
+                            )}
+                          />
+                        </div>
+                      );
+                    case "Author":
+                      return (
+                        <div className="filter__option option" key={item.id}>
+                          <span className="option__title">
+                            {item.inputName}
+                          </span>
+                          <Autocomplete
+                            multiple
+                            className="filter__input"
+                            id={`${item.id}`}
+                            options={authorsArray}
+                            getOptionLabel={(option) => option}
+                            onChange={onAuthorChangeHandler}
+                            renderInput={(params) => (
+                              <TextField {...params} label={item.inputLabel} />
+                            )}
+                          />
+                        </div>
+                      );
+                    case "Genre":
+                      return (
+                        <div className="filter__option option" key={item.id}>
+                          <span className="option__title">
+                            {item.inputName}
+                          </span>
+                          <Autocomplete
+                            multiple
+                            className="filter__input"
+                            id={`${item.id}`}
+                            options={genresArray}
+                            getOptionLabel={(option) => option}
+                            onChange={onGenreChangeHandler}
+                            renderInput={(params) => (
+                              <TextField {...params} label={item.inputLabel} />
+                            )}
+                          />
+                        </div>
+                      );
+                    case "Number of copies":
+                      return (
+                        <div className="filter__option option" key={item.id}>
+                          <span className="option__title">
+                            {item.inputName}
+                          </span>
+                          <TextField
+                            className="filter__input"
+                            type="number"
+                            label={item.inputLabel}
+                            onChange={onNumberOfCopiesChangeHandler}
+                            InputProps={{ inputProps: { min: 0 } }}
+                          />
+                        </div>
+                      );
+                  }
+                })}
+              </div>
+              <button className="filter-block__button" onClick={() => onDone()}>
+                Done
+              </button>
             </div>
-            <button className="filter-block__button" onClick={() => onDone()}>
-              Done
-            </button>
-          </div>
-        </Menu>
-      </section>
-    );
-  } else return null;
+          </Menu>
+        </section>
+      )}
+    </>
+  );
 };
