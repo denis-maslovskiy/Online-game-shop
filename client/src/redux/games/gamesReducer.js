@@ -1,7 +1,13 @@
-import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME } from "./gamesTypes";
+import {
+  SET_ALL_GAMES,
+  UPDATE_GAME_ARRAY,
+  DELETE_GAME,
+  GAME_FILTER,
+} from "./gamesTypes";
 
 const initialState = {
   allGames: [],
+  filteredGames: [],
   game: {},
 };
 
@@ -37,6 +43,11 @@ const gamesReducer = (state = initialState, action) => {
       return updateGameArray(action, state);
     case DELETE_GAME:
       return updateGameArrayAfterDeletingTheGame(action, state);
+    case GAME_FILTER:
+      return {
+        ...state,
+        filteredGames: action.payload,
+      };
     default:
       return state;
   }

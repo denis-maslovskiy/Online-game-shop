@@ -1,0 +1,41 @@
+@import '../styles/variables.scss';
+@import '../styles/mixins.scss';
+
+.filter-block {
+    width: 400px;
+    height: 300px;
+
+    &__filter, &__sort {
+        padding: 10px;
+        background-color: $app-bg;
+    }
+
+    &__section-name {
+        @include text-style(24px);
+        position: relative;
+        left: 30%;
+    }
+
+    &__button {
+        width: 100%;
+        text-align: left;
+        border: none;
+        height: 18%;
+        color: white;
+        background-color: #3f51b5;
+        cursor: pointer;
+        @include text-style(24px);
+    }
+}
+
+.filter {
+    &__option {
+        display: flex;
+        align-items: center;
+    }
+
+    &__input {
+        width: 50%;
+        margin-bottom: 2%;
+    }
+}

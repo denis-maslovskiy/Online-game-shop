@@ -1,5 +1,17 @@
 import axios from "axios";
-import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME } from "./gamesTypes";
+import {
+  SET_ALL_GAMES,
+  UPDATE_GAME_ARRAY,
+  DELETE_GAME,
+  GAME_FILTER,
+} from "./gamesTypes";
+
+export const setFilteredArray = (array) => {
+  return {
+    type: GAME_FILTER,
+    payload: array,
+  };
+};
 
 export const setAllGames = (games) => {
   return {
