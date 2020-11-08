@@ -11,7 +11,8 @@ const schema = new Schema({
   gameAddDate: { type: Date, required: true },
   isPhysical: { type: Boolean, required: true },
   isDigital: { type: Boolean, required: true },
-  numberOfPhysicalCopies: { type: Number }
+  numberOfPhysicalCopies: { type: Number },
+  discount: {type: Number}
 });
 
 module.exports = model("Game", schema);
