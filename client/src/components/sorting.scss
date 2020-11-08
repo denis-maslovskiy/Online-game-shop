@@ -1,0 +1,25 @@
+.sorting-block {
+    width: 200px;
+    height: 150px;
+    padding: 2%;
+
+    &__section-name {
+        text-align: center;
+    }
+
+    &__sorting-option {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.sorting-option {
+    &__title {
+        width: 45%;
+        height: 0px;
+    }
+}
+
+.MuiFormControl-root {
+    width: 45%;
+}
