@@ -4,7 +4,15 @@ import {
   UPDATE_GAME_ARRAY,
   DELETE_GAME,
   GAME_FILTER,
+  GAME_SORT
 } from "./gamesTypes";
+
+export const setSortedArray = (array) => {
+  return {
+    type: GAME_SORT,
+    payload: array
+  }
+}
 
 export const setFilteredArray = (array) => {
   return {
