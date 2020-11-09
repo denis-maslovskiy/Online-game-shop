@@ -4,6 +4,7 @@ import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Me
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { Filter } from "./Filter";
+import { Sorting } from './Sorting';
 import { useAuth } from "../hooks/authHook";
 import { useStyles } from "../hooks/useStyles";
 import "../styles/navbar.scss";
@@ -126,7 +127,8 @@ export const Navbar = () => {
               inputProps={{ "aria-label": "search" }}
             />
           </div>
-          <Filter />
+          <Filter/>
+          <Sorting/>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             {!isAuthenticated && (

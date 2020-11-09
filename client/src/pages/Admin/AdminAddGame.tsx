@@ -25,6 +25,7 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().required("Price is required"),
   isPhysical: Yup.boolean(),
   isDigital: Yup.boolean(),
+  discount: Yup.number().min(0).max(100)
 });
 
 const inputs = [
@@ -42,6 +43,7 @@ const inputs = [
     name: "numberOfPhysicalCopies",
   },
   { label: "Price", name: "price" },
+  {label: "Discount", name: "discount"}
 ];
 
 const initialValues = {
@@ -55,6 +57,7 @@ const initialValues = {
   price: 0,
   isPhysical: false,
   isDigital: false,
+  discount: 0
 };
 
 const AdminAddGame: React.FC = () => {
@@ -194,7 +197,8 @@ const AdminAddGame: React.FC = () => {
                 ) ||
                 !!(errors.price && touched.price) ||
                 !!(errors.isPhysical && touched.isPhysical) ||
-                !!(errors.isDigital && touched.isDigital)
+                !!(errors.isDigital && touched.isDigital) ||
+                !!(errors.discount && touched.discount)
               }
             >
               Add game

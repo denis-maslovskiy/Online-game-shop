@@ -30,6 +30,7 @@ interface FormValues {
   isPhysical: boolean;
   isDigital: boolean;
   _id: string;
+  discount: number;
 }
 
 interface IProps {
@@ -50,6 +51,7 @@ const validationSchema = Yup.object().shape({
   price: Yup.number().required("Price is required"),
   isPhysical: Yup.boolean(),
   isDigital: Yup.boolean(),
+  discount: Yup.string().min(0).max(100)
 });
 
 const inputs = [
@@ -69,6 +71,7 @@ const inputs = [
     name: "numberOfPhysicalCopies",
   },
   { label: "Price", name: "price" },
+  { label: "Discount", name: "discount" }
 ];
 
 const initialEmptyForm = {
@@ -83,6 +86,7 @@ const initialEmptyForm = {
   isPhysical: false,
   isDigital: false,
   _id: "",
+  discount: 0
 };
 
 const RenderGameForm = ({
@@ -106,6 +110,7 @@ const RenderGameForm = ({
           isPhysical: initialGameData.isPhysical,
           isDigital: initialGameData.isDigital,
           _id: initialGameData._id,
+          discount: initialGameData.discount
         }}
         onSubmit={(values) => {
           console.log("Game has been edited...");

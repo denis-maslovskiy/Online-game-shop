@@ -3,6 +3,7 @@ import {
   UPDATE_GAME_ARRAY,
   DELETE_GAME,
   GAME_FILTER,
+  GAME_SORT
 } from "./gamesTypes";
 
 const initialState = {
@@ -48,6 +49,11 @@ const gamesReducer = (state = initialState, action) => {
         ...state,
         filteredGames: action.payload,
       };
+    case GAME_SORT:
+      return {
+        ...state,
+        allGames: action.payload
+      }
     default:
       return state;
   }
