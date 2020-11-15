@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, Link } from "react-router-dom";
-import { AppBar, Toolbar, IconButton, Typography, InputBase, Badge, MenuItem, Menu } from "@material-ui/core";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Badge,
+  MenuItem,
+  Menu,
+  TextField,
+} from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { useSelector } from "react-redux";
 import { Filter } from "./Filter";
-import { Sorting } from './Sorting';
+import { Sorting } from "./Sorting";
 import { useAuth } from "../hooks/authHook";
 import { useStyles } from "../hooks/useStyles";
 import "../styles/navbar.scss";
 
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+  const [isHomePage, setIsHomePage] = useState(false);
   const classes = useStyles();
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const { isAuthenticated, logout } = useAuth();
@@ -26,7 +38,7 @@ export const Navbar = () => {
 
   const logoutHandler = () => {
     logout();
-    history.push('/');
+    history.push("/");
   };
 
   const notLoggedIn_MobileMenu = [
@@ -38,6 +50,49 @@ export const Navbar = () => {
     { linkTo: "/account", linkName: "Account", id: 1 },
     { linkTo: "/basket", linkName: "Basket", id: 2 },
   ];
+
+  const notLoggedIn = [
+    { linkName: "Log In", path: "/authorization", id: "1" },
+    { linkName: "Sign Up", path: "/registration", id: "2" },
+  ];
+
+  const loggedIn = [
+    { linkName: "Account", path: "/account", id: "1" },
+    { linkName: "Basket", path: "/basket", id: "2" },
+  ];
+
+  const { allGames } = useSelector((state) => state.games);
+
+  const onSearchFocusHandler = () => {
+    document.getElementById("search-icon").style.display = "none";
+  };
+
+  const onSearchBlurHandler = () => {
+    if (
+      !document
+        .getElementsByClassName(
+          "MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
+        )[0]
+        .getAttribute("value")
+    ) {
+      document.getElementById("search-icon").style.display = "inline-block";
+    }
+  };
+
+  const onSearchChangeHandler = (e, value) => {
+    if (value) {
+      history.push(`/selectedgame/${value._id}`);
+    }
+  };
+
+  useEffect(() => {
+    // Can be changed in future
+    if (window.location.href === "http://localhost:3000/") {
+      setIsHomePage(true);
+    } else {
+      setIsHomePage(false);
+    }
+  }, [window.location.href]);
 
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
@@ -66,27 +121,25 @@ export const Navbar = () => {
         })}
       {isAuthenticated && (
         <div>
-          {
-            loggedIn_MobileMenu.map((item) => {
-              return (
-                <MenuItem key={item.id}>
-                  <IconButton>
-                    <Badge>
-                      <Link to={item.linkTo} className="mobile-menu-link">
-                        {item.linkName}
-                      </Link>
-                    </Badge>
-                  </IconButton>
-                </MenuItem>
-              );
-            })
-          }
+          {loggedIn_MobileMenu.map((item) => {
+            return (
+              <MenuItem key={item.id}>
+                <IconButton>
+                  <Badge>
+                    <Link to={item.linkTo} className="mobile-menu-link">
+                      {item.linkName}
+                    </Link>
+                  </Badge>
+                </IconButton>
+              </MenuItem>
+            );
+          })}
           <MenuItem>
             <IconButton onClick={logoutHandler}>
               <Badge>
                 <Link to="#" className="mobile-menu-link">
                   Log Out
-              </Link>
+                </Link>
               </Badge>
             </IconButton>
           </MenuItem>
@@ -94,16 +147,6 @@ export const Navbar = () => {
       )}
     </Menu>
   );
-
-  const notLoggedIn = [
-    { linkName: "Log In", path: "/authorization", id: "1" },
-    { linkName: "Sign Up", path: "/registration", id: "2" },
-  ];
-
-  const loggedIn = [
-    { linkName: "Account", path: "/account", id: "1" },
-    { linkName: "Basket", path: "/basket", id: "2" },
-  ];
 
   return (
     <div className={classes.grow}>
@@ -114,21 +157,25 @@ export const Navbar = () => {
               Online Game Shop
             </Link>
           </Typography>
-          <div className={classes.search}>
+          <div className={classes.search} id="navbar__search">
             <div className={classes.searchIcon}>
-              <SearchIcon />
+              <SearchIcon id="search-icon" />
             </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.input,
-              }}
-              inputProps={{ "aria-label": "search" }}
+            <Autocomplete
+              options={allGames}
+              getOptionLabel={(option) =>
+                option.gameName + " - " + option.author
+              }
+              renderInput={(params) => (
+                <TextField className="search-input" {...params} />
+              )}
+              onFocus={onSearchFocusHandler}
+              onBlur={onSearchBlurHandler}
+              onChange={onSearchChangeHandler}
             />
           </div>
-          <Filter/>
-          <Sorting/>
+          {isHomePage && <Filter />}
+          {isHomePage && <Sorting />}
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             {!isAuthenticated && (
