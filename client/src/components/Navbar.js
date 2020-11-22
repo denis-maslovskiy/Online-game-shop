@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory, Link, useLocation } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -27,6 +27,7 @@ export const Navbar = () => {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const { isAuthenticated, logout } = useAuth();
   const history = useHistory();
+  const location = useLocation();
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -68,15 +69,10 @@ export const Navbar = () => {
   };
 
   const onSearchBlurHandler = () => {
-    if (
-      !document
-        .getElementsByClassName(
-          "MuiInputBase-input MuiInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd"
-        )[0]
-        .getAttribute("value")
-    ) {
+    if (!document.getElementById("search-input").getAttribute("value")) {
       document.getElementById("search-icon").style.display = "inline-block";
     }
+    // console.log(document.getElementById('search-input'));
   };
 
   const onSearchChangeHandler = (e, value) => {
@@ -86,13 +82,12 @@ export const Navbar = () => {
   };
 
   useEffect(() => {
-    // Can be changed in future
-    if (window.location.href === "http://localhost:3000/") {
+    if (location.pathname === "/") {
       setIsHomePage(true);
     } else {
       setIsHomePage(false);
     }
-  }, [window.location.href]);
+  }, [location.pathname]);
 
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
@@ -167,7 +162,10 @@ export const Navbar = () => {
                 option.gameName + " - " + option.author
               }
               renderInput={(params) => (
-                <TextField className="search-input" {...params} />
+                <TextField
+                  {...params}
+                  inputProps={{ ...params.inputProps, id: "search-input" }}
+                />
               )}
               onFocus={onSearchFocusHandler}
               onBlur={onSearchBlurHandler}
