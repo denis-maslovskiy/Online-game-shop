@@ -42,7 +42,7 @@ export const Navbar = () => {
     history.push("/");
   };
 
-  const notLoggedIn_MobileMenu = [
+  const notLoggedInMobileMenu = [
     { linkTo: "/authorization", linkName: "Log In", id: 1 },
     { linkTo: "/registration", linkName: "Sign Up", id: 2 },
   ];
@@ -72,7 +72,6 @@ export const Navbar = () => {
     if (!document.getElementById("search-input").getAttribute("value")) {
       document.getElementById("search-icon").style.display = "inline-block";
     }
-    // console.log(document.getElementById('search-input'));
   };
 
   const onSearchChangeHandler = (e, value) => {
@@ -82,11 +81,8 @@ export const Navbar = () => {
   };
 
   useEffect(() => {
-    if (location.pathname === "/") {
-      setIsHomePage(true);
-    } else {
-      setIsHomePage(false);
-    }
+    const isHomePage = Boolean(location.pathname === "/");
+    setIsHomePage(isHomePage);
   }, [location.pathname]);
 
   const mobileMenuId = "primary-search-account-menu-mobile";
@@ -101,7 +97,7 @@ export const Navbar = () => {
       onClose={handleMobileMenuClose}
     >
       {!isAuthenticated &&
-        notLoggedIn_MobileMenu.map((item) => {
+        notLoggedInMobileMenu.map((item) => {
           return (
             <MenuItem key={item.id}>
               <IconButton>
