@@ -76,6 +76,11 @@
     @include custom-btn(none, 8px 12px, 2%, 2px solid $blue-color, 24px, $blue-color);
 }
 
+.timer {
+    @include text-style(22px);
+    width: 75px;
+}
+
 @media (max-width: 599px) {
 
     .order {
