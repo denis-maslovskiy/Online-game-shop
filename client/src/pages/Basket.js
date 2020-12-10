@@ -12,11 +12,38 @@ import {
   clearSuccessMessage,
 } from "../redux/notification/notificationActions";
 import { updateGameData } from "../redux/games/gamesActions";
-import { getGameInfo } from '../helpers/gameHelpers';
+import { getGameInfo } from "../helpers/gameHelpers";
 import image from "../img/3.jpg";
 import "../styles/basket.scss";
 
-const itemsInBasketList = (itemsInBasket, removeGameHandler) => {
+const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
+  let [time, setTime] = useState(
+    900 - Math.floor((Date.now() - Date.parse(dateAddedToBasket)) / 1000)
+  );
+  
+  const getMinutes = () => {
+    return ("0" + Math.floor((time % 3600) / 60)).slice(-2);
+  };
+
+  const getSeconds = () => {
+    return ("0" + (time % 60)).slice(-2);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      time > 0 ? setTime((time = time - 1)) :  removeGameHandler(gameName)
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [time]);
+
+  return (
+    <div className="timer">
+      {getMinutes()} : {getSeconds()}
+    </div>
+  );
+};
+
+const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
   return (
     <>
       {itemsInBasket.map((item) => {
@@ -29,10 +56,19 @@ const itemsInBasketList = (itemsInBasket, removeGameHandler) => {
             </div>
             <button
               className="remove-game"
-              onClick={removeGameHandler.bind(null, item.gameName)}
+              onClick={() => removeGameHandler(item.gameName)}
             >
               <ClearIcon />
             </button>
+            <div>
+              {item.gameType === "Physical" && (
+                <Timer
+                  removeGameHandler={removeGameHandler}
+                  gameName={item.gameName}
+                  dateAddedToBasket={item.dateAddedToBasket}
+                />
+              )}
+            </div>
           </div>
         );
       })}
@@ -104,7 +140,10 @@ const Basket = (props) => {
         <div className="order">
           <h1 className="container__titles">Order</h1>
           {itemsInBasket.length ? (
-            itemsInBasketList(itemsInBasket, removeGameHandler)
+            <ItemsInBasketList
+              itemsInBasket={itemsInBasket}
+              removeGameHandler={removeGameHandler}
+            />
           ) : (
             <h1 className="order__empty-basket-text">Basket is empty</h1>
           )}
