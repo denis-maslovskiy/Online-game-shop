@@ -86,7 +86,7 @@ const SelectedGame = (props) => {
         const user = await getUserData(userId);
         user.gamesInTheBasket.push(briefInformationAboutTheGame);
         const response = await addGameInTheBasket(userId, user);
-        if (response && gameData.isPhysical) {
+        if (response && briefInformationAboutTheGame.gameType === 'Physical') {
           gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
           await updateGameData(gameId, gameData);
           setGameData(gameData);
