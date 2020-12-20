@@ -25,7 +25,7 @@ const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
       }
     }, 1000);
     return () => clearInterval(timer);
-  });
+  }, [minutes, seconds]);
 
   return (
     <div className="timer">
