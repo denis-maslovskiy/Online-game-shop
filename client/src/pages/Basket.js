@@ -2,43 +2,34 @@ import React, { useState, useEffect } from "react";
 import ClearIcon from "@material-ui/icons/Clear";
 import { connect } from "react-redux";
 import Notification from "../components/Notification";
-import {
-  getUserData,
-  updateTheBasket,
-  purchaseGame,
-} from "../redux/user/userActions";
-import {
-  clearInfoMessage,
-  clearSuccessMessage,
-} from "../redux/notification/notificationActions";
+import { getUserData, updateTheBasket, purchaseGame } from "../redux/user/userActions";
+import { clearInfoMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
 import image from "../img/3.jpg";
 import "../styles/basket.scss";
 
 const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
-  let [time, setTime] = useState(
-    900 - Math.floor((Date.now() - Date.parse(dateAddedToBasket)) / 1000)
-  );
-  
-  const getMinutes = () => {
-    return ("0" + Math.floor((time % 3600) / 60)).slice(-2);
-  };
+  const fifteenMinutes = 900000;
 
-  const getSeconds = () => {
-    return ("0" + (time % 60)).slice(-2);
-  };
+  const [minutes, setMinutes] = useState();
+  const [seconds, setSeconds] = useState();
 
   useEffect(() => {
     const timer = setInterval(() => {
-      time > 0 ? setTime((time = time - 1)) :  removeGameHandler(gameName)
+      let time = new Date(new Date(fifteenMinutes) - new Date(Date.now() - Date.parse(dateAddedToBasket)));
+      setMinutes(time.getMinutes());
+      setSeconds(time.getSeconds());
+      if (time.getMinutes() === 0 && time.getSeconds() === 0 || time.getMinutes() > fifteenMinutes / 60000) {
+        removeGameHandler(gameName);
+      }
     }, 1000);
     return () => clearInterval(timer);
-  }, [time]);
+  });
 
   return (
     <div className="timer">
-      {getMinutes()} : {getSeconds()}
+      {minutes} : {seconds}
     </div>
   );
 };
@@ -54,10 +45,7 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
               <span>{item.gameName}</span>
               <span>{item.price} $</span>
             </div>
-            <button
-              className="remove-game"
-              onClick={() => removeGameHandler(item.gameName)}
-            >
+            <button className="remove-game" onClick={() => removeGameHandler(item.gameName)}>
               <ClearIcon />
             </button>
             <div>
@@ -140,10 +128,7 @@ const Basket = (props) => {
         <div className="order">
           <h1 className="container__titles">Order</h1>
           {itemsInBasket.length ? (
-            <ItemsInBasketList
-              itemsInBasket={itemsInBasket}
-              removeGameHandler={removeGameHandler}
-            />
+            <ItemsInBasketList itemsInBasket={itemsInBasket} removeGameHandler={removeGameHandler} />
           ) : (
             <h1 className="order__empty-basket-text">Basket is empty</h1>
           )}
@@ -188,12 +173,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getUserData: (userId) => dispatch(getUserData(userId)),
-    updateTheBasket: (userId, gameData) =>
-      dispatch(updateTheBasket(userId, gameData)),
+    updateTheBasket: (userId, gameData) => dispatch(updateTheBasket(userId, gameData)),
     clearInfoMessage: () => dispatch(clearInfoMessage()),
     clearSuccessMessage: () => dispatch(clearSuccessMessage()),
-    purchaseGame: (userId, gameData) =>
-      dispatch(purchaseGame(userId, gameData)),
+    purchaseGame: (userId, gameData) => dispatch(purchaseGame(userId, gameData)),
     updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
   };
 };
