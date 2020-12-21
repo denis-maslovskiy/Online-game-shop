@@ -11,6 +11,7 @@ import "../styles/basket.scss";
 
 const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
   const fifteenMinutes = 900000;
+  const oneMinute = 60000;
 
   const [minutes, setMinutes] = useState();
   const [seconds, setSeconds] = useState();
@@ -20,7 +21,7 @@ const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
       let time = new Date(new Date(fifteenMinutes) - new Date(Date.now() - Date.parse(dateAddedToBasket)));
       setMinutes(time.getMinutes());
       setSeconds(time.getSeconds());
-      if (time.getMinutes() === 0 && time.getSeconds() === 0 || time.getMinutes() > fifteenMinutes / 60000) {
+      if (time.getMinutes() === 0 && time.getSeconds() === 0 || time.getMinutes() > fifteenMinutes / oneMinute) {
         removeGameHandler(gameName);
       }
     }, 1000);
