@@ -39,9 +39,7 @@ router.put("/:id", async (req, res) => {
 router.put("/updatethebasket/:id", async (req, res) => {
   try {
     await User.findByIdAndUpdate({ _id: req.params.id }, req.body);
-    // console.log(User.find({ _id: req.params.id }));
     const user = User.findOne({ _id: req.params.id })
-    console.log(user);
     res
       .status(200)
       .json({ message: "The game has been removed from the basket" });
