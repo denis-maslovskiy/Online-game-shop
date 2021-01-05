@@ -10,10 +10,7 @@ const router = Router();
 router.post(
   "/registration",
   [
-    check(
-      "username",
-      "The minimum username length is 3 characters, the maximum is 15"
-    ).isLength({ min: 3, max: 15 }),
+    check("username", "The minimum username length is 3 characters, the maximum is 15").isLength({ min: 3, max: 15 }),
     check("email", "Incorrect email").isEmail(),
     check("password", "The minimum password length is 6 characters").isLength({
       min: 6,
@@ -65,6 +62,7 @@ router.post(
           name: newUser.username,
           email: newUser.email,
           dateOfRegistration: newUser.dateOfRegistration,
+          isAdmin: newUser.isAdmin,
         },
       });
     } catch (e) {
@@ -76,10 +74,7 @@ router.post(
 // /api/auth/login
 router.post(
   "/login",
-  [
-    check("email", "Enter the correct email").normalizeEmail().isEmail(),
-    check("password", "Enter password").exists(),
-  ],
+  [check("email", "Enter the correct email").normalizeEmail().isEmail(), check("password", "Enter password").exists()],
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -104,9 +99,7 @@ router.post(
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res
-          .status(400)
-          .json({ message: "Wrong password. Try again..." });
+        return res.status(400).json({ message: "Wrong password. Try again..." });
       }
 
       const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"), {
@@ -120,7 +113,8 @@ router.post(
           id: user._id,
           name: user.username,
           email: user.email,
-          dateOfRegistration: user.dateOfRegistration
+          dateOfRegistration: user.dateOfRegistration,
+          isAdmin: user.isAdmin,
         },
       });
     } catch (e) {
