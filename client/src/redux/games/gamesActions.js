@@ -1,18 +1,12 @@
 import axios from "axios";
-import {
-  SET_ALL_GAMES,
-  UPDATE_GAME_ARRAY,
-  DELETE_GAME,
-  GAME_FILTER,
-  GAME_SORT
-} from "./gamesTypes";
+import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME, GAME_FILTER, GAME_SORT } from "./gamesTypes";
 
 export const setSortedArray = (array) => {
   return {
     type: GAME_SORT,
-    payload: array
-  }
-}
+    payload: array,
+  };
+};
 
 export const setFilteredArray = (array) => {
   return {
@@ -45,7 +39,7 @@ export const updateGameArrayAfterDeletingTheGame = (deletedGame) => {
 export const getAllGames = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get("/api/games/getAllGames");
+      const response = await axios.get("/api/games/get-all-games");
       dispatch(setAllGames(response.data));
     } catch (e) {
       console.log(e.response.data.message);
@@ -64,10 +58,21 @@ export const updateGameData = (gameId, game) => {
   };
 };
 
-export const deleteGame = (gameId) => {
+export const adminUpdateGameData = (gameId, game) => {
   return async (dispatch) => {
     try {
-      await axios.delete(`/api/games/${gameId}`);
+      await axios.put(`/api/admin/${gameId}`, game);
+      dispatch(updateGameArray(game));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+};
+
+export const deleteGame = (gameId, userId) => {
+  return async (dispatch) => {
+    try {
+      await axios.delete(`/api/admin/${gameId}`, { data: { ...userId } });
       dispatch(updateGameArrayAfterDeletingTheGame(gameId));
     } catch (e) {
       console.log(e);
