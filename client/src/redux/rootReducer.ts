@@ -1,15 +1,13 @@
 import { combineReducers } from "redux";
 import notificationReducer from "./notification/notificationReducer";
 import authenticationReducer from "./authentication/authenticationReducer";
-import gamesReducer from './games/gamesReducer';
-import adminReducer from './admin/adminReducer';
+import gamesReducer from "./games/gamesReducer";
 
 const rootReducer = combineReducers({
   notification: notificationReducer,
   authentication: authenticationReducer,
   games: gamesReducer,
-  admin: adminReducer
 });
 
-export type RootState = ReturnType<typeof rootReducer>
+export type RootState = ReturnType<typeof rootReducer>;
 export default rootReducer;
