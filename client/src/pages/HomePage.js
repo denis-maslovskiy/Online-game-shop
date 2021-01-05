@@ -30,13 +30,9 @@ const HomePage = () => {
           {filteredGames &&
             filteredGames.map((game) => (
               <button className="content__card-btn" key={game._id}>
-                <Link to={`/selectedgame/${game._id}`} className="link">
+                <Link to={`/selected-game/${game._id}`} className="link">
                   <div className="link__card card">
-                    <img
-                      src={image}
-                      className="card__picture"
-                      alt={game.gameName}
-                    />
+                    <img src={image} className="card__picture" alt={game.gameName} />
                     <div className="card_description">
                       <h2>{game.gameName}</h2>
                       <h3>{game.genre}</h3>
@@ -53,13 +49,9 @@ const HomePage = () => {
           {allGames &&
             allGames.map((game) => (
               <button className="content__card-btn" key={game._id}>
-                <Link to={`/selectedgame/${game._id}`} className="link">
+                <Link to={`/selected-game/${game._id}`} className="link">
                   <div className="link__card card">
-                    <img
-                      src={image}
-                      className="card__picture"
-                      alt={game.gameName}
-                    />
+                    <img src={image} className="card__picture" alt={game.gameName} />
                     <div className="card_description">
                       <h2>{game.gameName}</h2>
                       <h3>{game.genre}</h3>
