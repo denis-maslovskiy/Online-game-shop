@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react";
 
 export const useAuth = () => {
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [state, setState] = useState({
+    token: null,
+    userId: null,
+    isAdmin: null,
+  });
 
-  const logout = ()=> {
-    localStorage.removeItem('userData');
-    setToken(null);
-    setUserId(null);
-  }
-  
+  const logout = () => {
+    localStorage.removeItem("userData");
+    setState({ token: null, userId: null, isAdmin: null });
+  };
+
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("userData"));
 
     if (data && data.token) {
-      setToken(data.token);
-      setUserId(data.userId);
+      setState({ token: data.token, userId: data.userId, isAdmin: data.isAdmin });
     }
   }, []);
 
-  return { logout, token, userId, isAuthenticated: !!token };
+  return { logout, ...state, isAuthenticated: !!state.token };
 };
