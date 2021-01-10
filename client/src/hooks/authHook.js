@@ -16,7 +16,7 @@ export const useAuth = () => {
     const data = JSON.parse(localStorage.getItem("userData"));
 
     if (data && data.token) {
-      setState({ token: data.token, userId: data.userId, isAdmin: data.isAdmin });
+      setState({...data});
     }
   }, []);
 
