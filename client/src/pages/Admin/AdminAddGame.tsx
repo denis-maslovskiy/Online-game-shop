@@ -8,7 +8,7 @@ import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import "./adminaddgame.scss";
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikErrors, FormikTouched } from "formik";
 import { addGame } from "../../helpers/gameHelpers";
 import "./adminaddgame.scss";
 
@@ -44,6 +44,21 @@ const inputs = [
   { label: "Discount", name: "discount" },
 ];
 
+const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
+  return isSubmitting ||
+  !!(errors.gameName && touched.gameName) ||
+  !!(errors.gameDescription && touched.gameDescription) ||
+  !!(errors.rating && touched.rating) ||
+  !!(errors.releaseDate && touched.releaseDate) ||
+  !!(errors.author && touched.author) ||
+  !!(errors.genre && touched.genre) ||
+  !!(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
+  !!(errors.price && touched.price) ||
+  !!(errors.isPhysical && touched.isPhysical) ||
+  !!(errors.isDigital && touched.isDigital) ||
+  !!(errors.discount && touched.discount);
+}
+
 const initialValues = {
   gameName: "",
   gameDescription: "",
@@ -59,6 +74,7 @@ const initialValues = {
 };
 
 const AdminAddGame: React.FC = () => {
+  const numericalInputs = ["numberOfPhysicalCopies", "rating", "price"];
   return (
     <>
       <h2 className="title">Add new game</h2>
@@ -121,7 +137,7 @@ const AdminAddGame: React.FC = () => {
                   </div>
                 );
               }
-              if (input.name === "numberOfPhysicalCopies" || input.name === "rating" || input.name === "price") {
+              if (numericalInputs.includes(input.name)) {
                 return (
                   <div className="form__div" key={input.name}>
                     <TextField
@@ -154,20 +170,7 @@ const AdminAddGame: React.FC = () => {
             <button
               type="submit"
               className="add-game-button"
-              disabled={
-                isSubmitting ||
-                !!(errors.gameName && touched.gameName) ||
-                !!(errors.gameDescription && touched.gameDescription) ||
-                !!(errors.rating && touched.rating) ||
-                !!(errors.releaseDate && touched.releaseDate) ||
-                !!(errors.author && touched.author) ||
-                !!(errors.genre && touched.genre) ||
-                !!(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
-                !!(errors.price && touched.price) ||
-                !!(errors.isPhysical && touched.isPhysical) ||
-                !!(errors.isDigital && touched.isDigital) ||
-                !!(errors.discount && touched.discount)
-              }
+              disabled={checksForButton(isSubmitting, errors, touched)}
             >
               Add game
             </button>
