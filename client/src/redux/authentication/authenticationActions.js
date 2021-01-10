@@ -17,11 +17,7 @@ export const registerUser = (userData) => {
       dispatch(setCurrentUser(response.data.user));
       localStorage.setItem(
         "userData",
-        JSON.stringify({
-          userId: response.data.user.id,
-          token: response.data.token,
-          isAdmin: response.data.user.isAdmin,
-        })
+        JSON.stringify({...response.data, isAdmin: response.data.user.isAdmin})
       );
       window.location.href = "/";
     } catch (e) {
@@ -37,11 +33,7 @@ export const loginUser = (userData) => {
       dispatch(setCurrentUser(response.data));
       localStorage.setItem(
         "userData",
-        JSON.stringify({
-          userId: response.data.userId,
-          token: response.data.token,
-          isAdmin: response.data.user.isAdmin,
-        })
+        JSON.stringify({...response.data, isAdmin: response.data.user.isAdmin})
       );
       window.location.href = "/";
     } catch (e) {
