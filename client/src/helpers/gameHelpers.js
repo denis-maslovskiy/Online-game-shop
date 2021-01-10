@@ -12,7 +12,6 @@ export const getGameInfo = async (gameId) => {
 export const addGame = async (newGame) => {
   try {
     await axios.post("/api/admin/create-game", { ...newGame });
-    console.log("game created successfully");
   } catch (e) {
     console.log(e);
   }
