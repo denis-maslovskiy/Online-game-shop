@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, Link, useLocation } from "react-router-dom";
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Badge,
-  MenuItem,
-  Menu,
-  TextField,
-} from "@material-ui/core";
+import { AppBar, Toolbar, IconButton, Typography, Badge, MenuItem, Menu, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -25,7 +16,7 @@ export const Navbar = () => {
   const [isHomePage, setIsHomePage] = useState(false);
   const classes = useStyles();
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, isAdmin } = useAuth();
   const history = useHistory();
   const location = useLocation();
 
@@ -76,7 +67,7 @@ export const Navbar = () => {
 
   const onSearchChangeHandler = (e, value) => {
     if (value) {
-      history.push(`/selectedgame/${value._id}`);
+      history.push(`/selected-game/${value._id}`);
     }
   };
 
@@ -154,14 +145,9 @@ export const Navbar = () => {
             </div>
             <Autocomplete
               options={allGames}
-              getOptionLabel={(option) =>
-                option.gameName + " - " + option.author
-              }
+              getOptionLabel={(option) => option.gameName + " - " + option.author}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  inputProps={{ ...params.inputProps, id: "search-input" }}
-                />
+                <TextField {...params} inputProps={{ ...params.inputProps, id: "search-input" }} />
               )}
               onFocus={onSearchFocusHandler}
               onBlur={onSearchBlurHandler}
@@ -207,6 +193,17 @@ export const Navbar = () => {
                     </Link>
                   </Badge>
                 </IconButton>
+                {isAdmin && (
+                  <>
+                    <IconButton>
+                      <Badge>
+                        <Link to="/admin-panel" className="navbar-links">
+                          Admin Panel
+                        </Link>
+                      </Badge>
+                    </IconButton>
+                  </>
+                )}
               </>
             )}
           </div>

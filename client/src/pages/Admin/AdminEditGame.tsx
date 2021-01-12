@@ -9,11 +9,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import {
-  updateGameData,
-  getAllGames,
-  deleteGame,
-} from "../../redux/games/gamesActions";
+import { adminUpdateGameData, getAllGames, deleteGame } from "../../redux/games/gamesActions";
 import { RootState } from "../../redux/rootReducer";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
@@ -45,13 +41,11 @@ const validationSchema = Yup.object().shape({
   releaseDate: Yup.string().required("Release date is required"),
   author: Yup.string().required("Author is required"),
   genre: Yup.string().required("Genre is required"),
-  numberOfPhysicalCopies: Yup.number().required(
-    "Number of physical copies is required"
-  ),
+  numberOfPhysicalCopies: Yup.number().required("Number of physical copies is required"),
   price: Yup.number().required("Price is required"),
   isPhysical: Yup.boolean(),
   isDigital: Yup.boolean(),
-  discount: Yup.string().min(0).max(100)
+  discount: Yup.string().min(0).max(100),
 });
 
 const inputs = [
@@ -71,7 +65,7 @@ const inputs = [
     name: "numberOfPhysicalCopies",
   },
   { label: "Price", name: "price" },
-  { label: "Discount", name: "discount" }
+  { label: "Discount", name: "discount" },
 ];
 
 const initialEmptyForm = {
@@ -86,13 +80,10 @@ const initialEmptyForm = {
   isPhysical: false,
   isDigital: false,
   _id: "",
-  discount: 0
+  discount: 0,
 };
 
-const RenderGameForm = ({
-  initialGameData,
-  deleteGameClickHandler,
-}: IProps) => {
+const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => {
   const dispatch = useDispatch();
   return (
     <>
@@ -110,11 +101,12 @@ const RenderGameForm = ({
           isPhysical: initialGameData.isPhysical,
           isDigital: initialGameData.isDigital,
           _id: initialGameData._id,
-          discount: initialGameData.discount
+          discount: initialGameData.discount,
         }}
         onSubmit={(values) => {
           console.log("Game has been edited...");
-          dispatch(updateGameData(values._id, values));
+          const { userId } = JSON.parse(localStorage.getItem("userData")!);
+          dispatch(adminUpdateGameData(values._id, { ...values, userId }));
         }}
         enableReinitialize={true}
         validationSchema={validationSchema}
@@ -127,13 +119,7 @@ const RenderGameForm = ({
                   <Field key={input.name} name={input.name} label={input.label}>
                     {({ field }: FieldProps<FormValues>) => (
                       <FormControlLabel
-                        control={
-                          <Checkbox
-                            {...field}
-                            color="primary"
-                            checked={values[`${input.name}`]}
-                          />
-                        }
+                        control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
                         label={input.label}
                       />
                     )}
@@ -145,12 +131,7 @@ const RenderGameForm = ({
                 <Field key={input.name} name={input.name}>
                   {({ field }: FieldProps<FormValues>) => (
                     <div className="form__div">
-                      <TextField
-                        {...field}
-                        required
-                        label={input.label}
-                        variant="outlined"
-                      />
+                      <TextField {...field} required label={input.label} variant="outlined" />
                     </div>
                   )}
                 </Field>
@@ -159,10 +140,7 @@ const RenderGameForm = ({
             <button type="submit" className="add-game-button">
               Save changes
             </button>
-            <button
-              className="delete-game-button"
-              onClick={() => deleteGameClickHandler(values._id)}
-            >
+            <button type="button" className="delete-game-button" onClick={() => deleteGameClickHandler(values._id)}>
               Delete game
             </button>
           </Form>
@@ -193,7 +171,8 @@ const AdminEditGame: React.FC = () => {
   };
 
   const deleteGameClickHandler = async (gameId: string) => {
-    dispatch(deleteGame(gameId));
+    const { userId } = JSON.parse(localStorage.getItem("userData")!);
+    dispatch(deleteGame(gameId, { userId }));
   };
 
   return (
@@ -213,10 +192,7 @@ const AdminEditGame: React.FC = () => {
       </FormControl>
 
       {initialGameData && (
-        <RenderGameForm
-          initialGameData={initialGameData}
-          deleteGameClickHandler={deleteGameClickHandler}
-        />
+        <RenderGameForm initialGameData={initialGameData} deleteGameClickHandler={deleteGameClickHandler} />
       )}
     </>
   );

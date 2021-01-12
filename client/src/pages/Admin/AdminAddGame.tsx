@@ -8,7 +8,7 @@ import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import "./adminaddgame.scss";
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikErrors, FormikTouched } from "formik";
 import { addGame } from "../../helpers/gameHelpers";
 import "./adminaddgame.scss";
 
@@ -19,13 +19,11 @@ const validationSchema = Yup.object().shape({
   releaseDate: Yup.string().required("Release date is required"),
   author: Yup.string().required("Author is required"),
   genre: Yup.string().required("Genre is required"),
-  numberOfPhysicalCopies: Yup.number().required(
-    "Number of physical copies is required"
-  ),
+  numberOfPhysicalCopies: Yup.number().required("Number of physical copies is required"),
   price: Yup.number().required("Price is required"),
   isPhysical: Yup.boolean(),
   isDigital: Yup.boolean(),
-  discount: Yup.number().min(0).max(100)
+  discount: Yup.number().min(0).max(100),
 });
 
 const inputs = [
@@ -43,8 +41,23 @@ const inputs = [
     name: "numberOfPhysicalCopies",
   },
   { label: "Price", name: "price" },
-  {label: "Discount", name: "discount"}
+  { label: "Discount", name: "discount" },
 ];
+
+const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
+  return isSubmitting ||
+  !!(errors.gameName && touched.gameName) ||
+  !!(errors.gameDescription && touched.gameDescription) ||
+  !!(errors.rating && touched.rating) ||
+  !!(errors.releaseDate && touched.releaseDate) ||
+  !!(errors.author && touched.author) ||
+  !!(errors.genre && touched.genre) ||
+  !!(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
+  !!(errors.price && touched.price) ||
+  !!(errors.isPhysical && touched.isPhysical) ||
+  !!(errors.isDigital && touched.isDigital) ||
+  !!(errors.discount && touched.discount);
+}
 
 const initialValues = {
   gameName: "",
@@ -57,55 +70,36 @@ const initialValues = {
   price: 0,
   isPhysical: false,
   isDigital: false,
-  discount: 0
+  discount: 0,
 };
 
 const AdminAddGame: React.FC = () => {
+  const numericalInputs = ["numberOfPhysicalCopies", "rating", "price"];
   return (
     <>
       <h2 className="title">Add new game</h2>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values, {resetForm}) => {
-          addGame(values);
+        onSubmit={(values, { resetForm }) => {
+          const { userId } = JSON.parse(localStorage.getItem("userData")!);
+          addGame({ ...values, userId });
         }}
         validationSchema={validationSchema}
         enableReinitialize={true}
       >
-        {({
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          values,
-          isSubmitting,
-        }) => (
+        {({ errors, touched, handleChange, handleBlur, values, isSubmitting }) => (
           <Form className="form">
             <div className="form__checkboxes">
               <div>
                 <FormControlLabel
                   aria-required
-                  control={
-                    <Checkbox
-                      name="isPhysical"
-                      color="primary"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                  }
+                  control={<Checkbox name="isPhysical" color="primary" onChange={handleChange} onBlur={handleBlur} />}
                   label="Is Physical"
                 />
               </div>
               <div>
                 <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="isDigital"
-                      color="primary"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                  }
+                  control={<Checkbox name="isDigital" color="primary" onChange={handleChange} onBlur={handleBlur} />}
                   label="Is Digital"
                 />
               </div>
@@ -127,10 +121,7 @@ const AdminAddGame: React.FC = () => {
                   </div>
                 );
               }
-              if (
-                input.name === "numberOfPhysicalCopies" &&
-                !values.isPhysical
-              ) {
+              if (input.name === "numberOfPhysicalCopies" && !values.isPhysical) {
                 return (
                   <div className="form__div" key={input.name}>
                     <TextField
@@ -146,11 +137,7 @@ const AdminAddGame: React.FC = () => {
                   </div>
                 );
               }
-              if (
-                input.name === "numberOfPhysicalCopies" ||
-                input.name === "rating" ||
-                input.name === "price"
-              ) {
+              if (numericalInputs.includes(input.name)) {
                 return (
                   <div className="form__div" key={input.name}>
                     <TextField
@@ -183,23 +170,7 @@ const AdminAddGame: React.FC = () => {
             <button
               type="submit"
               className="add-game-button"
-              disabled={
-                isSubmitting ||
-                !!(errors.gameName && touched.gameName) ||
-                !!(errors.gameDescription && touched.gameDescription) ||
-                !!(errors.rating && touched.rating) ||
-                !!(errors.releaseDate && touched.releaseDate) ||
-                !!(errors.author && touched.author) ||
-                !!(errors.genre && touched.genre) ||
-                !!(
-                  errors.numberOfPhysicalCopies &&
-                  touched.numberOfPhysicalCopies
-                ) ||
-                !!(errors.price && touched.price) ||
-                !!(errors.isPhysical && touched.isPhysical) ||
-                !!(errors.isDigital && touched.isDigital) ||
-                !!(errors.discount && touched.discount)
-              }
+              disabled={checksForButton(isSubmitting, errors, touched)}
             >
               Add game
             </button>

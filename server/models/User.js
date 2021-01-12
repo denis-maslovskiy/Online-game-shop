@@ -7,6 +7,8 @@ const schema = new Schema({
   purchasedGames: { type: Array },
   gamesInTheBasket: { type: Array },
   dateOfRegistration: { type: Date, required: true },
+  personalDiscount: { type: Number, default: 0 },
+  isAdmin: { type: Boolean, default: false },
 });
 
 module.exports = model("User", schema);

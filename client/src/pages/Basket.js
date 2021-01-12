@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ClearIcon from "@material-ui/icons/Clear";
 import { connect } from "react-redux";
 import Notification from "../components/Notification";
-import { getUserData, updateTheBasket, purchaseGame } from "../redux/user/userActions";
+import { getUserData, removeGameFromBasket, purchaseGame } from "../redux/user/userActions";
 import { clearInfoMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
@@ -21,7 +21,7 @@ const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
       let time = new Date(new Date(fifteenMinutes) - new Date(Date.now() - Date.parse(dateAddedToBasket)));
       setMinutes(time.getMinutes());
       setSeconds(time.getSeconds());
-      if (time.getMinutes() === 0 && time.getSeconds() === 0 || time.getMinutes() > fifteenMinutes / oneMinute) {
+      if ((time.getMinutes() === 0 && time.getSeconds() === 0) || time.getMinutes() > fifteenMinutes / oneMinute) {
         removeGameHandler(gameName);
       }
     }, 1000);
@@ -75,7 +75,7 @@ const Basket = (props) => {
     successMsg,
     clearInfoMessage,
     clearSuccessMessage,
-    updateTheBasket,
+    removeGameFromBasket,
     updateGameData,
   } = props;
   let userId = JSON.parse(localStorage.getItem("userData")).userId;
@@ -87,7 +87,7 @@ const Basket = (props) => {
       setItemsInBasket(newBasket);
       const user = await getUserData(userId);
       user.gamesInTheBasket = newBasket;
-      await updateTheBasket(userId, user);
+      await removeGameFromBasket(userId, user);
 
       const gameId = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameId;
       const gameType = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameType;
@@ -174,7 +174,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getUserData: (userId) => dispatch(getUserData(userId)),
-    updateTheBasket: (userId, gameData) => dispatch(updateTheBasket(userId, gameData)),
+    removeGameFromBasket: (userId, gameData) => dispatch(removeGameFromBasket(userId, gameData)),
     clearInfoMessage: () => dispatch(clearInfoMessage()),
     clearSuccessMessage: () => dispatch(clearSuccessMessage()),
     purchaseGame: (userId, gameData) => dispatch(purchaseGame(userId, gameData)),

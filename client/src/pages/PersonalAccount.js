@@ -4,13 +4,11 @@ import { getUserData } from "../redux/user/userActions";
 import image from "../img/3.jpg";
 import "../styles/personal-account.scss";
 
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 
 const PersonalAccount = (props) => {
-  const dispatch = useDispatch()
-  const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(
-    false
-  );
+  const dispatch = useDispatch();
+  const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(false);
   const [userData, setUserDate] = useState([
     { title: "Account name", value: "", id: 1, fieldName: "username" },
     { title: "Email", value: "", id: 2, fieldName: "email" },
@@ -44,11 +42,10 @@ const PersonalAccount = (props) => {
       const user = await getUserData(userId);
       userData.map((item) => {
         if (item.fieldName === "dateOfRegistration") {
-          console.log(item.value, user[item.fieldName]);
           return (item.value = user[item.fieldName].split("T")[0]);
         }
         if (item.fieldName === "personalDiscount") {
-          if(user[item.fieldName]) {
+          if (user[item.fieldName]) {
             return (item.value = user[item.fieldName] + "%");
           } else return (item.value = 0 + "%");
         }
@@ -77,11 +74,7 @@ const PersonalAccount = (props) => {
           <h2 className="block-title">Orders</h2>
           {purchasedGames.map((item) => (
             <div className="orders__game game" key={item.dateAddedToBasket}>
-              <img
-                className="game__picture"
-                src={image}
-                alt={item.gameName}
-              />
+              <img className="game__picture" src={image} alt={item.gameName} />
               <div className="game__text">
                 <span>{item.gameName}</span>
                 <span>{item.date}</span>
