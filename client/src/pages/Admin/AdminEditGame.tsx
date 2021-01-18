@@ -194,6 +194,7 @@ const AdminEditGame: React.FC = () => {
 
       {notification.successMsg && <Notification values={{successMsg: notification.successMsg}}/>}
       {notification.infoMsg && <Notification values={{infoMsg: notification.infoMsg}}/>}
+      {notification.errorMsg && <Notification values={{errorMsg: notification.errorMsg}}/>}
       {initialGameData && (
         <RenderGameForm initialGameData={initialGameData} deleteGameClickHandler={deleteGameClickHandler} />
       )}

@@ -43,6 +43,7 @@ export const addGame = (newGame) => {
       const response = await axios.post("/api/admin/create-game", { ...newGame });
       dispatch(successMessage(response.data.message));
     } catch (e) {
+      console.log(e);
       dispatch(errorMessage(e.response.data.message));
     }
   }
@@ -78,6 +79,7 @@ export const adminUpdateGameData = (gameId, game) => {
       dispatch(successMessage(response.data.message));
     } catch (e) {
       console.log(e);
+      dispatch(errorMessage(e.response.data.message));
     }
   };
 };
@@ -90,6 +92,7 @@ export const deleteGame = (gameId, userId) => {
       dispatch(infoMessage(response.data.message))
     } catch (e) {
       console.log(e);
+      dispatch(errorMessage(e.response.data.message));
     }
   };
 };
