@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
 import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps } from "formik";
 import TextField from "@material-ui/core/TextField";
@@ -10,7 +11,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { adminUpdateGameData, getAllGames, deleteGame } from "../../redux/games/gamesActions";
-import { RootState } from "../../redux/rootReducer";
+import Notification from "../../components/Notification";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
 
@@ -104,7 +105,6 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
           discount: initialGameData.discount,
         }}
         onSubmit={(values) => {
-          console.log("Game has been edited...");
           const { userId } = JSON.parse(localStorage.getItem("userData")!);
           dispatch(adminUpdateGameData(values._id, { ...values, userId }));
         }}
@@ -153,6 +153,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
 const AdminEditGame: React.FC = () => {
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
+  const notification = useSelector((state: RootState) => state.notification);
   const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
 
   useEffect(() => {
@@ -191,6 +192,8 @@ const AdminEditGame: React.FC = () => {
         </Select>
       </FormControl>
 
+      {notification.successMsg && <Notification values={{successMsg: notification.successMsg}}/>}
+      {notification.infoMsg && <Notification values={{infoMsg: notification.infoMsg}}/>}
       {initialGameData && (
         <RenderGameForm initialGameData={initialGameData} deleteGameClickHandler={deleteGameClickHandler} />
       )}

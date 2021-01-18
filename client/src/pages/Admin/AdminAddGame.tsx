@@ -1,15 +1,18 @@
 // TODO: Не работает отчистка формы
 // TODO: Сделать кнопку недоступной до тех пор, пока все поля не буду заполнены
+// TODO: Игра добавляется, если чекбоксы isPhysical/isDigital оба пустые
 
 import React from "react";
 import * as Yup from "yup";
-
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import "./adminaddgame.scss";
 import { Form, Formik, FormikErrors, FormikTouched } from "formik";
-import { addGame } from "../../helpers/gameHelpers";
+import { addGame } from "../../redux/games/gamesActions";
+import Notification from "../../components/Notification";
 import "./adminaddgame.scss";
 
 const validationSchema = Yup.object().shape({
@@ -74,15 +77,20 @@ const initialValues = {
 };
 
 const AdminAddGame: React.FC = () => {
+  const dispatch = useDispatch();
+  const notification = useSelector((state: RootState) => state.notification);
+
   const numericalInputs = ["numberOfPhysicalCopies", "rating", "price"];
   return (
     <>
+      {notification.successMsg && <Notification values={{successMsg: notification.successMsg}}/>}
+      {notification.errorMsg && <Notification values={{errorMsg: notification.errorMsg}}/>}
       <h2 className="title">Add new game</h2>
       <Formik
         initialValues={initialValues}
         onSubmit={(values, { resetForm }) => {
           const { userId } = JSON.parse(localStorage.getItem("userData")!);
-          addGame({ ...values, userId });
+          dispatch(addGame({...values, userId}));
         }}
         validationSchema={validationSchema}
         enableReinitialize={true}
