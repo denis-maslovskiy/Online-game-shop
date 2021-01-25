@@ -5,7 +5,8 @@ const router = Router();
 
 router.use(async (req, res, next) => {
   try {
-    const user = await User.findById(req.body.userId);
+    const userId = req.body.userId || req.query.userId;
+    const user = await User.findById(userId);
     user.isAdmin
       ? next()
       : res.status(400).json({ message: "Access is blocked. Functionality are available only to the admin!" });
@@ -121,5 +122,18 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: e.message });
   }
 });
+
+router.get("/get-all-users", async (req, res) => {
+  try {
+    const users = await User.find();
+    if(!users) {
+      return res.status(400).json({ message: "No users" });
+    }
+
+    res.status(200).json(users);
+  } catch (e) {
+    return res.status(500).json({ message: e.message });
+  }
+})
 
 module.exports = router;
