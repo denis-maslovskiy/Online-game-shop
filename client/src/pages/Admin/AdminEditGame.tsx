@@ -153,7 +153,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
 const AdminEditGame: React.FC = () => {
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
-  const notification = useSelector((state: RootState) => state.notification);
+  const {successMsg, infoMsg, errorMsg} = useSelector((state: RootState) => state.notification);
   const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
 
   useEffect(() => {
@@ -192,9 +192,9 @@ const AdminEditGame: React.FC = () => {
         </Select>
       </FormControl>
 
-      {notification.successMsg && <Notification values={{successMsg: notification.successMsg}}/>}
-      {notification.infoMsg && <Notification values={{infoMsg: notification.infoMsg}}/>}
-      {notification.errorMsg && <Notification values={{errorMsg: notification.errorMsg}}/>}
+      {successMsg && <Notification values={{successMsg}}/>}
+      {infoMsg && <Notification values={{infoMsg}}/>}
+      {errorMsg && <Notification values={{errorMsg}}/>}
       {initialGameData && (
         <RenderGameForm initialGameData={initialGameData} deleteGameClickHandler={deleteGameClickHandler} />
       )}

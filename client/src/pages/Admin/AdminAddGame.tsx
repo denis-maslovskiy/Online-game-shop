@@ -78,13 +78,13 @@ const initialValues = {
 
 const AdminAddGame: React.FC = () => {
   const dispatch = useDispatch();
-  const notification = useSelector((state: RootState) => state.notification);
+  const {successMsg, errorMsg} = useSelector((state: RootState) => state.notification);
 
   const numericalInputs = ["numberOfPhysicalCopies", "rating", "price"];
   return (
     <>
-      {notification.successMsg && <Notification values={{successMsg: notification.successMsg}}/>}
-      {notification.errorMsg && <Notification values={{errorMsg: notification.errorMsg}}/>}
+      {successMsg && <Notification values={{successMsg}}/>}
+      {errorMsg && <Notification values={{errorMsg}}/>}
       <h2 className="title">Add new game</h2>
       <Formik
         initialValues={initialValues}
