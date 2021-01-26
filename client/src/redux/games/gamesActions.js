@@ -74,9 +74,9 @@ export const updateGameData = (gameId, game) => {
 export const adminUpdateGameData = (gameId, game) => {
   return async (dispatch) => {
     try {
-      const response = await axios.put(`/api/admin/${gameId}`, game);
+      const {data:{message}} = await axios.put(`/api/admin/${gameId}`, game);
       dispatch(updateGameArray(game));
-      dispatch(successMessage(response.data.message));
+      dispatch(successMessage(message));
     } catch (e) {
       console.log(e);
       dispatch(errorMessage(e.response.data.message));
@@ -87,9 +87,9 @@ export const adminUpdateGameData = (gameId, game) => {
 export const deleteGame = (gameId, userId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.delete(`/api/admin/${gameId}`, { data: { ...userId } });
+      const {data:{message}} = await axios.delete(`/api/admin/${gameId}`, { data: { ...userId } });
       dispatch(updateGameArrayAfterDeletingTheGame(gameId));
-      dispatch(infoMessage(response.data.message))
+      dispatch(infoMessage(message))
     } catch (e) {
       console.log(e);
       dispatch(errorMessage(e.response.data.message));
