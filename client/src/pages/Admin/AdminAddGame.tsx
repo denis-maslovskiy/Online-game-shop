@@ -9,7 +9,6 @@ import { RootState } from "../../redux/rootReducer";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import "./adminaddgame.scss";
 import { Form, Formik, FormikErrors, FormikTouched } from "formik";
 import { addGame } from "../../redux/games/gamesActions";
 import Notification from "../../components/Notification";
