@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getUserData } from "../redux/user/userActions";
 import image from "../img/3.jpg";
 import "../styles/personal-account.scss";
 
-import { useDispatch } from "react-redux";
-
 const PersonalAccount = (props) => {
   const dispatch = useDispatch();
   const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(false);
+  const [isCheckboxActive, setIsCheckboxActive] = useState(false);
   const [userData, setUserDate] = useState([
     { title: "Account name", value: "", id: 1, fieldName: "username" },
     { title: "Email", value: "", id: 2, fieldName: "email" },
@@ -51,11 +51,25 @@ const PersonalAccount = (props) => {
         }
         return (item.value = user[item.fieldName]);
       });
+      user.purchasedGames.sort(
+        (a, b) => new Date(b.dateAddedToBasket).getTime() - new Date(a.dateAddedToBasket).getTime()
+      );
       setPurchasedGames(user.purchasedGames);
       setUserDate(userData);
       setIsReadyToDisplayUserInfo(true);
     })();
   }, [getUserData, userData, dispatch]);
+
+  const checkboxChangeHandler = (e) => {
+    setIsCheckboxActive((prevState) => !prevState);
+    e.target.checked
+      ? setPurchasedGames((prevState) =>
+          prevState.sort((a, b) => new Date(a.dateAddedToBasket).getTime() - new Date(b.dateAddedToBasket).getTime())
+        )
+      : setPurchasedGames((prevState) =>
+          prevState.sort((a, b) => new Date(b.dateAddedToBasket).getTime() - new Date(a.dateAddedToBasket).getTime())
+        );
+  };
 
   return (
     <div className="container">
@@ -72,12 +86,19 @@ const PersonalAccount = (props) => {
       <div className="account-info">
         <div className="account-info__orders orders">
           <h2 className="block-title">Orders</h2>
+          <div>
+            <label>Old first</label>
+            <input type="checkbox" value={isCheckboxActive} onChange={checkboxChangeHandler} />
+          </div>
           {purchasedGames.map((item) => (
             <div className="orders__game game" key={item.dateAddedToBasket}>
               <img className="game__picture" src={image} alt={item.gameName} />
               <div className="game__text">
                 <span>{item.gameName}</span>
-                <span>{item.date}</span>
+                <span>
+                  {new Date(item.dateAddedToBasket).getMonth() + 1}.{new Date(item.dateAddedToBasket).getDate()}.
+                  {new Date(item.dateAddedToBasket).getFullYear()}
+                </span>
                 <span>{item.price} $</span>
               </div>
             </div>
