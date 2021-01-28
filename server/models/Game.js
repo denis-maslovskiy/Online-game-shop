@@ -5,7 +5,7 @@ const schema = new Schema({
   author: { type: String, required: true },
   genre: { type: String, required: true },
   price: { type: Number, required: true },
-  rating: { type: Number, required: true },
+  rating: { type: Number, default: 0 },
   gameDescription: { type: String, required: true },
   releaseDate: { type: String, required: true },
   gameAddDate: { type: Date, required: true },
