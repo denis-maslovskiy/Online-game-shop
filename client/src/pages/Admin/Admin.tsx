@@ -31,10 +31,12 @@ const Admin = () => {
     setAdminOption(text);
   }
 
+  const adminOptions = ["Statistic", "Add new game", "Edit game"];
+
   const list = (anchor: Anchor) => (
     <div role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
       <List>
-        {["Statistic", "Add new game", "Edit game"].map((text) => (
+        {adminOptions.map((text) => (
           <ListItem button key={text} onClick={() => clickHandler(text)}>
             <ListItemText primary={text} />
           </ListItem>

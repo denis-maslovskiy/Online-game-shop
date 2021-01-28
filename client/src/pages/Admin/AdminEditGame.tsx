@@ -119,6 +119,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
                   <Field key={input.name} name={input.name} label={input.label}>
                     {({ field }: FieldProps<FormValues>) => (
                       <FormControlLabel
+                        // @ts-ignore
                         control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
                         label={input.label}
                       />
