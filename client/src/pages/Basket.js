@@ -105,6 +105,14 @@ const Basket = (props) => {
     try {
       clearSuccessMessage();
       const user = await getUserData(userId);
+
+      // Increase game rating
+      itemsInBasket.forEach(async (item) => {
+        const game = await getGameInfo(item.gameId);
+        game.rating = game.rating + 100;
+        await updateGameData(game._id, game);
+      })
+      
       user.purchasedGames = user.purchasedGames.concat(itemsInBasket);
       user.gamesInTheBasket = [];
       setItemsInBasket([]);

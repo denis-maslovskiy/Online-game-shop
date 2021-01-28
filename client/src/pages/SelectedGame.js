@@ -56,21 +56,25 @@ const SelectedGame = (props) => {
 
   useEffect(() => {
     async function func() {
-      const dataFromServer = await getGameInfo(gameId);
-      setGameData(dataFromServer);
+      const game = await getGameInfo(gameId);
+      setGameData(game);
 
       textFields.map((item) => {
-        return (item.value = dataFromServer[item.fieldName]);
+        return (item.value = game[item.fieldName]);
       });
       setTextFields(textFields);
       setIsReadyToDisplayGameInfo(true);
-      setIsDigital(dataFromServer.isDigital);
-      setIsPhysical(dataFromServer.isPhysical);
+      setIsDigital(game.isDigital);
+      setIsPhysical(game.isPhysical);
+
+      // Increase game rating
+      game.rating = game.rating + 1;
+      await updateGameData(game._id, game);
     }
     func();
   }, [textFields, getGameInfo, gameId]);
 
-  const addToCardButtonHandler = (gameType) => {
+  const addToBasketButtonHandler = (gameType) => {
     clearSuccessMessage();
     clearErrorMessage();
     if (!!JSON.parse(localStorage.getItem("userData"))) {
@@ -90,7 +94,11 @@ const SelectedGame = (props) => {
           gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
           await updateGameData(gameId, gameData);
           setGameData(gameData);
-        }
+        };
+        
+        // Increase game rating
+        gameData.rating = gameData.rating + 10;
+        await updateGameData(gameData._id, gameData);
       })();
     } else {
       history.push("/authorization");
@@ -160,14 +168,14 @@ const SelectedGame = (props) => {
             {isDigital && (
               <button
                 className="buy-game__button"
-                onClick={() => addToCardButtonHandler("Digital")}
+                onClick={() => addToBasketButtonHandler("Digital")}
               >
-                Add to card
+                Add to basket
               </button>
             )}
             {!isDigital && (
               <button className="buy-game__button--disable" disabled>
-                Add to card
+                Add to basket
               </button>
             )}
           </div>
@@ -177,14 +185,14 @@ const SelectedGame = (props) => {
             {isPhysical && (
               <button
                 className="buy-game__button"
-                onClick={() => addToCardButtonHandler("Physical")}
+                onClick={() => addToBasketButtonHandler("Physical")}
               >
-                Add to card
+                Add to basket
               </button>
             )}
             {!isPhysical && (
               <button className="buy-game__button--disable" disabled>
-                Add to card
+                Add to basket
               </button>
             )}
           </div>
