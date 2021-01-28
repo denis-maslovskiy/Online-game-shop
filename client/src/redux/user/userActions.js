@@ -1,5 +1,13 @@
 import axios from "axios";
 import { successMessage, errorMessage, infoMessage } from "../notification/notificationActions";
+import {  SET_ALL_USERS } from './userTypes';
+
+export const setAllUser = (users) => {
+  return {
+    type: SET_ALL_USERS,
+    payload: users
+  }
+}
 
 export const getUserData = (userId) => {
   return async () => {
@@ -45,3 +53,14 @@ export const removeGameFromBasket = (userId, user) => {
     }
   };
 };
+
+export const getAllUsers = (userId) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.get("/api/admin/get-all-users", { params: { ...userId } });
+      dispatch(setAllUser(response.data))
+    } catch (e) {
+      console.log(e.response.data.message);
+    }
+  }
+}

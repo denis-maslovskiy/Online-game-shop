@@ -6,6 +6,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import AdminAddGame from "./AdminAddGame";
 import AdminEditGame from "./AdminEditGame";
+import AdminStatistic from "./AdminStatistic";
 import "./admin.scss";
 
 type Anchor = "left";
@@ -14,16 +15,12 @@ const Admin = () => {
   const [state, setState] = useState({
     left: false,
   });
-  const [adminOption, setAdminOption] = useState("");
+  const [adminOption, setAdminOption] = useState("Statistic");
 
-  const toggleDrawer = (anchor: Anchor, open: boolean) => (
-    event: React.KeyboardEvent | React.MouseEvent
-  ) => {
+  const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (
-      event &&
-      event.type === "keydown" &&
-      ((event as React.KeyboardEvent).key === "Tab" ||
-        (event as React.KeyboardEvent).key === "Shift")
+      event && event.type === "keydown" &&
+      ((event as React.KeyboardEvent).key === "Tab" || (event as React.KeyboardEvent).key === "Shift")
     ) {
       return;
     }
@@ -34,14 +31,12 @@ const Admin = () => {
     setAdminOption(text);
   }
 
+  const adminOptions = ["Statistic", "Add new game", "Edit game"];
+
   const list = (anchor: Anchor) => (
-    <div
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
+    <div role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
       <List>
-        {["Add new game", "Edit game"].map((text) => (
+        {adminOptions.map((text) => (
           <ListItem button key={text} onClick={() => clickHandler(text)}>
             <ListItemText primary={text} />
           </ListItem>
@@ -70,8 +65,8 @@ const Admin = () => {
         ))}
       </div>
       {adminOption === "Add new game" && <AdminAddGame />}
-      {/* {adminOption === 'Edit game' && <AdminEditGame/>} */}
       {adminOption === "Edit game" && <AdminEditGame />}
+      {adminOption === "Statistic" && <AdminStatistic />}
     </>
   );
 };
