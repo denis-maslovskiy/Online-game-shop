@@ -8,11 +8,3 @@ export const getGameInfo = async (gameId) => {
     console.log(e.response.data.message);
   }
 };
-
-export const addGame = async (newGame) => {
-  try {
-    await axios.post("/api/admin/create-game", { ...newGame });
-  } catch (e) {
-    console.log(e);
-  }
-};
