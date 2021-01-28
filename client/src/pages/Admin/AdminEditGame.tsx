@@ -18,7 +18,6 @@ import "./adminaddgame.scss";
 interface FormValues {
   gameName: string;
   gameDescription: string;
-  rating: number;
   releaseDate: string;
   author: string;
   genre: string;
@@ -38,7 +37,6 @@ interface IProps {
 const validationSchema = Yup.object().shape({
   gameName: Yup.string().required("Game name is required"),
   gameDescription: Yup.string().required("Game description is required"),
-  rating: Yup.number().required("Rating is required"),
   releaseDate: Yup.string().required("Release date is required"),
   author: Yup.string().required("Author is required"),
   genre: Yup.string().required("Genre is required"),
@@ -57,7 +55,6 @@ const inputs = [
     label: "Game Description",
     name: "gameDescription",
   },
-  { label: "Rating", name: "rating" },
   { label: "Release date", name: "releaseDate" },
   { label: "Author", name: "author" },
   { label: "Genre", name: "genre" },
@@ -72,7 +69,6 @@ const inputs = [
 const initialEmptyForm = {
   gameName: "",
   gameDescription: "",
-  rating: 0,
   releaseDate: "",
   author: "",
   genre: "",
@@ -93,7 +89,6 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
         initialValues={{
           gameName: initialGameData.gameName,
           gameDescription: initialGameData.gameDescription,
-          rating: initialGameData.rating,
           releaseDate: initialGameData.releaseDate,
           author: initialGameData.author,
           genre: initialGameData.genre,
@@ -119,9 +114,22 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
                   <Field key={input.name} name={input.name} label={input.label}>
                     {({ field }: FieldProps<FormValues>) => (
                       <FormControlLabel
+                        // @ts-ignore
                         control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
                         label={input.label}
                       />
+                    )}
+                  </Field>
+                );
+              }
+
+              if (input.name === "numberOfPhysicalCopies" && !values.isPhysical) {
+                return (
+                  <Field key={input.name} name={input.name}>
+                    {({ field }: FieldProps<FormValues>) => (
+                      <div className="form__div">
+                        <TextField disabled {...field} required label={input.label} variant="outlined" />
+                      </div>
                     )}
                   </Field>
                 );

@@ -17,7 +17,6 @@ import "./adminaddgame.scss";
 const validationSchema = Yup.object().shape({
   gameName: Yup.string().required("Game name is required"),
   gameDescription: Yup.string().required("Game description is required"),
-  rating: Yup.number().required("Rating is required"),
   releaseDate: Yup.string().required("Release date is required"),
   author: Yup.string().required("Author is required"),
   genre: Yup.string().required("Genre is required"),
@@ -34,7 +33,6 @@ const inputs = [
     label: "Game Description",
     name: "gameDescription",
   },
-  { label: "Rating", name: "rating" },
   { label: "Release date", name: "releaseDate" },
   { label: "Author", name: "author" },
   { label: "Genre", name: "genre" },
@@ -50,7 +48,6 @@ const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touch
   return isSubmitting ||
   !!(errors.gameName && touched.gameName) ||
   !!(errors.gameDescription && touched.gameDescription) ||
-  !!(errors.rating && touched.rating) ||
   !!(errors.releaseDate && touched.releaseDate) ||
   !!(errors.author && touched.author) ||
   !!(errors.genre && touched.genre) ||
@@ -64,7 +61,6 @@ const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touch
 const initialValues = {
   gameName: "",
   gameDescription: "",
-  rating: 0,
   releaseDate: "",
   author: "",
   genre: "",
@@ -78,8 +74,8 @@ const initialValues = {
 const AdminAddGame: React.FC = () => {
   const dispatch = useDispatch();
   const {successMsg, errorMsg} = useSelector((state: RootState) => state.notification);
+  const numericalInputs = ["numberOfPhysicalCopies", "price"];
 
-  const numericalInputs = ["numberOfPhysicalCopies", "rating", "price"];
   return (
     <>
       {successMsg && <Notification values={{successMsg}}/>}
