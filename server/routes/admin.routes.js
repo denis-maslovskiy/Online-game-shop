@@ -55,7 +55,7 @@ router.post("/create-game", async (req, res) => {
     await newGame.save();
 
     res.status(201).json({
-      message: "Game added",
+      message: "Game has been added successfully",
       game: {
         id: newGame._id,
         name: newGame.gameName,
@@ -108,7 +108,7 @@ router.put("/:id", async (req, res) => {
         discount,
       }
     );
-    res.status(200).json(req.body);
+    res.status(200).json({message: 'Game has been edited successfully'});
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -117,7 +117,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     await Game.remove({ _id: req.params.id });
-    res.status(200).json({ message: "Game was deleted" });
+    res.status(200).json({ message: "Game has been deleted successfully" });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
