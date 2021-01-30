@@ -44,7 +44,7 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
             <img className="game__picture" src={image} alt={item.gameName} />
             <div className="game__text">
               <span>{item.gameName}</span>
-              <span>{item.price} $</span>
+              <span>{(item.price * (1 - item?.discount / 100)).toFixed(2)} $</span>
             </div>
             <button className="remove-game" onClick={() => removeGameHandler(item.gameName)}>
               <ClearIcon />
@@ -67,6 +67,9 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
 
 const Basket = (props) => {
   const [itemsInBasket, setItemsInBasket] = useState([]);
+  const [userData, setUserData] = useState(null);
+  let totalPrice = 0,
+    youWillPay = 0;
 
   const {
     getUserData,
@@ -85,9 +88,8 @@ const Basket = (props) => {
       clearInfoMessage();
       const newBasket = itemsInBasket.filter((item) => item.gameName !== gameName);
       setItemsInBasket(newBasket);
-      const user = await getUserData(userId);
-      user.gamesInTheBasket = newBasket;
-      await removeGameFromBasket(userId, user);
+      userData.gamesInTheBasket = newBasket;
+      await removeGameFromBasket(userId, userData);
 
       const gameId = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameId;
       const gameType = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameType;
@@ -111,8 +113,8 @@ const Basket = (props) => {
         const game = await getGameInfo(item.gameId);
         game.rating = game.rating + 100;
         await updateGameData(game._id, game);
-      })
-      
+      });
+
       user.purchasedGames = user.purchasedGames.concat(itemsInBasket);
       user.gamesInTheBasket = [];
       setItemsInBasket([]);
@@ -125,9 +127,21 @@ const Basket = (props) => {
   useEffect(() => {
     (async function () {
       const data = await getUserData(userId);
+      setUserData(data);
       setItemsInBasket(data.gamesInTheBasket);
     })();
   }, [getUserData, userId]);
+
+  if(itemsInBasket.length) {
+    console.log(userData);
+    totalPrice = itemsInBasket
+      .reduce((prevValue, currValue) => {
+        return prevValue + currValue.price * (1 - currValue?.discount / 100);
+      }, 0)
+      .toFixed(2);
+    youWillPay = totalPrice * (1-userData?.personalDiscount/100);
+
+  }
 
   return (
     <>
@@ -145,17 +159,9 @@ const Basket = (props) => {
         <div className="payment">
           <h1 className="container__titles">Payment</h1>
           <div className="price-summary">
-            <span className="price-summary__text">
-              Total price:{" "}
-              {itemsInBasket
-                .reduce((prevValue, currValue) => {
-                  return prevValue + currValue.price;
-                }, 0)
-                .toFixed(2)}{" "}
-              $
-            </span>
-            <span className="price-summary__text">Personal discount: </span>
-            <span className="price-summary__text">You will pay: </span>
+            <span className="price-summary__text">Total price: {totalPrice}$</span>
+            <span className="price-summary__text">Personal discount: {userData?.personalDiscount}%</span>
+            <span className="price-summary__text">You will pay: {youWillPay.toFixed(2)}$</span>
           </div>
           {itemsInBasket.length ? (
             <button className="purchase-btn" onClick={purchaseClickHandler}>
