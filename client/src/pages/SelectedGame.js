@@ -85,6 +85,7 @@ const SelectedGame = (props) => {
         dateAddedToBasket: new Date(),
         gameId: gameData._id,
         gameType: gameType,
+        discount: gameData.discount
       };
       (async function () {
         const user = await getUserData(userId);
@@ -164,7 +165,7 @@ const SelectedGame = (props) => {
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
             <h2 className="buy-game__title">Digital Copy</h2>
-            <h2 className="buy-game__price">Price</h2>
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {(gameData?.price * (1-(gameData?.discount/100))).toFixed(2)}$</h2>}
             {isDigital && (
               <button
                 className="buy-game__button"
@@ -181,7 +182,7 @@ const SelectedGame = (props) => {
           </div>
           <div className="buy-game__physical-copy">
             <h2 className="buy-game__title">Physical Copy</h2>
-            <h2 className="buy-game__price">Price</h2>
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {(gameData?.price * (1-(gameData?.discount/100))).toFixed(2)}$</h2>}
             {isPhysical && (
               <button
                 className="buy-game__button"
