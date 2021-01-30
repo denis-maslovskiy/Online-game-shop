@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { PieChart, Pie, Cell } from "recharts";
 import { RootState } from "../../redux/rootReducer";
 import { getAllUsers } from "../../redux/user/userActions";
+import { AchievementsList } from '../../components/Achievements';
 
 interface User {
   dateOfRegistration: Date;
@@ -58,8 +59,11 @@ const AdminStatistic: React.FC = () => {
     if (user?.purchasedGames.length) numberOfGamePurchased += user.purchasedGames.length;
     user?.purchasedGames.forEach((game: PurchasedGame) => {
       gamesBoughtFor += game.price;
+      // @ts-ignore
       howManyAndWhatGamesWerePurchased[game.gameName]
+      // @ts-ignore
         ? howManyAndWhatGamesWerePurchased[game.gameName]++
+      // @ts-ignore
         : (howManyAndWhatGamesWerePurchased[game.gameName] = 1);
       game.gameType === "Physical"
         ? numberOfPurchasedPhysicalCopiesOfTheGame++
@@ -85,8 +89,11 @@ const AdminStatistic: React.FC = () => {
   const HowManyAndWhatGamesWerePurchasedChartColors: Array<string> = [];
 
   for (let key in howManyAndWhatGamesWerePurchased) {
+    // @ts-ignore
     HowManyAndWhatGamesWerePurchasedChartData.push({ name: key, value: howManyAndWhatGamesWerePurchased[key] });
-    HowManyAndWhatGamesWerePurchasedChartColors.push("#" + (Math.random().toString(16) + "000000").substring(2, 8).toUpperCase());
+    HowManyAndWhatGamesWerePurchasedChartColors.push(
+      "#" + (Math.random().toString(16) + "000000").substring(2, 8).toUpperCase()
+    );
   }
 
   const renderCustomizedLabel = ({
@@ -110,6 +117,16 @@ const AdminStatistic: React.FC = () => {
     );
   };
 
+  const ArrayOfAllAvailableAchievements:Array<string> = [];
+    
+    for(let topic in AchievementsList) {
+      // @ts-ignore
+      for(let key in AchievementsList[topic]){
+          // @ts-ignore
+          ArrayOfAllAvailableAchievements.push(AchievementsList[topic][key].achievementText)
+      }
+    }
+
   return (
     <div>
       <h2>Statistic</h2>
@@ -126,6 +143,7 @@ const AdminStatistic: React.FC = () => {
             data={PhysicalDigitalChartData}
             cx={300}
             cy={200}
+            // @ts-ignore
             label={renderCustomizedLabel}
             outerRadius={80}
             dataKey="value"
@@ -143,6 +161,7 @@ const AdminStatistic: React.FC = () => {
             data={HowManyAndWhatGamesWerePurchasedChartData}
             cx={300}
             cy={200}
+            // @ts-ignore
             label={renderCustomizedLabel}
             outerRadius={80}
             dataKey="value"
@@ -159,6 +178,12 @@ const AdminStatistic: React.FC = () => {
             ))}
           </Pie>
         </PieChart>
+      </div>
+      <div>
+        <h3>List of all available achievements</h3>
+        {ArrayOfAllAvailableAchievements.map(item=> (
+          <p key={item}>{item}</p>
+        ))}
       </div>
     </div>
   );
