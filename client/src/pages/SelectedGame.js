@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
 import { updateGameData } from "../redux/games/gamesActions";
 import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
-import { getGameInfo } from '../helpers/gameHelpers';
+import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
+import Notification from "../components/Notification";
+import { getGameInfo } from "../helpers/gameHelpers";
 import img1 from "../img/1.jpg";
 import img2 from "../img/2.jpg";
 import img3 from "../img/3.jpg";
@@ -13,18 +16,72 @@ import img6 from "../img/6.jpg";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
 
-import Notification from "../components/Notification";
-import {
-  clearErrorMessage,
-  clearSuccessMessage,
-} from "../redux/notification/notificationActions";
+const ModalTransition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const Modal = ({ isModalOpen, modalCloseHandler, addToBasketButtonHandler }) => {
+  const [deliveryMethod, setDeliveryMethod] = useState('');
+  const SelfPickup = "Self-pickup", CourierDelivery = "Courier delivery";
+
+  const isButtonPressed = (deliveryMethodName) => {
+    if (deliveryMethodName && deliveryMethod) {
+      return deliveryMethodName === deliveryMethod ? true : false;
+    } else return false;
+  };
+
+  const deliveryMethodButtonHandler = (deliveryMethodName) => {
+    deliveryMethodName === SelfPickup ? setDeliveryMethod(deliveryMethodName) : setDeliveryMethod(CourierDelivery);
+  };
+
+  const onModalClose = () => {
+    setDeliveryMethod(false);
+    modalCloseHandler();
+  };
+
+  const onModalConfirm = () => {
+    if (deliveryMethod) {
+      addToBasketButtonHandler("Physical", deliveryMethod);
+      setDeliveryMethod(false);
+      modalCloseHandler();
+    }
+  };
+
+  return (
+    <div>
+      <Dialog open={isModalOpen} TransitionComponent={ModalTransition} keepMounted onClose={modalCloseHandler}>
+        <DialogTitle>{"Please choose a delivery method for a physical copy of the game"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            We offer you two delivery options: courier delivery, self-pickup. Please choose one option
+          </DialogContentText>
+          <button
+            aria-pressed={isButtonPressed(CourierDelivery)}
+            onClick={() => deliveryMethodButtonHandler(CourierDelivery)}
+          >
+            Courier delivery
+          </button>
+          <button aria-pressed={isButtonPressed(SelfPickup)} onClick={() => deliveryMethodButtonHandler(SelfPickup)}>
+            Self-pickup
+          </button>
+        </DialogContent>
+        <DialogActions>
+          <button onClick={onModalConfirm} disabled={!deliveryMethod}>
+            Confirm selection
+          </button>
+          <button onClick={onModalClose}>Close</button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
 
 const SelectedGame = (props) => {
-  const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(
-    false
-  );
+  const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(false);
   const [isPhysical, setIsPhysical] = useState(false);
   const [isDigital, setIsDigital] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [gameData, setGameData] = useState(null);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -38,7 +95,6 @@ const SelectedGame = (props) => {
       fieldName: "numberOfPhysicalCopies",
     },
   ]);
-  const [gameData, setGameData] = useState(null);
 
   const history = useHistory();
 
@@ -53,6 +109,18 @@ const SelectedGame = (props) => {
   } = props;
 
   const gameId = window.location.href.split("/")[4];
+
+  const arrayOfImgs = [
+    { img: img1, id: "r1" },
+    { img: img2, id: "r2" },
+    { img: img3, id: "r3" },
+    { img: img4, id: "r4" },
+    { img: img5, id: "r5" },
+    { img: img6, id: "r6" },
+  ];
+
+  const modalOpenHandler = () => setIsModalOpen(true);
+  const modalCloseHandler = () => setIsModalOpen(false);
 
   useEffect(() => {
     async function func() {
@@ -74,7 +142,7 @@ const SelectedGame = (props) => {
     func();
   }, [textFields, getGameInfo, gameId]);
 
-  const addToBasketButtonHandler = (gameType) => {
+  const addToBasketButtonHandler = (gameType, deliveryMethod) => {
     clearSuccessMessage();
     clearErrorMessage();
     if (!!JSON.parse(localStorage.getItem("userData"))) {
@@ -86,16 +154,17 @@ const SelectedGame = (props) => {
         gameId: gameData._id,
         gameType: gameType,
       };
+      if (deliveryMethod) briefInformationAboutTheGame.deliveryMethod = deliveryMethod;
       (async function () {
         const user = await getUserData(userId);
         user.gamesInTheBasket.push(briefInformationAboutTheGame);
         const response = await addGameInTheBasket(userId, user);
-        if (response && briefInformationAboutTheGame.gameType === 'Physical') {
+        if (response && briefInformationAboutTheGame.gameType === "Physical") {
           gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
           await updateGameData(gameId, gameData);
           setGameData(gameData);
-        };
-        
+        }
+
         // Increase game rating
         gameData.rating = gameData.rating + 10;
         await updateGameData(gameData._id, gameData);
@@ -104,15 +173,6 @@ const SelectedGame = (props) => {
       history.push("/authorization");
     }
   };
-
-  const arrayOfImgs = [
-    { img: img1, id: "r1" },
-    { img: img2, id: "r2" },
-    { img: img3, id: "r3" },
-    { img: img4, id: "r4" },
-    { img: img5, id: "r5" },
-    { img: img6, id: "r6" },
-  ];
 
   return (
     <>
@@ -154,9 +214,7 @@ const SelectedGame = (props) => {
           {isReadyToDisplayGameInfo &&
             textFields.map((item) => (
               <div key={item.title}>
-                <span className="game-info__text-field-title">
-                  {item.title}
-                </span>
+                <span className="game-info__text-field-title">{item.title}</span>
                 <p className="game-info__text-field-value">{item.value}</p>
               </div>
             ))}
@@ -166,10 +224,7 @@ const SelectedGame = (props) => {
             <h2 className="buy-game__title">Digital Copy</h2>
             <h2 className="buy-game__price">Price</h2>
             {isDigital && (
-              <button
-                className="buy-game__button"
-                onClick={() => addToBasketButtonHandler("Digital")}
-              >
+              <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Digital")}>
                 Add to basket
               </button>
             )}
@@ -183,10 +238,7 @@ const SelectedGame = (props) => {
             <h2 className="buy-game__title">Physical Copy</h2>
             <h2 className="buy-game__price">Price</h2>
             {isPhysical && (
-              <button
-                className="buy-game__button"
-                onClick={() => addToBasketButtonHandler("Physical")}
-              >
+              <button className="buy-game__button" onClick={() => modalOpenHandler()}>
                 Add to basket
               </button>
             )}
@@ -198,6 +250,11 @@ const SelectedGame = (props) => {
           </div>
         </div>
       </div>
+      <Modal
+        isModalOpen={isModalOpen}
+        modalCloseHandler={modalCloseHandler}
+        addToBasketButtonHandler={addToBasketButtonHandler}
+      />
     </>
   );
 };
@@ -213,8 +270,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getUserData: (userId) => dispatch(getUserData(userId)),
     updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
-    addGameInTheBasket: (userId, gameData) =>
-      dispatch(addGameInTheBasket(userId, gameData)),
+    addGameInTheBasket: (userId, gameData) => dispatch(addGameInTheBasket(userId, gameData)),
     clearErrorMessage: () => dispatch(clearErrorMessage()),
     clearSuccessMessage: () => dispatch(clearSuccessMessage()),
   };
