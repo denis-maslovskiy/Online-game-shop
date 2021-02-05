@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { PieChart, Pie, Cell } from "recharts";
 import { RootState } from "../../redux/rootReducer";
 import { getAllUsers } from "../../redux/user/userActions";
-import { AchievementsList } from '../../components/Achievements';
+import { getAllAchievements } from "../../redux/achievement/achievementActions";
 
 interface User {
   dateOfRegistration: Date;
@@ -38,13 +38,23 @@ interface RenderCustomizedLabel {
   };
 }
 
+interface Achieve {
+  achievementTopic: string;
+  achievementName: string;
+  achievementText: string;
+  achievementValue: number;
+  estimatedDiscountForTheClient: number;
+}
+
 const AdminStatistic: React.FC = () => {
   const dispatch = useDispatch();
   const { allUsers } = useSelector((state: RootState) => state.user);
+  const { allAchievements } = useSelector((state: RootState) => state.achievement);
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
     dispatch(getAllUsers({ userId }));
+    dispatch(getAllAchievements());
   }, []);
 
   let gamesBoughtFor = 0,
@@ -61,10 +71,10 @@ const AdminStatistic: React.FC = () => {
       gamesBoughtFor += game.price;
       // @ts-ignore
       howManyAndWhatGamesWerePurchased[game.gameName]
-      // @ts-ignore
-        ? howManyAndWhatGamesWerePurchased[game.gameName]++
-      // @ts-ignore
-        : (howManyAndWhatGamesWerePurchased[game.gameName] = 1);
+        ? // @ts-ignore
+          howManyAndWhatGamesWerePurchased[game.gameName]++
+        : // @ts-ignore
+          (howManyAndWhatGamesWerePurchased[game.gameName] = 1);
       game.gameType === "Physical"
         ? numberOfPurchasedPhysicalCopiesOfTheGame++
         : numberOfPurchasedDigitalCopiesOfTheGame++;
@@ -117,15 +127,13 @@ const AdminStatistic: React.FC = () => {
     );
   };
 
-  const ArrayOfAllAvailableAchievements:Array<string> = [];
-    
-    for(let topic in AchievementsList) {
-      // @ts-ignore
-      for(let key in AchievementsList[topic]){
-          // @ts-ignore
-          ArrayOfAllAvailableAchievements.push(AchievementsList[topic][key].achievementText)
-      }
-    }
+  const ArrayOfAllAvailableAchievements: Array<string> = [];
+
+  if (allAchievements.length) {
+    allAchievements.forEach((achieve: Achieve) => {
+      ArrayOfAllAvailableAchievements.push(achieve.achievementText);
+    });
+  }
 
   return (
     <div>
@@ -181,7 +189,7 @@ const AdminStatistic: React.FC = () => {
       </div>
       <div>
         <h3>List of all available achievements</h3>
-        {ArrayOfAllAvailableAchievements.map(item=> (
+        {ArrayOfAllAvailableAchievements.map((item) => (
           <p key={item}>{item}</p>
         ))}
       </div>
