@@ -12,16 +12,16 @@ export const setAllAchievements = (achievements) => {
 export const updateAchievementArray = (newAchievement) => {
   return {
     type: UPDATE_ACHIEVEMENT_ARRAY,
-    payload: newAchievement
-  }
-}
+    payload: newAchievement,
+  };
+};
 
 export const updateAchievementArrayAfterDeletingTheAchievement = (deletedAchievement) => {
   return {
     type: DELETE_ACHIEVEMENT,
-    payload: deletedAchievement
-  }
-}
+    payload: deletedAchievement,
+  };
+};
 
 export const getAllAchievements = () => {
   return async (dispatch) => {
@@ -37,7 +37,9 @@ export const getAllAchievements = () => {
 export const addAchievement = (newAchievement) => {
   return async (dispatch) => {
     try {
-      const {data:{message}} = await axios.post("/api/admin/create-achievement", { ...newAchievement });
+      const {
+        data: { message },
+      } = await axios.post("/api/admin/create-achievement", { ...newAchievement });
       dispatch(successMessage(message));
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
@@ -48,7 +50,9 @@ export const addAchievement = (newAchievement) => {
 export const updateAchievementData = (achievementId, achievement) => {
   return async (dispatch) => {
     try {
-      const {data:{message}} = await axios.put(`/api/admin/edit-achievement/${achievementId}`, achievement);
+      const {
+        data: { message },
+      } = await axios.put(`/api/admin/edit-achievement/${achievementId}`, achievement);
       dispatch(updateAchievementArray(achievement));
       dispatch(successMessage(message));
     } catch (e) {
@@ -60,9 +64,11 @@ export const updateAchievementData = (achievementId, achievement) => {
 export const deleteAchievement = (achievementId, userId) => {
   return async (dispatch) => {
     try {
-      const {data:{message}} = await axios.delete(`/api/admin/delete-achievement/${achievementId}`, { data: { ...userId } });
+      const {
+        data: { message },
+      } = await axios.delete(`/api/admin/delete-achievement/${achievementId}`, { data: { ...userId } });
       dispatch(updateAchievementArrayAfterDeletingTheAchievement(achievementId));
-      dispatch(infoMessage(message))
+      dispatch(infoMessage(message));
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
     }
