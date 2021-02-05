@@ -21,8 +21,9 @@ const ModalTransition = React.forwardRef(function Transition(props, ref) {
 });
 
 const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
-  const [deliveryMethod, setDeliveryMethod] = useState('');
-  const SELF_PICKUP = "Self-pickup", COURIER_DELIVERY = "Courier delivery";
+  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const SELF_PICKUP = "Self-pickup",
+    COURIER_DELIVERY = "Courier delivery";
 
   const isButtonPressed = (deliveryMethodName) => deliveryMethodName === deliveryMethod;
 
@@ -58,7 +59,11 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
           >
             Courier delivery
           </button>
-          <button type="button" aria-pressed={isButtonPressed(SELF_PICKUP)} onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}>
+          <button
+            type="button"
+            aria-pressed={isButtonPressed(SELF_PICKUP)}
+            onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}
+          >
             Self-pickup
           </button>
         </DialogContent>
@@ -66,7 +71,9 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
           <button type="button" onClick={onModalConfirm} disabled={!deliveryMethod}>
             Confirm selection
           </button>
-          <button type="button" onClick={onModalClose}>Close</button>
+          <button type="button" onClick={onModalClose}>
+            Close
+          </button>
         </DialogActions>
       </Dialog>
     </div>
