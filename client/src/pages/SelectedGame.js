@@ -20,56 +20,53 @@ const ModalTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const Modal = ({ isModalOpen, modalCloseHandler, addToBasketButtonHandler }) => {
+const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
   const [deliveryMethod, setDeliveryMethod] = useState('');
-  const SelfPickup = "Self-pickup", CourierDelivery = "Courier delivery";
+  const SELF_PICKUP = "Self-pickup", COURIER_DELIVERY = "Courier delivery";
 
-  const isButtonPressed = (deliveryMethodName) => {
-    if (deliveryMethodName && deliveryMethod) {
-      return deliveryMethodName === deliveryMethod ? true : false;
-    } else return false;
-  };
+  const isButtonPressed = (deliveryMethodName) => deliveryMethodName === deliveryMethod;
 
   const deliveryMethodButtonHandler = (deliveryMethodName) => {
-    deliveryMethodName === SelfPickup ? setDeliveryMethod(deliveryMethodName) : setDeliveryMethod(CourierDelivery);
+    deliveryMethodName === SELF_PICKUP ? setDeliveryMethod(deliveryMethodName) : setDeliveryMethod(COURIER_DELIVERY);
   };
 
   const onModalClose = () => {
     setDeliveryMethod(false);
-    modalCloseHandler();
+    handleCloseModal();
   };
 
   const onModalConfirm = () => {
     if (deliveryMethod) {
       addToBasketButtonHandler("Physical", deliveryMethod);
       setDeliveryMethod(false);
-      modalCloseHandler();
+      handleCloseModal();
     }
   };
 
   return (
     <div>
-      <Dialog open={isModalOpen} TransitionComponent={ModalTransition} keepMounted onClose={modalCloseHandler}>
+      <Dialog open={isModalOpen} TransitionComponent={ModalTransition} keepMounted onClose={handleCloseModal}>
         <DialogTitle>{"Please choose a delivery method for a physical copy of the game"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             We offer you two delivery options: courier delivery, self-pickup. Please choose one option
           </DialogContentText>
           <button
-            aria-pressed={isButtonPressed(CourierDelivery)}
-            onClick={() => deliveryMethodButtonHandler(CourierDelivery)}
+            type="button"
+            aria-pressed={isButtonPressed(COURIER_DELIVERY)}
+            onClick={() => deliveryMethodButtonHandler(COURIER_DELIVERY)}
           >
             Courier delivery
           </button>
-          <button aria-pressed={isButtonPressed(SelfPickup)} onClick={() => deliveryMethodButtonHandler(SelfPickup)}>
+          <button type="button" aria-pressed={isButtonPressed(SELF_PICKUP)} onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}>
             Self-pickup
           </button>
         </DialogContent>
         <DialogActions>
-          <button onClick={onModalConfirm} disabled={!deliveryMethod}>
+          <button type="button" onClick={onModalConfirm} disabled={!deliveryMethod}>
             Confirm selection
           </button>
-          <button onClick={onModalClose}>Close</button>
+          <button type="button" onClick={onModalClose}>Close</button>
         </DialogActions>
       </Dialog>
     </div>
@@ -108,7 +105,8 @@ const SelectedGame = (props) => {
     clearSuccessMessage,
   } = props;
 
-  const gameId = window.location.href.split("/")[4];
+  const locationHrefArray = window.location.href.split("/");
+  const gameId = locationHrefArray[locationHrefArray.length - 1];
 
   const arrayOfImgs = [
     { img: img1, id: "r1" },
@@ -119,8 +117,8 @@ const SelectedGame = (props) => {
     { img: img6, id: "r6" },
   ];
 
-  const modalOpenHandler = () => setIsModalOpen(true);
-  const modalCloseHandler = () => setIsModalOpen(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     async function func() {
@@ -238,7 +236,7 @@ const SelectedGame = (props) => {
             <h2 className="buy-game__title">Physical Copy</h2>
             <h2 className="buy-game__price">Price</h2>
             {isPhysical && (
-              <button className="buy-game__button" onClick={() => modalOpenHandler()}>
+              <button className="buy-game__button" onClick={() => handleOpenModal()}>
                 Add to basket
               </button>
             )}
@@ -252,7 +250,7 @@ const SelectedGame = (props) => {
       </div>
       <Modal
         isModalOpen={isModalOpen}
-        modalCloseHandler={modalCloseHandler}
+        handleCloseModal={handleCloseModal}
         addToBasketButtonHandler={addToBasketButtonHandler}
       />
     </>
