@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const Game = require("../models/Game");
 const User = require("../models/User");
+const Achievement = require("../models/Achievement");
 const router = Router();
 
 router.use(async (req, res, next) => {
@@ -15,7 +16,7 @@ router.use(async (req, res, next) => {
   }
 });
 
-// /api/admin/create-game
+// Games
 router.post("/create-game", async (req, res) => {
   try {
     const {
@@ -108,7 +109,7 @@ router.put("/:id", async (req, res) => {
         discount,
       }
     );
-    res.status(200).json({message: 'Game has been edited successfully'});
+    res.status(200).json({ message: "Game has been edited successfully" });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -123,10 +124,11 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Users
 router.get("/get-all-users", async (req, res) => {
   try {
     const users = await User.find();
-    if(!users) {
+    if (!users) {
       return res.status(400).json({ message: "No users" });
     }
 
@@ -134,6 +136,82 @@ router.get("/get-all-users", async (req, res) => {
   } catch (e) {
     return res.status(500).json({ message: e.message });
   }
-})
+});
+
+// Achievements
+router.post("/create-achievement", async (req, res) => {
+  try {
+    const {
+      achievementTopic,
+      achievementName,
+      achievementText,
+      achievementValue,
+      estimatedDiscountForTheClient,
+    } = req.body;
+
+    const isAchievementExist = await Achievement.findOne({ achievementName });
+
+    if (isAchievementExist) {
+      return res.status(400).json({ message: "Achievement with this name already exist." });
+    }
+
+    const newAchievement = new Achievement({
+      achievementTopic,
+      achievementName,
+      achievementText,
+      achievementValue,
+      estimatedDiscountForTheClient,
+    });
+    await newAchievement.save();
+
+    res.status(201).json({
+      message: "Achievement has been added successfully",
+      achievement: {
+        id: newAchievement._id,
+        achievementTopic: newAchievement.achievementTopic,
+        achievementName: newAchievement.achievementName,
+        achievementText: newAchievement.achievementText,
+        achievementValue: newAchievement.achievementValue,
+        estimatedDiscountForTheClient: newAchievement.estimatedDiscountForTheClient,
+      },
+    });
+  } catch (e) {
+    res.status(500).json({ message: "Something wrong, try again later..." });
+  }
+});
+
+router.put("/edit-achievement/:id", async (req, res) => {
+  try {
+    const {
+      achievementTopic,
+      achievementName,
+      achievementText,
+      achievementValue,
+      estimatedDiscountForTheClient,
+    } = req.body;
+    await Achievement.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        achievementTopic,
+        achievementName,
+        achievementText,
+        achievementValue,
+        estimatedDiscountForTheClient,
+      }
+    );
+    res.status(200).json({ message: "Achievement has been edited successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+router.delete("/delete-achievement/:id", async (req, res) => {
+  try {
+    await Achievement.remove({ _id: req.params.id });
+    res.status(200).json({ message: "Achievement has been deleted successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
 
 module.exports = router;
