@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../redux/user/userActions";
-import Achievements from '../components/Achievements';
+import Achievements from "../components/Achievements";
 import image from "../img/3.jpg";
 import "../styles/personal-account.scss";
 
-const PersonalAccount = (props) => {
+const PersonalAccount = () => {
   const dispatch = useDispatch();
   const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(false);
   const [isCheckboxActive, setIsCheckboxActive] = useState(false);
-  const [user, setUser] = useState(null);
   const [purchasedGames, setPurchasedGames] = useState([]);
   const [isUserDataUpdate, setIsUserDataUpdated] = useState(false);
   const [userData, setUserDate] = useState([
@@ -30,13 +28,15 @@ const PersonalAccount = (props) => {
     },
   ]);
 
-  const { getUserData } = props;
   const userId = JSON.parse(localStorage.getItem("userData")).userId;
+  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    (async function () {
-      const user = await getUserData(userId);
-      setUser(user);
+    dispatch(getUserData(userId));
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(user).length !== 0) {
       userData.map((item) => {
         if (item.fieldName === "dateOfRegistration") {
           return (item.value = user[item.fieldName].split("T")[0]);
@@ -48,6 +48,7 @@ const PersonalAccount = (props) => {
         }
         return (item.value = user[item.fieldName]);
       });
+
       user.purchasedGames.sort(
         (a, b) => new Date(b.dateAddedToBasket).getTime() - new Date(a.dateAddedToBasket).getTime()
       );
@@ -55,12 +56,12 @@ const PersonalAccount = (props) => {
       setUserDate(userData);
       setIsReadyToDisplayUserInfo(true);
       setIsUserDataUpdated(false);
-    })();
-  }, [getUserData, userData, dispatch, isUserDataUpdate]);
+    }
+  }, [userData, isUserDataUpdate, user]);
 
-  const UpdatingUserDataTriggered = () => {
+  const updatingUserDataTriggered = () => {
     setIsUserDataUpdated(true);
-  }
+  };
 
   const checkboxChangeHandler = (e) => {
     setIsCheckboxActive((prevState) => !prevState);
@@ -108,17 +109,13 @@ const PersonalAccount = (props) => {
         </div>
         <h2 className="block-title">Achievements</h2>
         <div className="account-info__achievements achievements">
-          {isReadyToDisplayUserInfo && <Achievements user={user} UpdatingUserDataTriggered={UpdatingUserDataTriggered}/>}
+          {isReadyToDisplayUserInfo && (
+            <Achievements user={user} updatingUserDataTriggered={updatingUserDataTriggered} />
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getUserData: (userId) => dispatch(getUserData(userId)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(PersonalAccount);
+export default PersonalAccount;
