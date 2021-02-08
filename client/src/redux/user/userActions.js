@@ -1,6 +1,6 @@
 import axios from "axios";
 import { successMessage, errorMessage, infoMessage } from "../notification/notificationActions";
-import {  SET_ALL_USERS } from './userTypes';
+import {  SET_ALL_USERS, SET_USER_DATA } from './userTypes';
 
 export const setAllUser = (users) => {
   return {
@@ -9,10 +9,18 @@ export const setAllUser = (users) => {
   }
 }
 
+export const setUserData = (user) => {
+  return {
+    type: SET_USER_DATA,
+    payload: user
+  }
+}
+
 export const getUserData = (userId) => {
-  return async () => {
+  return async (dispatch) => {
     try {
       const response = await axios.get(`/api/user/${userId}`);
+      dispatch(setUserData(response.data));
       return response.data;
     } catch (e) {
       console.log(e.response.data.message);

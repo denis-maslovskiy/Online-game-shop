@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../redux/user/userActions";
+import Achievements from "../components/Achievements";
 import image from "../img/3.jpg";
 import "../styles/personal-account.scss";
 
-const PersonalAccount = (props) => {
+const PersonalAccount = () => {
   const dispatch = useDispatch();
   const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(false);
   const [isCheckboxActive, setIsCheckboxActive] = useState(false);
+  const [purchasedGames, setPurchasedGames] = useState([]);
+  const [isUserDataUpdate, setIsUserDataUpdated] = useState(false);
   const [userData, setUserDate] = useState([
     { title: "Account name", value: "", id: 1, fieldName: "username" },
     { title: "Email", value: "", id: 2, fieldName: "email" },
@@ -26,20 +28,15 @@ const PersonalAccount = (props) => {
     },
   ]);
 
-  const { getUserData } = props;
-  const [purchasedGames, setPurchasedGames] = useState([]);
-
-  const achievements = [
-    { achieveName: "Title of achievement", progress: 25, id: 1 },
-    { achieveName: "Title of achievement", progress: 6, id: 2 },
-    { achieveName: "Title of achievement", progress: 48, id: 3 },
-    { achieveName: "Title of achievement", progress: 90, id: 4 },
-  ];
+  const userId = JSON.parse(localStorage.getItem("userData")).userId;
+  const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    let userId = JSON.parse(localStorage.getItem("userData")).userId;
-    (async function () {
-      const user = await getUserData(userId);
+    dispatch(getUserData(userId));
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(user).length !== 0) {
       userData.map((item) => {
         if (item.fieldName === "dateOfRegistration") {
           return (item.value = user[item.fieldName].split("T")[0]);
@@ -51,14 +48,20 @@ const PersonalAccount = (props) => {
         }
         return (item.value = user[item.fieldName]);
       });
+
       user.purchasedGames.sort(
         (a, b) => new Date(b.dateAddedToBasket).getTime() - new Date(a.dateAddedToBasket).getTime()
       );
       setPurchasedGames(user.purchasedGames);
       setUserDate(userData);
       setIsReadyToDisplayUserInfo(true);
-    })();
-  }, [getUserData, userData, dispatch]);
+      setIsUserDataUpdated(false);
+    }
+  }, [userData, isUserDataUpdate, user]);
+
+  const updatingUserDataTriggered = () => {
+    setIsUserDataUpdated(true);
+  };
 
   const checkboxChangeHandler = (e) => {
     setIsCheckboxActive((prevState) => !prevState);
@@ -106,24 +109,13 @@ const PersonalAccount = (props) => {
         </div>
         <h2 className="block-title">Achievements</h2>
         <div className="account-info__achievements achievements">
-          {achievements.map((item) => (
-            <div className="achievements__achieve achieve" key={item.id}>
-              <h2 className="achieve__text">
-                <span className="achieve__title">{item.achieveName}: </span>
-                {item.progress} %
-              </h2>
-            </div>
-          ))}
+          {isReadyToDisplayUserInfo && (
+            <Achievements user={user} updatingUserDataTriggered={updatingUserDataTriggered} />
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getUserData: (userId) => dispatch(getUserData(userId)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(PersonalAccount);
+export default PersonalAccount;
