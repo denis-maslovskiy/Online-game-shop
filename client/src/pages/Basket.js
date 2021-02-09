@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ClearIcon from "@material-ui/icons/Clear";
-import { connect } from "react-redux";
 import Notification from "../components/Notification";
 import { getUserData, removeGameFromBasket, purchaseGame } from "../redux/user/userActions";
 import { clearInfoMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
@@ -44,7 +44,7 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
             <img className="game__picture" src={image} alt={item.gameName} />
             <div className="game__text">
               <span>{item.gameName}</span>
-              <span>{item.price} $</span>
+              <span>{(item.price * (1 - item?.discount / 100)).toFixed(2)} $</span>
             </div>
             <button className="remove-game" onClick={() => removeGameHandler(item.gameName)}>
               <ClearIcon />
@@ -65,69 +65,76 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
   );
 };
 
-const Basket = (props) => {
+const Basket = () => {
   const [itemsInBasket, setItemsInBasket] = useState([]);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+  const { successMsg, infoMsg } = useSelector((state) => state.notification);
 
-  const {
-    getUserData,
-    purchaseGame,
-    infoMsg,
-    successMsg,
-    clearInfoMessage,
-    clearSuccessMessage,
-    removeGameFromBasket,
-    updateGameData,
-  } = props;
-  let userId = JSON.parse(localStorage.getItem("userData")).userId;
+  let totalPrice = 0,
+    youWillPay = 0;
+
+  const userId = JSON.parse(localStorage.getItem("userData")).userId;
+
+  useEffect(() => {
+    dispatch(getUserData(userId));
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(user).length !== 0) {
+      setItemsInBasket(user.gamesInTheBasket);
+    }
+  }, [user]);
+
+  if (itemsInBasket?.length) {
+    totalPrice = itemsInBasket
+      .reduce((prevValue, currValue) => {
+        return prevValue + currValue.price * (1 - currValue?.discount / 100);
+      }, 0)
+      .toFixed(2);
+    youWillPay = totalPrice * (1 - user?.personalDiscount / 100);
+  }
 
   const removeGameHandler = async (gameName) => {
     try {
-      clearInfoMessage();
+      dispatch(clearInfoMessage());
       const newBasket = itemsInBasket.filter((item) => item.gameName !== gameName);
       setItemsInBasket(newBasket);
-      const user = await getUserData(userId);
-      user.gamesInTheBasket = newBasket;
-      await removeGameFromBasket(userId, user);
+      if (Object.keys(user).length !== 0) {
+        user.gamesInTheBasket = newBasket;
+        dispatch(removeGameFromBasket(userId, user));
+      }
 
       const gameId = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameId;
       const gameType = itemsInBasket.filter((item) => item.gameName === gameName)[0].gameType;
       const game = await getGameInfo(gameId);
       if (gameType === "Physical") {
         game.numberOfPhysicalCopies = game.numberOfPhysicalCopies + 1;
-        await updateGameData(gameId, game);
+        dispatch(updateGameData(gameId, game));
       }
     } catch (e) {
       throw new Error(e);
     }
   };
 
-  const purchaseClickHandler = async () => {
-    try {
-      clearSuccessMessage();
-      const user = await getUserData(userId);
-
-      // Increase game rating
-      itemsInBasket.forEach(async (item) => {
+  const purchaseClickHandler = () => {
+    dispatch(clearSuccessMessage());
+    // Increase game rating
+    itemsInBasket.forEach(async (item) => {
+      try {
         const game = await getGameInfo(item.gameId);
         game.rating = game.rating + 100;
-        await updateGameData(game._id, game);
-      })
-      
-      user.purchasedGames = user.purchasedGames.concat(itemsInBasket);
-      user.gamesInTheBasket = [];
-      setItemsInBasket([]);
-      await purchaseGame(userId, user);
-    } catch (e) {
-      throw new Error(e);
-    }
-  };
+        dispatch(updateGameData(game._id, game));
+      } catch (e) {
+        throw new Error(e);
+      }
+    });
 
-  useEffect(() => {
-    (async function () {
-      const data = await getUserData(userId);
-      setItemsInBasket(data.gamesInTheBasket);
-    })();
-  }, [getUserData, userId]);
+    user.purchasedGames = user.purchasedGames.concat(itemsInBasket);
+    user.gamesInTheBasket = [];
+    setItemsInBasket([]);
+    dispatch(purchaseGame(userId, user));
+  };
 
   return (
     <>
@@ -145,17 +152,9 @@ const Basket = (props) => {
         <div className="payment">
           <h1 className="container__titles">Payment</h1>
           <div className="price-summary">
-            <span className="price-summary__text">
-              Total price:{" "}
-              {itemsInBasket
-                .reduce((prevValue, currValue) => {
-                  return prevValue + currValue.price;
-                }, 0)
-                .toFixed(2)}{" "}
-              $
-            </span>
-            <span className="price-summary__text">Personal discount: </span>
-            <span className="price-summary__text">You will pay: </span>
+            <span className="price-summary__text">Total price: {totalPrice}$</span>
+            <span className="price-summary__text">Personal discount: {user?.personalDiscount}%</span>
+            <span className="price-summary__text">You will pay: {youWillPay.toFixed(2)}$</span>
           </div>
           {itemsInBasket.length ? (
             <button className="purchase-btn" onClick={purchaseClickHandler}>
@@ -172,22 +171,4 @@ const Basket = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    infoMsg: state.notification.infoMsg,
-    successMsg: state.notification.successMsg,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getUserData: (userId) => dispatch(getUserData(userId)),
-    removeGameFromBasket: (userId, gameData) => dispatch(removeGameFromBasket(userId, gameData)),
-    clearInfoMessage: () => dispatch(clearInfoMessage()),
-    clearSuccessMessage: () => dispatch(clearSuccessMessage()),
-    purchaseGame: (userId, gameData) => dispatch(purchaseGame(userId, gameData)),
-    updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Basket);
+export default Basket;

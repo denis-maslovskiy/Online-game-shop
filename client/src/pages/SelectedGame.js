@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
+import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
-import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
 import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
+import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
 import Notification from "../components/Notification";
 import { getGameInfo } from "../helpers/gameHelpers";
 import img1 from "../img/1.jpg";
@@ -47,7 +47,7 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
   return (
     <div>
       <Dialog open={isModalOpen} TransitionComponent={ModalTransition} keepMounted onClose={handleCloseModal}>
-        <DialogTitle>{"Please choose a delivery method for a physical copy of the game"}</DialogTitle>
+        <DialogTitle>Please choose a delivery method for a physical copy of the game</DialogTitle>
         <DialogContent>
           <DialogContentText>
             We offer you two delivery options: courier delivery, self-pickup. Please choose one option
@@ -80,7 +80,7 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
   );
 };
 
-const SelectedGame = (props) => {
+const SelectedGame = () => {
   const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(false);
   const [isPhysical, setIsPhysical] = useState(false);
   const [isDigital, setIsDigital] = useState(false);
@@ -99,18 +99,17 @@ const SelectedGame = (props) => {
       fieldName: "numberOfPhysicalCopies",
     },
   ]);
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.user);
+  const { successMsg, errorMsg } = useSelector((state) => state.notification);
+  const userId = JSON.parse(localStorage.getItem("userData")).userId;
+
+  useEffect(() => {
+    dispatch(getUserData(userId));
+  }, []);
 
   const history = useHistory();
-
-  const {
-    getUserData,
-    updateGameData,
-    addGameInTheBasket,
-    errorMsg,
-    successMsg,
-    clearErrorMessage,
-    clearSuccessMessage,
-  } = props;
 
   const locationHrefArray = window.location.href.split("/");
   const gameId = locationHrefArray[locationHrefArray.length - 1];
@@ -142,42 +141,46 @@ const SelectedGame = (props) => {
 
       // Increase game rating
       game.rating = game.rating + 1;
-      await updateGameData(game._id, game);
+      dispatch(updateGameData(game._id, game));
     }
     func();
   }, [textFields, getGameInfo, gameId]);
 
   const addToBasketButtonHandler = (gameType, deliveryMethod) => {
-    clearSuccessMessage();
-    clearErrorMessage();
+    dispatch(clearSuccessMessage());
+    dispatch(clearErrorMessage());
     if (!!JSON.parse(localStorage.getItem("userData"))) {
-      let userId = JSON.parse(localStorage.getItem("userData")).userId;
       const briefInformationAboutTheGame = {
         gameName: gameData.gameName,
         price: gameData.price,
         dateAddedToBasket: new Date(),
         gameId: gameData._id,
         gameType: gameType,
+        discount: gameData.discount,
       };
-      if (deliveryMethod) briefInformationAboutTheGame.deliveryMethod = deliveryMethod;
-      (async function () {
-        const user = await getUserData(userId);
-        user.gamesInTheBasket.push(briefInformationAboutTheGame);
-        const response = await addGameInTheBasket(userId, user);
-        if (response && briefInformationAboutTheGame.gameType === "Physical") {
-          gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
-          await updateGameData(gameId, gameData);
-          setGameData(gameData);
-        }
 
-        // Increase game rating
-        gameData.rating = gameData.rating + 10;
-        await updateGameData(gameData._id, gameData);
-      })();
+      if (deliveryMethod) briefInformationAboutTheGame.deliveryMethod = deliveryMethod;
+
+      if (Object.keys(user).length !== 0) {
+        user.gamesInTheBasket.push(briefInformationAboutTheGame);
+        dispatch(addGameInTheBasket(userId, user));
+      }
+
+      if (briefInformationAboutTheGame.gameType === "Physical") {
+        gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
+        dispatch(updateGameData(gameId, gameData));
+        setGameData(gameData);
+      }
+
+      // Increase game rating
+      gameData.rating = gameData.rating + 10;
+      dispatch(updateGameData(gameData._id, gameData));
     } else {
       history.push("/authorization");
     }
   };
+
+  const price = (gameData?.price * (1 - gameData?.discount / 100)).toFixed(2);
 
   return (
     <>
@@ -227,7 +230,7 @@ const SelectedGame = (props) => {
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
             <h2 className="buy-game__title">Digital Copy</h2>
-            <h2 className="buy-game__price">Price</h2>
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {price}$</h2>}
             {isDigital && (
               <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Digital")}>
                 Add to basket
@@ -241,7 +244,7 @@ const SelectedGame = (props) => {
           </div>
           <div className="buy-game__physical-copy">
             <h2 className="buy-game__title">Physical Copy</h2>
-            <h2 className="buy-game__price">Price</h2>
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {price}$</h2>}
             {isPhysical && (
               <button className="buy-game__button" onClick={handleOpenModal}>
                 Add to basket
@@ -264,21 +267,4 @@ const SelectedGame = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    errorMsg: state.notification.errorMsg,
-    successMsg: state.notification.successMsg,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getUserData: (userId) => dispatch(getUserData(userId)),
-    updateGameData: (userId, game) => dispatch(updateGameData(userId, game)),
-    addGameInTheBasket: (userId, gameData) => dispatch(addGameInTheBasket(userId, gameData)),
-    clearErrorMessage: () => dispatch(clearErrorMessage()),
-    clearSuccessMessage: () => dispatch(clearSuccessMessage()),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SelectedGame);
+export default SelectedGame;
