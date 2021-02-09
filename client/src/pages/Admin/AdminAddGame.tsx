@@ -46,18 +46,20 @@ const inputs = [
 ];
 
 const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
-  return isSubmitting ||
-  !!(errors.gameName && touched.gameName) ||
-  !!(errors.gameDescription && touched.gameDescription) ||
-  !!(errors.releaseDate && touched.releaseDate) ||
-  !!(errors.author && touched.author) ||
-  !!(errors.genre && touched.genre) ||
-  !!(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
-  !!(errors.price && touched.price) ||
-  !!(errors.isPhysical && touched.isPhysical) ||
-  !!(errors.isDigital && touched.isDigital) ||
-  !!(errors.discount && touched.discount);
-}
+  return (
+    isSubmitting ||
+    !!(errors.gameName && touched.gameName) ||
+    !!(errors.gameDescription && touched.gameDescription) ||
+    !!(errors.releaseDate && touched.releaseDate) ||
+    !!(errors.author && touched.author) ||
+    !!(errors.genre && touched.genre) ||
+    !!(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
+    !!(errors.price && touched.price) ||
+    !!(errors.isPhysical && touched.isPhysical) ||
+    !!(errors.isDigital && touched.isDigital) ||
+    !!(errors.discount && touched.discount)
+  );
+};
 
 const initialValues = {
   gameName: "",
@@ -89,48 +91,48 @@ interface Author {
   authorName: string;
   authorDescription: string;
   authorsGames: Array<Game>;
-  yearOfFoundationOfTheCompany: Date; 
+  yearOfFoundationOfTheCompany: Date;
   _id: string;
 }
 
 const AdminAddGame: React.FC = () => {
   const dispatch = useDispatch();
-  const {successMsg, errorMsg} = useSelector((state: RootState) => state.notification);
+  const { successMsg, errorMsg } = useSelector((state: RootState) => state.notification);
   const { allGameAuthors } = useSelector((state: RootState) => state.gameAuthor);
   const numericalInputs = ["numberOfPhysicalCopies", "price"];
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
-    dispatch(getAllAuthors())
-  }, [])
+    dispatch(getAllAuthors());
+  }, []);
 
   const checkingTheExistenceOfTheAuthor = (game: Game) => {
     let isAuthorAlreadyExist = false;
     allGameAuthors.forEach((author: Author) => {
-      if(author.authorName === game.author) {
-        author.authorsGames.push(game)
-        dispatch(adminUpdateGameAuthorData(author._id, {...author, userId}))
+      if (author.authorName === game.author) {
+        author.authorsGames.push(game);
+        dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
         isAuthorAlreadyExist = true;
       }
     });
-    if(!isAuthorAlreadyExist) {
+    if (!isAuthorAlreadyExist) {
       const newAuthor = {
         authorName: game.author,
         authorsGames: [game],
-      }
-      dispatch(adminAddAuthor({...newAuthor, userId}))
+      };
+      dispatch(adminAddAuthor({ ...newAuthor, userId }));
     }
-  }
+  };
 
   return (
     <>
-      {successMsg && <Notification values={{successMsg}}/>}
-      {errorMsg && <Notification values={{errorMsg}}/>}
+      {successMsg && <Notification values={{ successMsg }} />}
+      {errorMsg && <Notification values={{ errorMsg }} />}
       <h2 className="title">Add new game</h2>
       <Formik
         initialValues={initialValues}
         onSubmit={(values, { resetForm }) => {
-          dispatch(addGame({...values, userId}));
+          dispatch(addGame({ ...values, userId }));
           checkingTheExistenceOfTheAuthor(values);
         }}
         validationSchema={validationSchema}
@@ -216,11 +218,7 @@ const AdminAddGame: React.FC = () => {
                 </div>
               );
             })}
-            <button
-              type="submit"
-              className="add-game-button"
-              disabled={checksForButton(isSubmitting, errors, touched)}
-            >
+            <button type="submit" className="add-game-button" disabled={checksForButton(isSubmitting, errors, touched)}>
               Add game
             </button>
           </Form>
