@@ -243,7 +243,7 @@ const SelectedGame = (props) => {
             <h2 className="buy-game__title">Physical Copy</h2>
             <h2 className="buy-game__price">Price</h2>
             {isPhysical && (
-              <button className="buy-game__button" onClick={() => handleOpenModal()}>
+              <button className="buy-game__button" onClick={handleOpenModal}>
                 Add to basket
               </button>
             )}
