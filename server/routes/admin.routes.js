@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const Game = require("../models/Game");
 const User = require("../models/User");
+const GameAuthor = require("../models/GameAuthor");
 const router = Router();
 
 router.use(async (req, res, next) => {
@@ -15,7 +16,6 @@ router.use(async (req, res, next) => {
   }
 });
 
-// /api/admin/create-game
 router.post("/create-game", async (req, res) => {
   try {
     const {
@@ -108,7 +108,7 @@ router.put("/:id", async (req, res) => {
         discount,
       }
     );
-    res.status(200).json({message: 'Game has been edited successfully'});
+    res.status(200).json({ message: "Game has been edited successfully" });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -126,7 +126,7 @@ router.delete("/:id", async (req, res) => {
 router.get("/get-all-users", async (req, res) => {
   try {
     const users = await User.find();
-    if(!users) {
+    if (!users) {
       return res.status(400).json({ message: "No users" });
     }
 
@@ -134,6 +134,58 @@ router.get("/get-all-users", async (req, res) => {
   } catch (e) {
     return res.status(500).json({ message: e.message });
   }
-})
+});
+
+// Game Author
+router.post("/create-game-author", async (req, res) => {
+  try {
+    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany } = req.body;
+
+    const isAuthorExist = await GameAuthor.findOne({ authorName });
+
+    if (isAuthorExist) {
+      return res.status(400).json({ message: "Author with this name already exist." });
+    }
+
+    const newGameAuthor = new GameAuthor({
+      authorName,
+      authorDescription,
+      authorsGames,
+      yearOfFoundationOfTheCompany,
+    });
+    await newGameAuthor.save();
+
+    res.status(201).json({ message: "Author has been added successfully" });
+  } catch (e) {
+    res.status(500).json({ message: "Something wrong, try again later..." });
+  }
+});
+
+router.put("/edit-game-author-info/:id", async (req, res) => {
+  try {
+    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany } = req.body;
+    await GameAuthor.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        authorName,
+        authorDescription,
+        authorsGames,
+        yearOfFoundationOfTheCompany,
+      }
+    );
+    res.status(200).json({ message: "Author info has been edited successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+router.delete("/delete-game-author/:id", async (req, res) => {
+  try {
+    await GameAuthor.remove({ _id: req.params.id });
+    res.status(200).json({ message: "Game author has been deleted" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
 
 module.exports = router;
