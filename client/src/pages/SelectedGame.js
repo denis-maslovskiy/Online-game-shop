@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
 import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
@@ -15,10 +16,76 @@ import img6 from "../img/6.jpg";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
 
+const ModalTransition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
+  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const SELF_PICKUP = "Self-pickup",
+    COURIER_DELIVERY = "Courier delivery";
+
+  const isButtonPressed = (deliveryMethodName) => deliveryMethodName === deliveryMethod;
+
+  const deliveryMethodButtonHandler = (deliveryMethodName) => {
+    deliveryMethodName === SELF_PICKUP ? setDeliveryMethod(deliveryMethodName) : setDeliveryMethod(COURIER_DELIVERY);
+  };
+
+  const onModalClose = () => {
+    setDeliveryMethod(false);
+    handleCloseModal();
+  };
+
+  const onModalConfirm = () => {
+    if (deliveryMethod) {
+      addToBasketButtonHandler("Physical", deliveryMethod);
+      setDeliveryMethod(false);
+      handleCloseModal();
+    }
+  };
+
+  return (
+    <div>
+      <Dialog open={isModalOpen} TransitionComponent={ModalTransition} keepMounted onClose={handleCloseModal}>
+        <DialogTitle>Please choose a delivery method for a physical copy of the game</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            We offer you two delivery options: courier delivery, self-pickup. Please choose one option
+          </DialogContentText>
+          <button
+            type="button"
+            aria-pressed={isButtonPressed(COURIER_DELIVERY)}
+            onClick={() => deliveryMethodButtonHandler(COURIER_DELIVERY)}
+          >
+            Courier delivery
+          </button>
+          <button
+            type="button"
+            aria-pressed={isButtonPressed(SELF_PICKUP)}
+            onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}
+          >
+            Self-pickup
+          </button>
+        </DialogContent>
+        <DialogActions>
+          <button type="button" onClick={onModalConfirm} disabled={!deliveryMethod}>
+            Confirm selection
+          </button>
+          <button type="button" onClick={onModalClose}>
+            Close
+          </button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
+
 const SelectedGame = () => {
   const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(false);
   const [isPhysical, setIsPhysical] = useState(false);
   const [isDigital, setIsDigital] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [gameData, setGameData] = useState(null);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -32,7 +99,6 @@ const SelectedGame = () => {
       fieldName: "numberOfPhysicalCopies",
     },
   ]);
-  const [gameData, setGameData] = useState(null);
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.user);
@@ -45,7 +111,20 @@ const SelectedGame = () => {
 
   const history = useHistory();
 
-  const gameId = window.location.href.split("/")[4];
+  const locationHrefArray = window.location.href.split("/");
+  const gameId = locationHrefArray[locationHrefArray.length - 1];
+
+  const arrayOfImgs = [
+    { img: img1, id: "r1" },
+    { img: img2, id: "r2" },
+    { img: img3, id: "r3" },
+    { img: img4, id: "r4" },
+    { img: img5, id: "r5" },
+    { img: img6, id: "r6" },
+  ];
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     async function func() {
@@ -67,7 +146,7 @@ const SelectedGame = () => {
     func();
   }, [textFields, getGameInfo, gameId]);
 
-  const addToBasketButtonHandler = (gameType) => {
+  const addToBasketButtonHandler = (gameType, deliveryMethod) => {
     dispatch(clearSuccessMessage());
     dispatch(clearErrorMessage());
     if (!!JSON.parse(localStorage.getItem("userData"))) {
@@ -79,6 +158,9 @@ const SelectedGame = () => {
         gameType: gameType,
         discount: gameData.discount,
       };
+
+      if (deliveryMethod) briefInformationAboutTheGame.deliveryMethod = deliveryMethod;
+
       if (Object.keys(user).length !== 0) {
         user.gamesInTheBasket.push(briefInformationAboutTheGame);
         dispatch(addGameInTheBasket(userId, user));
@@ -97,15 +179,6 @@ const SelectedGame = () => {
       history.push("/authorization");
     }
   };
-
-  const arrayOfImgs = [
-    { img: img1, id: "r1" },
-    { img: img2, id: "r2" },
-    { img: img3, id: "r3" },
-    { img: img4, id: "r4" },
-    { img: img5, id: "r5" },
-    { img: img6, id: "r6" },
-  ];
 
   const price = (gameData?.price * (1 - gameData?.discount / 100)).toFixed(2);
 
@@ -173,7 +246,7 @@ const SelectedGame = () => {
             <h2 className="buy-game__title">Physical Copy</h2>
             {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {price}$</h2>}
             {isPhysical && (
-              <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Physical")}>
+              <button className="buy-game__button" onClick={handleOpenModal}>
                 Add to basket
               </button>
             )}
@@ -185,6 +258,11 @@ const SelectedGame = () => {
           </div>
         </div>
       </div>
+      <Modal
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        addToBasketButtonHandler={addToBasketButtonHandler}
+      />
     </>
   );
 };
