@@ -7,7 +7,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import AdminAddGame from "./AdminAddGame";
 import AdminEditGame from "./AdminEditGame";
 import AdminStatistic from "./AdminStatistic";
-import AdminEditGameAuthor from './AdminEditGameAuthor';
+import AdminEditGameAuthor from "./AdminEditGameAuthor";
+import AdminAddAchievement from "./AdminAddAchievement";
+import AdminEditAchievement from "./AdminEditAchievement";
 import "./admin.scss";
 
 type Anchor = "left";
@@ -20,7 +22,8 @@ const Admin = () => {
 
   const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (
-      event && event.type === "keydown" &&
+      event &&
+      event.type === "keydown" &&
       ((event as React.KeyboardEvent).key === "Tab" || (event as React.KeyboardEvent).key === "Shift")
     ) {
       return;
@@ -32,7 +35,14 @@ const Admin = () => {
     setAdminOption(text);
   }
 
-  const adminOptions = ["Statistic", "Add new game", "Edit game", "Admin edit game author"];
+  const adminOptions = [
+    "Statistic",
+    "Add new game",
+    "Edit game",
+    "Add new achievement",
+    "Edit achievement",
+    "Admin edit game author",
+  ];
 
   const list = (anchor: Anchor) => (
     <div role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
@@ -68,7 +78,9 @@ const Admin = () => {
       {adminOption === "Add new game" && <AdminAddGame />}
       {adminOption === "Edit game" && <AdminEditGame />}
       {adminOption === "Statistic" && <AdminStatistic />}
-      {adminOption === 'Admin edit game author' && <AdminEditGameAuthor />}
+      {adminOption === "Admin edit game author" && <AdminEditGameAuthor />}
+      {adminOption === "Add new achievement" && <AdminAddAchievement />}
+      {adminOption === "Edit achievement" && <AdminEditAchievement />}
     </>
   );
 };

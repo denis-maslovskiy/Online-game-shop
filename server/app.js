@@ -10,6 +10,7 @@ app.use("/api/games", require("./routes/games.routes"));
 app.use("/api/user", require("./routes/user.routes"));
 app.use("/api/admin", require("./routes/admin.routes"));
 app.use("/api/game-author", require("./routes/gameAuthor.routes"));
+app.use("/api/achievement", require("./routes/achievement.routes"));
 
 const PORT = config.get("port") || 5000;
 
