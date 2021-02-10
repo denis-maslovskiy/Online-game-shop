@@ -22,13 +22,13 @@ const SelectedGameAuthor = () => {
             return gameId;
         } 
         
-        let gameId = "";
+        let setGameId = "";
         allGames.forEach(game => {
             if(game.gameName === gameName) {
-                gameId = game._id;
+                setGameId = game._id;
             }
         });
-        return gameId;
+        return setGameId;
     }
 
     return (
