@@ -55,8 +55,8 @@ const validationSchema = Yup.object().shape({
 const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
   return (
     isSubmitting ||
-    !!(errors.authorDescription && touched.authorDescription) ||
-    !!(errors.yearOfFoundationOfTheCompany && touched.yearOfFoundationOfTheCompany)
+    Boolean(errors.authorDescription && touched.authorDescription) ||
+    Boolean(errors.yearOfFoundationOfTheCompany && touched.yearOfFoundationOfTheCompany)
   );
 };
 

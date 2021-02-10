@@ -48,16 +48,16 @@ const inputs = [
 const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
   return (
     isSubmitting ||
-    !!(errors.gameName && touched.gameName) ||
-    !!(errors.gameDescription && touched.gameDescription) ||
-    !!(errors.releaseDate && touched.releaseDate) ||
-    !!(errors.author && touched.author) ||
-    !!(errors.genre && touched.genre) ||
-    !!(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
-    !!(errors.price && touched.price) ||
-    !!(errors.isPhysical && touched.isPhysical) ||
-    !!(errors.isDigital && touched.isDigital) ||
-    !!(errors.discount && touched.discount)
+    Boolean(errors.gameName && touched.gameName) ||
+    Boolean(errors.gameDescription && touched.gameDescription) ||
+    Boolean(errors.releaseDate && touched.releaseDate) ||
+    Boolean(errors.author && touched.author) ||
+    Boolean(errors.genre && touched.genre) ||
+    Boolean(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
+    Boolean(errors.price && touched.price) ||
+    Boolean(errors.isPhysical && touched.isPhysical) ||
+    Boolean(errors.isDigital && touched.isDigital) ||
+    Boolean(errors.discount && touched.discount)
   );
 };
 
