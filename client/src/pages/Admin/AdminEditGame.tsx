@@ -11,16 +11,15 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { adminUpdateGameData, getAllGames, deleteGame } from "../../redux/games/gamesActions";
-import Notification from "../../components/Notification";
-import "./admineditgame.scss";
-import "./adminaddgame.scss";
-
 import {
   getAllAuthors,
   adminUpdateGameAuthorData,
   adminDeleteGameAuthor,
   adminAddAuthor,
 } from "../../redux/gameAuthor/gameAuthorActions";
+import Notification from "../../components/Notification";
+import "./admineditgame.scss";
+import "./adminaddgame.scss";
 
 interface FormValues {
   gameName: string;
@@ -115,22 +114,14 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
   const dispatch = useDispatch();
 
   const updateGameInAuthorsArray = (game: Game) => {
-    let updatedAuthor: Author = {
+    let previousAuthor: Author = {
         authorName: "",
         authorDescription: "",
         authorsGames: [],
         yearOfFoundationOfTheCompany: new Date(),
         _id: "",
       },
-      authorId = "",
-      isAuthorAlreadyExist = false,
-      previousAuthor: Author = {
-        authorName: "",
-        authorDescription: "",
-        authorsGames: [],
-        yearOfFoundationOfTheCompany: new Date(),
-        _id: "",
-      };
+      isAuthorAlreadyExist = false;
 
     allGameAuthors.forEach((author) => {
       author.authorsGames.forEach((authorGame) => {
@@ -142,40 +133,51 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
 
     allGameAuthors.forEach((author) => {
       if (author.authorName === game.author) {
-        author.authorsGames.forEach((item, index) => {
-          authorId = author._id;
-          if (previousAuthor.authorName !== game.author) {
-            author.authorsGames.push(game); // Add a game to a new author
-            updatedAuthor = author;
+        if (previousAuthor.authorName !== game.author) {
+          author.authorsGames.push(game); // Add a game to a new author
+          dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
 
-            previousAuthor.authorsGames.forEach((prevAuthorGame, index) => {
-              if (prevAuthorGame.gameName === game.gameName) {
-                previousAuthor.authorsGames.splice(index, 1); // Delete the game from the previous author
-                dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor, userId }));
+          previousAuthor.authorsGames.forEach((prevAuthorGame, index) => {
+            if (prevAuthorGame.gameName === game.gameName) {
+              previousAuthor.authorsGames.splice(index, 1); // Delete the game from the previous author
+              if (previousAuthor.authorsGames.length) {
+                return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor, userId }));
+              } else {
+                return dispatch(adminDeleteGameAuthor(previousAuthor._id, { userId }));
               }
-            });
-          } else if (item.gameName === game.gameName) {
-            author.authorsGames[index] = game;
-            return (updatedAuthor = author);
-          } else {
-            author.authorsGames.push(game);
-            updatedAuthor = author;
-          }
-        });
+            }
+          });
+        } else {
+          author.authorsGames.forEach((item, index) => {
+            if (item.gameName === game.gameName) {
+              author.authorsGames[index] = game;
+              return dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+            }
+          });
+        }
 
         isAuthorAlreadyExist = true;
       }
     });
 
     if (!isAuthorAlreadyExist) {
+      previousAuthor.authorsGames.forEach((prevAuthorGame, index) => {
+        if (prevAuthorGame.gameName === game.gameName) {
+          previousAuthor.authorsGames.splice(index, 1); // Delete the game from the previous author
+          if (previousAuthor.authorsGames.length) {
+            return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor, userId }));
+          } else {
+            return dispatch(adminDeleteGameAuthor(previousAuthor._id, { userId }));
+          }
+        }
+      });
+
       const newAuthor = {
         authorName: game.author,
         authorsGames: [game],
       };
       dispatch(adminAddAuthor({ ...newAuthor, userId }));
     }
-
-    dispatch(adminUpdateGameAuthorData(authorId, { ...updatedAuthor, userId }));
   };
 
   return (
@@ -282,14 +284,6 @@ const AdminEditGame: React.FC = () => {
   const deleteGameClickHandler = async (gameId: string) => {
     dispatch(deleteGame(gameId, { userId }));
 
-    let updatedAuthor: Author = {
-        authorName: "",
-        authorDescription: "",
-        authorsGames: [],
-        yearOfFoundationOfTheCompany: new Date(),
-        _id: "",
-      },
-      authorId = "";
     const gameData = allGames.find((game: Game) => {
       return game._id === gameId;
     });
@@ -298,22 +292,20 @@ const AdminEditGame: React.FC = () => {
       author.authorsGames.forEach((game, index: number) => {
         if (game.gameName === gameData.gameName) {
           author.authorsGames.splice(index, 1);
-          updatedAuthor = author;
-          authorId = author._id;
+
+          if (!author.authorsGames.length) {
+            dispatch(adminDeleteGameAuthor(author._id, { userId }));
+          } else {
+            dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+          }
         }
       });
     });
-
-    if (!updatedAuthor.authorsGames.length) {
-      dispatch(adminDeleteGameAuthor(authorId, { userId }));
-    } else {
-      dispatch(adminUpdateGameAuthorData(authorId, { ...updatedAuthor, userId }));
-    }
   };
 
   return (
     <>
-      <FormControl id="test">
+      <FormControl>
         <InputLabel>Select game</InputLabel>
         {/* @ts-ignore */}
         <Select value={initialGameData?._id} onChange={selectHandleChange}>
