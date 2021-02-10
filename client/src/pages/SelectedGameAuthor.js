@@ -20,15 +20,15 @@ const SelectedGameAuthor = () => {
     const getGameId = (gameName, gameId) => {
         if(gameId) {
             return gameId;
-        } else {
-            let gameId = "";
-            allGames.forEach(game => {
-                if(game.gameName === gameName) {
-                    gameId = game._id;
-                }
-            });
-            return gameId;
-        }
+        } 
+        
+        let gameId = "";
+        allGames.forEach(game => {
+            if(game.gameName === gameName) {
+                gameId = game._id;
+            }
+        });
+        return gameId;
     }
 
     return (
