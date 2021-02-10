@@ -7,6 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import AdminAddGame from "./AdminAddGame";
 import AdminEditGame from "./AdminEditGame";
 import AdminStatistic from "./AdminStatistic";
+import AdminEditGameAuthor from "./AdminEditGameAuthor";
 import AdminAddAchievement from "./AdminAddAchievement";
 import AdminEditAchievement from "./AdminEditAchievement";
 import "./admin.scss";
@@ -34,7 +35,14 @@ const Admin = () => {
     setAdminOption(text);
   }
 
-  const adminOptions = ["Statistic", "Add new game", "Edit game", "Add new achievement", "Edit achievement"];
+  const adminOptions = [
+    "Statistic",
+    "Add new game",
+    "Edit game",
+    "Add new achievement",
+    "Edit achievement",
+    "Admin edit game author",
+  ];
 
   const list = (anchor: Anchor) => (
     <div role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
@@ -70,6 +78,7 @@ const Admin = () => {
       {adminOption === "Add new game" && <AdminAddGame />}
       {adminOption === "Edit game" && <AdminEditGame />}
       {adminOption === "Statistic" && <AdminStatistic />}
+      {adminOption === "Admin edit game author" && <AdminEditGameAuthor />}
       {adminOption === "Add new achievement" && <AdminAddAchievement />}
       {adminOption === "Edit achievement" && <AdminEditAchievement />}
     </>

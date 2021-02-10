@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import image from "../img/3.jpg";
 import { getAllGames } from "../redux/games/gamesActions";
+import { getAllAuthors } from "../redux/gameAuthor/gameAuthorActions";
 import "../styles/content.scss";
 
 const HomePage = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllGames());
+    dispatch(getAllAuthors());
   }, []);
 
   const { allGames, filteredGames } = useSelector((state) => state.games);

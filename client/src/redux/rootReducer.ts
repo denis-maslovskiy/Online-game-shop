@@ -3,6 +3,7 @@ import notificationReducer from "./notification/notificationReducer";
 import authenticationReducer from "./authentication/authenticationReducer";
 import gamesReducer from "./games/gamesReducer";
 import userReducer from "./user/userReducer";
+import gameAuthorReducer from "./gameAuthor/gameAuthorReducer";
 import achievementReducer from "./achievement/achievementReducer";
 
 const rootReducer = combineReducers({
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   authentication: authenticationReducer,
   games: gamesReducer,
   user: userReducer,
+  gameAuthor: gameAuthorReducer,
   achievement: achievementReducer,
 });
 

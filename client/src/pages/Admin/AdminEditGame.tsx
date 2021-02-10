@@ -11,6 +11,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { adminUpdateGameData, getAllGames, deleteGame } from "../../redux/games/gamesActions";
+import {
+  getAllAuthors,
+  adminUpdateGameAuthorData,
+  adminDeleteGameAuthor,
+  adminAddAuthor,
+} from "../../redux/gameAuthor/gameAuthorActions";
 import Notification from "../../components/Notification";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
@@ -29,9 +35,33 @@ interface FormValues {
   discount: number;
 }
 
+interface Game {
+  gameName: string;
+  gameDescription: string;
+  releaseDate: string;
+  author: string;
+  genre: string;
+  numberOfPhysicalCopies: number;
+  price: number;
+  isPhysical: boolean;
+  isDigital: boolean;
+  discount: number;
+  _id: string;
+}
+
+interface Author {
+  authorName: string;
+  authorDescription: string;
+  authorsGames: Array<Game>;
+  yearOfFoundationOfTheCompany: Date;
+  _id: string;
+}
+
 interface IProps {
   initialGameData: FormValues;
   deleteGameClickHandler: (id: string) => void;
+  allGameAuthors: Array<Author>;
+  userId: string;
 }
 
 const validationSchema = Yup.object().shape({
@@ -80,8 +110,76 @@ const initialEmptyForm = {
   discount: 0,
 };
 
-const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => {
+const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthors, userId }: IProps) => {
   const dispatch = useDispatch();
+
+  const updateGameInAuthorsArray = (game: Game) => {
+    let previousAuthor: Author = {
+        authorName: "",
+        authorDescription: "",
+        authorsGames: [],
+        yearOfFoundationOfTheCompany: new Date(),
+        _id: "",
+      },
+      isAuthorAlreadyExist = false;
+
+    allGameAuthors.forEach((author) => {
+      author.authorsGames.forEach((authorGame) => {
+        if (authorGame.gameName === game.gameName) {
+          previousAuthor = author;
+        }
+      });
+    });
+
+    allGameAuthors.forEach((author) => {
+      if (author.authorName === game.author) {
+        if (previousAuthor.authorName !== game.author) {
+          author.authorsGames.push(game); // Add a game to a new author
+          dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+
+          previousAuthor.authorsGames.forEach((prevAuthorGame, index) => {
+            if (prevAuthorGame.gameName === game.gameName) {
+              previousAuthor.authorsGames.splice(index, 1); // Delete the game from the previous author
+              if (previousAuthor.authorsGames.length) {
+                return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor, userId }));
+              } else {
+                return dispatch(adminDeleteGameAuthor(previousAuthor._id, { userId }));
+              }
+            }
+          });
+        } else {
+          author.authorsGames.forEach((item, index) => {
+            if (item.gameName === game.gameName) {
+              author.authorsGames[index] = game;
+              return dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+            }
+          });
+        }
+
+        isAuthorAlreadyExist = true;
+      }
+    });
+
+    if (!isAuthorAlreadyExist) {
+      previousAuthor.authorsGames.forEach((prevAuthorGame, index) => {
+        if (prevAuthorGame.gameName === game.gameName) {
+          previousAuthor.authorsGames.splice(index, 1); // Delete the game from the previous author
+          if (previousAuthor.authorsGames.length) {
+            return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor, userId }));
+          } else {
+            return dispatch(adminDeleteGameAuthor(previousAuthor._id, { userId }));
+          }
+        }
+      });
+
+      const newAuthor = {
+        authorName: game.author,
+        authorsGames: [game],
+      };
+      dispatch(adminAddAuthor({ ...newAuthor, userId }));
+    }
+  };
+
   return (
     <>
       <h2 className="title">Edit Game</h2>
@@ -102,6 +200,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
         onSubmit={(values) => {
           const { userId } = JSON.parse(localStorage.getItem("userData")!);
           dispatch(adminUpdateGameData(values._id, { ...values, userId }));
+          updateGameInAuthorsArray(values);
         }}
         enableReinitialize={true}
         validationSchema={validationSchema}
@@ -161,18 +260,21 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler }: IProps) => 
 const AdminEditGame: React.FC = () => {
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
-  const {successMsg, infoMsg, errorMsg} = useSelector((state: RootState) => state.notification);
+  const { successMsg, infoMsg, errorMsg } = useSelector((state: RootState) => state.notification);
+  const { allGameAuthors } = useSelector((state: RootState) => state.gameAuthor);
   const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
+
+  const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
     dispatch(getAllGames());
+    dispatch(getAllAuthors());
   }, []);
 
   const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
     // @ts-ignore
     const gameId = event.target.value;
-    // @ts-ignore
-    const gameData = allGames.find((game) => {
+    const gameData = allGames.find((game: Game) => {
       return game._id === gameId;
     });
 
@@ -180,13 +282,30 @@ const AdminEditGame: React.FC = () => {
   };
 
   const deleteGameClickHandler = async (gameId: string) => {
-    const { userId } = JSON.parse(localStorage.getItem("userData")!);
     dispatch(deleteGame(gameId, { userId }));
+
+    const gameData = allGames.find((game: Game) => {
+      return game._id === gameId;
+    });
+
+    allGameAuthors.forEach((author: Author) => {
+      author.authorsGames.forEach((game, index: number) => {
+        if (game.gameName === gameData.gameName) {
+          author.authorsGames.splice(index, 1);
+
+          if (!author.authorsGames.length) {
+            dispatch(adminDeleteGameAuthor(author._id, { userId }));
+          } else {
+            dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+          }
+        }
+      });
+    });
   };
 
   return (
     <>
-      <FormControl id="test">
+      <FormControl>
         <InputLabel>Select game</InputLabel>
         {/* @ts-ignore */}
         <Select value={initialGameData?._id} onChange={selectHandleChange}>
@@ -200,11 +319,16 @@ const AdminEditGame: React.FC = () => {
         </Select>
       </FormControl>
 
-      {successMsg && <Notification values={{successMsg}}/>}
-      {infoMsg && <Notification values={{infoMsg}}/>}
-      {errorMsg && <Notification values={{errorMsg}}/>}
+      {successMsg && <Notification values={{ successMsg }} />}
+      {infoMsg && <Notification values={{ infoMsg }} />}
+      {errorMsg && <Notification values={{ errorMsg }} />}
       {initialGameData && (
-        <RenderGameForm initialGameData={initialGameData} deleteGameClickHandler={deleteGameClickHandler} />
+        <RenderGameForm
+          initialGameData={initialGameData}
+          deleteGameClickHandler={deleteGameClickHandler}
+          allGameAuthors={allGameAuthors}
+          userId={userId}
+        />
       )}
     </>
   );

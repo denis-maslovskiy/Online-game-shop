@@ -4,7 +4,8 @@ import { AppBar, Toolbar, IconButton, Typography, Badge, MenuItem, Menu, TextFie
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { getSelectedGameAuthor } from "../redux/gameAuthor/gameAuthorActions";
 import { Filter } from "./Filter";
 import { Sorting } from "./Sorting";
 import { useAuth } from "../hooks/authHook";
@@ -19,6 +20,7 @@ export const Navbar = () => {
   const { isAuthenticated, logout, isAdmin } = useAuth();
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -54,6 +56,12 @@ export const Navbar = () => {
   ];
 
   const { allGames } = useSelector((state) => state.games);
+  const { allGameAuthors } = useSelector((state) => state.gameAuthor);
+
+  let optionAutocompleteArray = [];
+  if (allGames.length && allGameAuthors.length) {
+    optionAutocompleteArray = allGames.concat(allGameAuthors);
+  }
 
   const onSearchFocusHandler = () => {
     document.getElementById("search-icon").style.display = "none";
@@ -67,7 +75,12 @@ export const Navbar = () => {
 
   const onSearchChangeHandler = (e, value) => {
     if (value) {
-      history.push(`/selected-game/${value._id}`);
+      if (value.authorName) {
+        dispatch(getSelectedGameAuthor(value._id));
+        history.push(`/selected-game-author/${value._id}`);
+      } else {
+        history.push(`/selected-game/${value._id}`);
+      }
     }
   };
 
@@ -144,8 +157,10 @@ export const Navbar = () => {
               <SearchIcon id="search-icon" />
             </div>
             <Autocomplete
-              options={allGames}
-              getOptionLabel={(option) => option.gameName + " - " + option.author}
+              options={optionAutocompleteArray}
+              getOptionLabel={(option) =>
+                option.authorName ? option.authorName : option.gameName + " - " + option.author
+              }
               renderInput={(params) => (
                 <TextField {...params} inputProps={{ ...params.inputProps, id: "search-input" }} />
               )}

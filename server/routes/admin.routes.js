@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const Game = require("../models/Game");
 const User = require("../models/User");
+const GameAuthor = require("../models/GameAuthor");
 const Achievement = require("../models/Achievement");
 const router = Router();
 
@@ -209,6 +210,58 @@ router.delete("/delete-achievement/:id", async (req, res) => {
   try {
     await Achievement.remove({ _id: req.params.id });
     res.status(200).json({ message: "Achievement has been deleted successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// Game Author
+router.post("/create-game-author", async (req, res) => {
+  try {
+    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany } = req.body;
+
+    const isAuthorExist = await GameAuthor.findOne({ authorName });
+
+    if (isAuthorExist) {
+      return res.status(400).json({ message: "Author with this name already exist." });
+    }
+
+    const newGameAuthor = new GameAuthor({
+      authorName,
+      authorDescription,
+      authorsGames,
+      yearOfFoundationOfTheCompany,
+    });
+    await newGameAuthor.save();
+
+    res.status(201).json({ message: "Author has been added successfully" });
+  } catch (e) {
+    res.status(500).json({ message: "Something wrong, try again later..." });
+  }
+});
+
+router.put("/edit-game-author-info/:id", async (req, res) => {
+  try {
+    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany } = req.body;
+    await GameAuthor.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        authorName,
+        authorDescription,
+        authorsGames,
+        yearOfFoundationOfTheCompany,
+      }
+    );
+    res.status(200).json({ message: "Author info has been edited successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+router.delete("/delete-game-author/:id", async (req, res) => {
+  try {
+    await GameAuthor.remove({ _id: req.params.id });
+    res.status(200).json({ message: "Game author has been deleted" });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

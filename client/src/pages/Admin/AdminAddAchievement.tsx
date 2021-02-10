@@ -26,11 +26,11 @@ const inputs = [
 const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
   return (
     isSubmitting ||
-    !!(errors.achievementTopic && touched.achievementTopic) ||
-    !!(errors.achievementName && touched.achievementName) ||
-    !!(errors.achievementText && touched.achievementText) ||
-    !!(errors.achievementValue && touched.achievementValue) ||
-    !!(errors.estimatedDiscountForTheClient && touched.estimatedDiscountForTheClient)
+    Boolean(errors.achievementTopic && touched.achievementTopic) ||
+    Boolean(errors.achievementName && touched.achievementName) ||
+    Boolean(errors.achievementText && touched.achievementText) ||
+    Boolean(errors.achievementValue && touched.achievementValue) ||
+    Boolean(errors.estimatedDiscountForTheClient && touched.estimatedDiscountForTheClient)
   );
 };
 
