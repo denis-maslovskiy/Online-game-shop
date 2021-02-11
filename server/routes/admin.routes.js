@@ -93,6 +93,9 @@ router.put("/:id", async (req, res) => {
       isDigital,
       numberOfPhysicalCopies,
       discount,
+      plannedDiscount,
+      plannedDiscountStartsOn,
+      plannedDiscountEndsOn,
     } = req.body;
     await Game.findOneAndUpdate(
       { _id: req.params.id },
@@ -108,6 +111,9 @@ router.put("/:id", async (req, res) => {
         isDigital,
         numberOfPhysicalCopies,
         discount,
+        plannedDiscount,
+        plannedDiscountStartsOn,
+        plannedDiscountEndsOn,
       }
     );
     res.status(200).json({ message: "Game has been edited successfully" });
