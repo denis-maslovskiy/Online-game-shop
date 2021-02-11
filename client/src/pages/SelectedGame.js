@@ -86,6 +86,7 @@ const SelectedGame = () => {
   const [isDigital, setIsDigital] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [gameData, setGameData] = useState(null);
+  const [gamePrice, setGamePrice] = useState(0);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -135,9 +136,22 @@ const SelectedGame = () => {
         return (item.value = game[item.fieldName]);
       });
       setTextFields(textFields);
-      setIsReadyToDisplayGameInfo(true);
+
+      if (game?.plannedDiscountEndsOn && game?.plannedDiscountStartsOn) {
+        const startsOn = game.plannedDiscountStartsOn,
+          endsOn = game.plannedDiscountEndsOn;
+        if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
+          console.log(game);
+          setGamePrice((game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2));
+        } else {
+          setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+        }
+      } else {
+        setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+      }
       setIsDigital(game.isDigital);
       setIsPhysical(game.isPhysical);
+      setIsReadyToDisplayGameInfo(true);
 
       // Increase game rating
       game.rating = game.rating + 1;
@@ -149,10 +163,11 @@ const SelectedGame = () => {
   const addToBasketButtonHandler = (gameType, deliveryMethod) => {
     dispatch(clearSuccessMessage());
     dispatch(clearErrorMessage());
+
     if (!!JSON.parse(localStorage.getItem("userData"))) {
       const briefInformationAboutTheGame = {
         gameName: gameData.gameName,
-        price: gameData.price,
+        price: gamePrice,
         dateAddedToBasket: new Date(),
         gameId: gameData._id,
         gameType: gameType,
@@ -179,8 +194,6 @@ const SelectedGame = () => {
       history.push("/authorization");
     }
   };
-
-  const price = (gameData?.price * (1 - gameData?.discount / 100)).toFixed(2);
 
   return (
     <>
@@ -230,7 +243,7 @@ const SelectedGame = () => {
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
             <h2 className="buy-game__title">Digital Copy</h2>
-            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {price}$</h2>}
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isDigital && (
               <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Digital")}>
                 Add to basket
@@ -244,7 +257,7 @@ const SelectedGame = () => {
           </div>
           <div className="buy-game__physical-copy">
             <h2 className="buy-game__title">Physical Copy</h2>
-            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {price}$</h2>}
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isPhysical && (
               <button className="buy-game__button" onClick={handleOpenModal}>
                 Add to basket

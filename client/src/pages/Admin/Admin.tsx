@@ -10,6 +10,7 @@ import AdminStatistic from "./AdminStatistic";
 import AdminEditGameAuthor from "./AdminEditGameAuthor";
 import AdminAddAchievement from "./AdminAddAchievement";
 import AdminEditAchievement from "./AdminEditAchievement";
+import AdminPlanningFutureDiscounts from './AdminPlanningFutureDiscounts';
 import "./admin.scss";
 
 type Anchor = "left";
@@ -41,7 +42,8 @@ const Admin = () => {
     "Edit game",
     "Add new achievement",
     "Edit achievement",
-    "Admin edit game author",
+    "Edit game author",
+    "Planning future discounts"
   ];
 
   const list = (anchor: Anchor) => (
@@ -78,9 +80,10 @@ const Admin = () => {
       {adminOption === "Add new game" && <AdminAddGame />}
       {adminOption === "Edit game" && <AdminEditGame />}
       {adminOption === "Statistic" && <AdminStatistic />}
-      {adminOption === "Admin edit game author" && <AdminEditGameAuthor />}
+      {adminOption === "Edit game author" && <AdminEditGameAuthor />}
       {adminOption === "Add new achievement" && <AdminAddAchievement />}
       {adminOption === "Edit achievement" && <AdminEditAchievement />}
+      {adminOption === "Planning future discounts" && <AdminPlanningFutureDiscounts />}
     </>
   );
 };
