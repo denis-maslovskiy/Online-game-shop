@@ -13,6 +13,7 @@ const schema = new Schema({
   isDigital: { type: Boolean, required: true },
   numberOfPhysicalCopies: { type: Number, default: 0 },
   discount: { type: Number, default: 0 },
+  imgSource: { type: Array, default: [] }
 });
 
 module.exports = model("Game", schema);
