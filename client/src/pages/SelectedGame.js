@@ -2,19 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { updateGameData } from "../redux/games/gamesActions";
+import { updateGameData, getGameInfo } from "../redux/games/gamesActions";
 import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
 import Notification from "../components/Notification";
-import { getGameInfo } from "../helpers/gameHelpers";
-import img1 from "../img/1.jpg";
-import img2 from "../img/2.jpg";
-import img3 from "../img/3.jpg";
-import img4 from "../img/4.jpg";
-import img5 from "../img/5.jpg";
-import img6 from "../img/6.jpg";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
+import { Image } from "cloudinary-react";
 
 const ModalTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -85,7 +79,6 @@ const SelectedGame = () => {
   const [isPhysical, setIsPhysical] = useState(false);
   const [isDigital, setIsDigital] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [gameData, setGameData] = useState(null);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -99,37 +92,36 @@ const SelectedGame = () => {
       fieldName: "numberOfPhysicalCopies",
     },
   ]);
+  const [arrayOfImgs, setArrayOfImgs] = useState([]);
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.user);
-  const { successMsg, errorMsg } = useSelector((state) => state.notification);
-  const userId = JSON.parse(localStorage.getItem("userData")).userId;
-
   useEffect(() => {
+    console.log(gameId);
     dispatch(getUserData(userId));
+    dispatch(getGameInfo(gameId));
   }, []);
 
-  const history = useHistory();
-
+  const { user } = useSelector((state) => state.user);
+  const { game } = useSelector((state) => state.games);
+  const { successMsg, errorMsg } = useSelector((state) => state.notification);
+  const userId = JSON.parse(localStorage.getItem("userData")).userId;
   const locationHrefArray = window.location.href.split("/");
   const gameId = locationHrefArray[locationHrefArray.length - 1];
 
-  const arrayOfImgs = [
-    { img: img1, id: "r1" },
-    { img: img2, id: "r2" },
-    { img: img3, id: "r3" },
-    { img: img4, id: "r4" },
-    { img: img5, id: "r5" },
-    { img: img6, id: "r6" },
-  ];
+  const history = useHistory();
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   useEffect(() => {
-    async function func() {
-      const game = await getGameInfo(gameId);
-      setGameData(game);
+    if (Object.keys(game).length !== 0) {
+      game.imgSource.forEach((imageId, index) => {
+        const temp = arrayOfImgs;
+        temp.push({ imgId: imageId, id: `r${index + 1}` });
+        setArrayOfImgs(temp);
+      });
+
+      console.log(game);
 
       textFields.map((item) => {
         return (item.value = game[item.fieldName]);
@@ -143,20 +135,19 @@ const SelectedGame = () => {
       game.rating = game.rating + 1;
       dispatch(updateGameData(game._id, game));
     }
-    func();
-  }, [textFields, getGameInfo, gameId]);
+  }, [textFields, gameId, game]);
 
   const addToBasketButtonHandler = (gameType, deliveryMethod) => {
     dispatch(clearSuccessMessage());
     dispatch(clearErrorMessage());
-    if (!!JSON.parse(localStorage.getItem("userData"))) {
+    if (!!JSON.parse(localStorage.getItem("userData")) && game) {
       const briefInformationAboutTheGame = {
-        gameName: gameData.gameName,
-        price: gameData.price,
+        gameName: game.gameName,
+        price: game.price,
         dateAddedToBasket: new Date(),
-        gameId: gameData._id,
+        gameId: game._id,
         gameType: gameType,
-        discount: gameData.discount,
+        discount: game.discount,
       };
 
       if (deliveryMethod) briefInformationAboutTheGame.deliveryMethod = deliveryMethod;
@@ -166,21 +157,20 @@ const SelectedGame = () => {
         dispatch(addGameInTheBasket(userId, user));
       }
 
-      if (briefInformationAboutTheGame.gameType === "Physical") {
-        gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
-        dispatch(updateGameData(gameId, gameData));
-        setGameData(gameData);
+      if (briefInformationAboutTheGame.gameType === "Physical" && game) {
+        game.numberOfPhysicalCopies = game.numberOfPhysicalCopies - 1;
+        dispatch(updateGameData(gameId, game));
       }
 
       // Increase game rating
-      gameData.rating = gameData.rating + 10;
-      dispatch(updateGameData(gameData._id, gameData));
+      game.rating = game.rating + 10;
+      dispatch(updateGameData(game._id, game));
     } else {
       history.push("/authorization");
     }
   };
 
-  const price = (gameData?.price * (1 - gameData?.discount / 100)).toFixed(2);
+  const price = (game?.price * (1 - game?.discount / 100)).toFixed(2);
 
   return (
     <>
@@ -191,26 +181,26 @@ const SelectedGame = () => {
       )}
       <div className="slidershow middle">
         <div className="slides">
-          {arrayOfImgs.map((item) => (
+          {arrayOfImgs?.map((item) => (
             <input type="radio" name="r" id={item.id} key={item.id} />
           ))}
-          {arrayOfImgs.map((item, index) => {
+          {arrayOfImgs?.map((item, index) => {
             if (index === 0) {
               return (
                 <div className="slide s1" key={item.id}>
-                  <img src={item.img} alt="GameImage" />
+                  <Image cloudName="dgefehkt9" publicId={item.imgId} width="300" crop="scale" />
                 </div>
               );
             }
             return (
               <div className="slide" key={item.id}>
-                <img src={item.img} alt="GameImage" />
+                <Image cloudName="dgefehkt9" publicId={item.imgId} width="300" crop="scale" />
               </div>
             );
           })}
         </div>
         <div className="navigation">
-          {arrayOfImgs.map((item) => (
+          {arrayOfImgs?.map((item) => (
             <label htmlFor={item.id} className="bar" key={item.id} />
           ))}
         </div>
