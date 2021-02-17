@@ -3,8 +3,11 @@ import {
   UPDATE_GAME_ARRAY,
   DELETE_GAME,
   GAME_FILTER,
-  GAME_SORT
+  GAME_SORT,
+  SET_GAME_DATA,
+  CLEAR_GAME_DATA
 } from "./gamesTypes";
+import { updateObject } from "../reducerHelpers";
 
 const initialState = {
   allGames: [],
@@ -33,6 +36,11 @@ const updateGameArrayAfterDeletingTheGame = (action, state) => {
   return state;
 };
 
+const clearGameData = (state) => {
+  const game = {};
+  return updateObject(state, { game });
+}
+
 const gamesReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_ALL_GAMES:
@@ -53,7 +61,14 @@ const gamesReducer = (state = initialState, action) => {
       return {
         ...state,
         allGames: action.payload
-      }
+      };
+    case SET_GAME_DATA:
+      return {
+        ...state,
+        game: action.payload
+      };
+    case CLEAR_GAME_DATA:
+      return clearGameData(state);
     default:
       return state;
   }
