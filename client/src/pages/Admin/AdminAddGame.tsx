@@ -2,7 +2,7 @@
 // TODO: Сделать кнопку недоступной до тех пор, пока все поля не буду заполнены
 // TODO: Игра добавляется, если чекбоксы isPhysical/isDigital оба пустые
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
@@ -10,7 +10,7 @@ import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { Form, Formik, FormikErrors, FormikTouched } from "formik";
-import { addGame } from "../../redux/games/gamesActions";
+import { addGame, uploadGameImages } from "../../redux/games/gamesActions";
 import { getAllAuthors, adminUpdateGameAuthorData, adminAddAuthor } from "../../redux/gameAuthor/gameAuthorActions";
 import Notification from "../../components/Notification";
 import "./adminaddgame.scss";
@@ -124,16 +124,78 @@ const AdminAddGame: React.FC = () => {
     }
   };
 
+  const [fileInputState, setFileInputState] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previewSource, setPreviewSource] = useState([]);
+
+  const handleFileInputChange = (e) => {
+    const files = e.target.files;
+    previewFile(files);
+    setSelectedFiles(files);
+    setFileInputState(e.target.value);
+  };
+
+  const previewFile = (files) => {
+    const tempArr = [];
+
+    if (files) {
+      for (let key in files) {
+        if (key !== "length" && key !== "item") {
+          const reader = new FileReader();
+          reader.readAsDataURL(files[key]);
+          reader.onloadend = () => {
+            tempArr.push(reader.result);
+            setPreviewSource(tempArr);
+          };
+        }
+      }
+    }
+    
+  };
+
+  useEffect(() => {
+    console.log('test');
+  }, [previewSource.length])
+
+  const submitFilesHandler = (gameName: string, userId: string, e) => {
+    e?.preventDefault();
+
+    if (!selectedFiles.length) return;
+
+    for (let key in selectedFiles) {
+      if (key !== "length" && key !== "item") {
+        const reader = new FileReader();
+        reader.readAsDataURL(selectedFiles[key]);
+        reader.onloadend = () => {
+          setTimeout(() => {
+            dispatch(uploadGameImages(reader.result, gameName, userId));
+          }, 0);
+        };
+      }
+    }
+  };
+
   return (
     <>
       {successMsg && <Notification values={{ successMsg }} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
       <h2 className="title">Add new game</h2>
+
+      <form id="image-form" onSubmit={submitFilesHandler} style={{ marginLeft: "50%" }}>
+        <input type="file" multiple name="images" onChange={handleFileInputChange} value={fileInputState} />
+      </form>
+
+      {previewSource &&
+        previewSource.map((file, index) => (
+          <img src={file} alt={`img-${index}`} key={file} style={{ height: "300px" }} />
+        ))}
+
       <Formik
         initialValues={initialValues}
         onSubmit={(values, { resetForm }) => {
           dispatch(addGame({ ...values, userId }));
           checkingTheExistenceOfTheAuthor(values);
+          submitFilesHandler(values.gameName, userId);
         }}
         validationSchema={validationSchema}
         enableReinitialize={true}
@@ -218,7 +280,12 @@ const AdminAddGame: React.FC = () => {
                 </div>
               );
             })}
-            <button type="submit" className="add-game-button" disabled={checksForButton(isSubmitting, errors, touched)}>
+            <button
+              type="submit"
+              id="form-submit"
+              className="add-game-button"
+              disabled={checksForButton(isSubmitting, errors, touched)}
+            >
               Add game
             </button>
           </Form>
