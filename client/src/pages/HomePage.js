@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import image from "../img/3.jpg";
-import { getAllGames } from "../redux/games/gamesActions";
+import { getAllGames, clearGameData } from "../redux/games/gamesActions";
 import { getAllAuthors } from "../redux/gameAuthor/gameAuthorActions";
 import "../styles/content.scss";
 
@@ -25,6 +25,10 @@ const HomePage = () => {
     );
   }
 
+  const linkClickHandler = (gameId) => {
+    dispatch(clearGameData())
+  }
+
   return (
     <main className="container">
       {filteredGames.length && filteredGames[0] !== "No matches found." ? (
@@ -32,7 +36,7 @@ const HomePage = () => {
           {filteredGames &&
             filteredGames.map((game) => (
               <button className="content__card-btn" key={game._id}>
-                <Link to={`/selected-game/${game._id}`} className="link">
+                <Link to={`/selected-game/${game._id}`} className="link" onClick={linkClickHandler}>
                   <div className="link__card card">
                     <img src={image} className="card__picture" alt={game.gameName} />
                     <div className="card_description">
