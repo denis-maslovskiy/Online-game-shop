@@ -1,21 +1,28 @@
 const { Router } = require("express");
+const cloudinary = require("cloudinary").v2;
+const config = require("config");
 const Game = require("../models/Game");
 const User = require("../models/User");
 const GameAuthor = require("../models/GameAuthor");
 const Achievement = require("../models/Achievement");
 const router = Router();
-
-router.use(async (req, res, next) => {
-  try {
-    const userId = req.body.userId || req.query.userId;
-    const user = await User.findById(userId);
-    user.isAdmin
-      ? next()
-      : res.status(400).json({ message: "Access is blocked. Functionality are available only to the admin!" });
-  } catch (e) {
-    res.status(500).json({ message: "Something wrong, try again later..." });
-  }
+cloudinary.config({
+  cloud_name: config.get("cloud_name"),
+  api_key: config.get("api_key"),
+  api_secret: config.get("api_secret"),
 });
+
+// router.use(async (req, res, next) => {
+//   try {
+//     const userId = req.body.userId || req.query.userId;
+//     const user = await User.findById(userId);
+//     user.isAdmin
+//       ? next()
+//       : res.status(400).json({ message: "Access is blocked. Functionality are available only to the admin!" });
+//   } catch (e) {
+//     res.status(500).json({ message: "Something wrong, try again later..." });
+//   }
+// });
 
 // Games
 router.post("/create-game", async (req, res) => {
@@ -93,6 +100,7 @@ router.put("/:id", async (req, res) => {
       isDigital,
       numberOfPhysicalCopies,
       discount,
+      imgSource
     } = req.body;
     await Game.findOneAndUpdate(
       { _id: req.params.id },
@@ -108,6 +116,7 @@ router.put("/:id", async (req, res) => {
         isDigital,
         numberOfPhysicalCopies,
         discount,
+        imgSource
       }
     );
     res.status(200).json({ message: "Game has been edited successfully" });
@@ -120,6 +129,18 @@ router.delete("/:id", async (req, res) => {
   try {
     await Game.remove({ _id: req.params.id });
     res.status(200).json({ message: "Game has been deleted successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+router.post("/upload-game-images", async (req, res) => {
+  try {
+    const { fileStr } = req.body;
+    const uploadResponse = await cloudinary.uploader.upload(fileStr, {
+      upload_preset: "lqxfbwbj",
+    });
+    res.status(200).json({ message: "Image uploaded", uploadResponse });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
