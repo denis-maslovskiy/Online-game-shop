@@ -44,7 +44,7 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
             <img className="game__picture" src={image} alt={item.gameName} />
             <div className="game__text">
               <span>{item.gameName}</span>
-              <span>{(item.price * (1 - item?.discount / 100)).toFixed(2)} $</span>
+              <span>{item.price} $</span>
             </div>
             <button className="remove-game" onClick={() => removeGameHandler(item.gameName)}>
               <ClearIcon />
