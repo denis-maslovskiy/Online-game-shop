@@ -141,7 +141,6 @@ const SelectedGame = () => {
         const startsOn = game.plannedDiscountStartsOn,
           endsOn = game.plannedDiscountEndsOn;
         if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
-          console.log(game);
           setGamePrice((game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2));
         } else {
           setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));

@@ -53,7 +53,6 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
   };
 
   const saveButtonClickHandler = () => {
-    console.log(selectedResult, plannedDiscountDates, discountValue);
     selectedResult.forEach((gameName) => {
       allGames.forEach((game: Game) => {
         if (gameName === game.gameName) {
