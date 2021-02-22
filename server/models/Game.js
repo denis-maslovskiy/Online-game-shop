@@ -13,7 +13,10 @@ const schema = new Schema({
   isDigital: { type: Boolean, required: true },
   numberOfPhysicalCopies: { type: Number, default: 0 },
   discount: { type: Number, default: 0 },
-  imgSource: { type: Array, default: [] }
+  imgSource: { type: Array, default: [] },
+  plannedDiscount: { type: Number, default: 0 },
+  plannedDiscountStartsOn: { type: Date },
+  plannedDiscountEndsOn: { type: Date },
 });
 
 module.exports = model("Game", schema);

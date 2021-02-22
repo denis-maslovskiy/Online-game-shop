@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { Image } from "cloudinary-react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { updateGameData, getGameInfo } from "../redux/games/gamesActions";
+import { updateGameData } from "../redux/games/gamesActions";
+import { getGameInfo } from "../helpers/gameHelpers";
 import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
 import Notification from "../components/Notification";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
-import { Image } from "cloudinary-react";
 
 const ModalTransition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -79,6 +80,8 @@ const SelectedGame = () => {
   const [isPhysical, setIsPhysical] = useState(false);
   const [isDigital, setIsDigital] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [gameData, setGameData] = useState(null);
+  const [gamePrice, setGamePrice] = useState(0);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -96,17 +99,15 @@ const SelectedGame = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(gameId);
     dispatch(getUserData(userId));
-    dispatch(getGameInfo(gameId));
   }, []);
 
   const { user } = useSelector((state) => state.user);
-  const { game } = useSelector((state) => state.games);
   const { successMsg, errorMsg } = useSelector((state) => state.notification);
   const userId = JSON.parse(localStorage.getItem("userData")).userId;
   const locationHrefArray = window.location.href.split("/");
   const gameId = locationHrefArray[locationHrefArray.length - 1];
+  const PHYSICAL = "Physical";
 
   const history = useHistory();
 
@@ -114,63 +115,77 @@ const SelectedGame = () => {
   const handleCloseModal = () => setIsModalOpen(false);
 
   useEffect(() => {
-    if (Object.keys(game).length !== 0) {
-      game.imgSource.forEach((imageId, index) => {
-        const temp = arrayOfImgs;
-        temp.push({ imgId: imageId, id: `r${index + 1}` });
-        setArrayOfImgs(temp);
-      });
+    (async function () {
+      const game = await getGameInfo(gameId);
+      setGameData(game);
 
-      console.log(game);
+      const updatedImgArray = [];
+      game.imgSource.forEach((imageId, index) => {
+        updatedImgArray.push({ imgId: imageId, id: `r${index + 1}` });
+      });
+      setArrayOfImgs(updatedImgArray);
 
       textFields.map((item) => {
         return (item.value = game[item.fieldName]);
       });
       setTextFields(textFields);
-      setIsReadyToDisplayGameInfo(true);
+
+      if (game?.plannedDiscountEndsOn && game?.plannedDiscountStartsOn) {
+        const startsOn = game.plannedDiscountStartsOn,
+          endsOn = game.plannedDiscountEndsOn;
+        if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
+          setGamePrice((game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2));
+        } else {
+          setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+        }
+      } else {
+        setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+      }
       setIsDigital(game.isDigital);
       setIsPhysical(game.isPhysical);
+      setIsReadyToDisplayGameInfo(true);
 
       // Increase game rating
       game.rating = game.rating + 1;
       dispatch(updateGameData(game._id, game));
-    }
-  }, [textFields, gameId, game]);
+    })();
+  }, [textFields, gameId]);
 
   const addToBasketButtonHandler = (gameType, deliveryMethod) => {
     dispatch(clearSuccessMessage());
     dispatch(clearErrorMessage());
-    if (!!JSON.parse(localStorage.getItem("userData")) && game) {
+
+    if (!!JSON.parse(localStorage.getItem("userData"))) {
       const briefInformationAboutTheGame = {
-        gameName: game.gameName,
-        price: game.price,
+        gameName: gameData.gameName,
+        price: gamePrice,
         dateAddedToBasket: new Date(),
-        gameId: game._id,
+        gameId: gameData._id,
         gameType: gameType,
-        discount: game.discount,
+        discount: gameData.discount,
+        imgSource: gameData.imgSource,
       };
 
       if (deliveryMethod) briefInformationAboutTheGame.deliveryMethod = deliveryMethod;
 
-      if (Object.keys(user).length !== 0) {
+      if (Object.keys(user).length) {
         user.gamesInTheBasket.push(briefInformationAboutTheGame);
         dispatch(addGameInTheBasket(userId, user));
       }
 
-      if (briefInformationAboutTheGame.gameType === "Physical" && game) {
-        game.numberOfPhysicalCopies = game.numberOfPhysicalCopies - 1;
-        dispatch(updateGameData(gameId, game));
+      if (briefInformationAboutTheGame.gameType === PHYSICAL) {
+        gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
+        dispatch(updateGameData(gameId, gameData));
+        setGameData(gameData);
       }
 
       // Increase game rating
-      game.rating = game.rating + 10;
-      dispatch(updateGameData(game._id, game));
+      gameData.rating = gameData.rating + 10;
+      dispatch(updateGameData(gameData._id, gameData));
     } else {
       history.push("/authorization");
     }
   };
-
-  const price = (game?.price * (1 - game?.discount / 100)).toFixed(2);
 
   return (
     <>
@@ -179,32 +194,34 @@ const SelectedGame = () => {
           <h2 className="game-name">{textFields[5].value}</h2>
         </div>
       )}
-      <div className="slidershow middle">
-        <div className="slides">
-          {arrayOfImgs?.map((item) => (
-            <input type="radio" name="r" id={item.id} key={item.id} />
-          ))}
-          {arrayOfImgs?.map((item, index) => {
-            if (index === 0) {
+      {arrayOfImgs.length && (
+        <div className="slidershow middle">
+          <div className="slides">
+            {arrayOfImgs?.map((item) => (
+              <input type="radio" name="r" id={item.id} key={item.id} />
+            ))}
+            {arrayOfImgs?.map((item, index) => {
+              if (index === 0) {
+                return (
+                  <div className="slide s1" key={item.id}>
+                    <Image cloudName="dgefehkt9" publicId={item.imgId} width="300" crop="scale" />
+                  </div>
+                );
+              }
               return (
-                <div className="slide s1" key={item.id}>
+                <div className="slide" key={item.id}>
                   <Image cloudName="dgefehkt9" publicId={item.imgId} width="300" crop="scale" />
                 </div>
               );
-            }
-            return (
-              <div className="slide" key={item.id}>
-                <Image cloudName="dgefehkt9" publicId={item.imgId} width="300" crop="scale" />
-              </div>
-            );
-          })}
+            })}
+          </div>
+          <div className="navigation">
+            {arrayOfImgs?.map((item) => (
+              <label htmlFor={item.id} className="bar" key={item.id} />
+            ))}
+          </div>
         </div>
-        <div className="navigation">
-          {arrayOfImgs?.map((item) => (
-            <label htmlFor={item.id} className="bar" key={item.id} />
-          ))}
-        </div>
-      </div>
+      )}
       {errorMsg && <Notification values={{ errorMsg }} />}
       {successMsg && <Notification values={{ successMsg }} />}
       <div className="content-area">
@@ -220,7 +237,7 @@ const SelectedGame = () => {
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
             <h2 className="buy-game__title">Digital Copy</h2>
-            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {price}$</h2>}
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isDigital && (
               <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Digital")}>
                 Add to basket
@@ -234,7 +251,7 @@ const SelectedGame = () => {
           </div>
           <div className="buy-game__physical-copy">
             <h2 className="buy-game__title">Physical Copy</h2>
-            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {price}$</h2>}
+            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isPhysical && (
               <button className="buy-game__button" onClick={handleOpenModal}>
                 Add to basket

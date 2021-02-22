@@ -12,17 +12,17 @@ cloudinary.config({
   api_secret: config.get("api_secret"),
 });
 
-// router.use(async (req, res, next) => {
-//   try {
-//     const userId = req.body.userId || req.query.userId;
-//     const user = await User.findById(userId);
-//     user.isAdmin
-//       ? next()
-//       : res.status(400).json({ message: "Access is blocked. Functionality are available only to the admin!" });
-//   } catch (e) {
-//     res.status(500).json({ message: "Something wrong, try again later..." });
-//   }
-// });
+router.use(async (req, res, next) => {
+  try {
+    const userId = req.body.userId || req.query.userId;
+    const user = await User.findById(userId);
+    user.isAdmin
+      ? next()
+      : res.status(400).json({ message: "Access is blocked. Functionality are available only to the admin!" });
+  } catch (e) {
+    res.status(500).json({ message: "Something wrong, try again later..." });
+  }
+});
 
 // Games
 router.post("/create-game", async (req, res) => {
@@ -60,6 +60,8 @@ router.post("/create-game", async (req, res) => {
       isDigital,
       numberOfPhysicalCopies,
       discount,
+      plannedDiscount: 0,
+      imgSource: [],
     });
     await newGame.save();
 
@@ -67,7 +69,7 @@ router.post("/create-game", async (req, res) => {
       message: "Game has been added successfully",
       game: {
         id: newGame._id,
-        name: newGame.gameName,
+        gameName: newGame.gameName,
         author: newGame.author,
         genre: newGame.genre,
         price: newGame.price,
@@ -79,6 +81,8 @@ router.post("/create-game", async (req, res) => {
         isDigital: newGame.isDigital,
         numberOfPhysicalCopies: newGame.numberOfPhysicalCopies,
         discount: newGame.discount,
+        plannedDiscount: newGame.plannedDiscount,
+        imgSource: newGame.imgSource,
       },
     });
   } catch (e) {
@@ -100,7 +104,10 @@ router.put("/:id", async (req, res) => {
       isDigital,
       numberOfPhysicalCopies,
       discount,
-      imgSource
+      imgSource,
+      plannedDiscount,
+      plannedDiscountStartsOn,
+      plannedDiscountEndsOn,
     } = req.body;
     await Game.findOneAndUpdate(
       { _id: req.params.id },
@@ -116,7 +123,10 @@ router.put("/:id", async (req, res) => {
         isDigital,
         numberOfPhysicalCopies,
         discount,
-        imgSource
+        imgSource,
+        plannedDiscount,
+        plannedDiscountStartsOn,
+        plannedDiscountEndsOn,
       }
     );
     res.status(200).json({ message: "Game has been edited successfully" });
@@ -134,7 +144,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.post("/upload-game-images", async (req, res) => {
+router.post("/upload-image", async (req, res) => {
   try {
     const { fileStr } = req.body;
     const uploadResponse = await cloudinary.uploader.upload(fileStr, {
@@ -263,7 +273,7 @@ router.post("/create-game-author", async (req, res) => {
 
 router.put("/edit-game-author-info/:id", async (req, res) => {
   try {
-    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany } = req.body;
+    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany, authorLogo } = req.body;
     await GameAuthor.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -271,6 +281,7 @@ router.put("/edit-game-author-info/:id", async (req, res) => {
         authorDescription,
         authorsGames,
         yearOfFoundationOfTheCompany,
+        authorLogo,
       }
     );
     res.status(200).json({ message: "Author info has been edited successfully" });
