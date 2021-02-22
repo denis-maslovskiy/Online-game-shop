@@ -1,6 +1,7 @@
 import axios from "axios";
-import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME, GAME_FILTER, GAME_SORT, SET_GAME_DATA, CLEAR_GAME_DATA } from "./gamesTypes";
-import { successMessage, errorMessage, infoMessage } from "../notification/notificationActions";
+import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME, GAME_FILTER, GAME_SORT } from "./gamesTypes";
+import { successMessage, errorMessage, infoMessage, clearSuccessMessage } from "../notification/notificationActions";
+import { updateGameAuthorArray } from "../gameAuthor/gameAuthorActions";
 
 export const setSortedArray = (array) => {
   return {
@@ -23,13 +24,6 @@ export const setAllGames = (games) => {
   };
 };
 
-export const setGameData = (game) => {
-  return {
-    type: SET_GAME_DATA,
-    payload: game
-  }
-}
-
 export const updateGameArray = (updatedGame) => {
   return {
     type: UPDATE_GAME_ARRAY,
@@ -44,20 +38,47 @@ export const updateGameArrayAfterDeletingTheGame = (deletedGame) => {
   };
 };
 
-export const clearGameData = () => { 
-  return {
-    type: CLEAR_GAME_DATA
-  }
-}
-
-let tempImageArray = [];
-
-export const addGame = (newGame) => {
+export const addGame = (newGame, selectedFiles, userId) => {
   return async (dispatch) => {
     try {
-      tempImageArray = [];
-      const response = await axios.post("/api/admin/create-game", { ...newGame });
-      dispatch(successMessage(response.data.message));
+      const {
+        data: { message, game },
+      } = await axios.post("/api/admin/create-game", { ...newGame, userId });
+      dispatch(successMessage(message));
+
+      // Checking the existence of the author
+      let isAuthorAlreadyExist = false;
+      const { data } = await axios.get("/api/game-author/get-all-game-authors");
+      data.forEach(async (author) => {
+        if (author.authorName === newGame.author) {
+          isAuthorAlreadyExist = true;
+          author.authorsGames.push(newGame);
+          await axios.put(`/api/admin/edit-game-author-info/${author._id}`, { ...author, userId });
+          dispatch(updateGameAuthorArray(author));
+        }
+      });
+
+      if (!isAuthorAlreadyExist) {
+        const newAuthor = {
+          authorName: newGame.author,
+          authorsGames: [newGame],
+        };
+        await axios.post("/api/admin/create-game-author", { ...newAuthor, userId });
+      }
+
+      // Image upload
+      selectedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = async () => {
+          const fileStr = reader.result;
+          const {
+            data: { uploadResponse },
+          } = await axios.post("/api/admin/upload-image", { fileStr, userId });
+          game.imgSource.push(uploadResponse.public_id);
+          await axios.put(`/api/admin/${game.id}`, { ...game, userId });
+        };
+      });
     } catch (e) {
       console.log(e);
       dispatch(errorMessage(e.response.data.message));
@@ -74,19 +95,6 @@ export const getAllGames = () => {
       console.log(e.response.data.message);
     }
   };
-};
-
-export const getGameInfo = (gameId) => {
-  return async (dispatch) => {
-    try {
-      console.log('test');
-      const {data} = await axios.get(`/api/games/${gameId}`);
-      console.log('redux data: ', data);
-      dispatch(setGameData(data));
-    } catch (e) {
-      console.log(e.response.data.message);
-    }
-  }
 };
 
 export const updateGameData = (gameId, game) => {
@@ -130,27 +138,25 @@ export const deleteGame = (gameId, userId) => {
   };
 };
 
-export const uploadGameImages = (fileStr, gameName, userId) => {
-  return async () => {
+export const adminUploadGameImagesWhenEditingGame = (selectedFiles, gameId, userId) => {
+  return async (dispatch) => {
     try {
-      let createdGame = null;
+      const { data } = await axios.get(`/api/games/${gameId}`);
 
-      const { data } = await axios.get("/api/games/get-all-games");
-      data.forEach((game) => {
-        if (game.gameName === gameName) {
-          return (createdGame = game);
-        }
+      selectedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = async () => {
+          const fileStr = reader.result;
+          const {
+            data: { uploadResponse },
+          } = await axios.post("/api/admin/upload-image", { fileStr, userId });
+          data.imgSource.push(uploadResponse.public_id);
+          await axios.put(`/api/admin/${gameId}`, { ...data, userId });
+          dispatch(clearSuccessMessage());
+          dispatch(successMessage(`Image "${file.name}" uploaded successfully`));
+        };
       });
-      const {
-        data: { uploadResponse },
-      } = await axios.post("/api/admin/upload-game-images", { fileStr });
-
-      if (!tempImageArray.includes(uploadResponse.public_id)) {
-        tempImageArray.push(uploadResponse.public_id);
-        createdGame.imgSource = tempImageArray;
-      }
-
-      await axios.put(`/api/admin/${createdGame._id}`, { ...createdGame, userId });
     } catch (e) {
       console.log(e);
     }
