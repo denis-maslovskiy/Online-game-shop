@@ -2,7 +2,7 @@
 // TODO: Сделать кнопку недоступной до тех пор, пока все поля не буду заполнены
 // TODO: Игра добавляется, если чекбоксы isPhysical/isDigital оба пустые
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
@@ -10,8 +10,8 @@ import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { Form, Formik, FormikErrors, FormikTouched } from "formik";
-import { addGame, uploadGameImages } from "../../redux/games/gamesActions";
-import { getAllAuthors, adminUpdateGameAuthorData, adminAddAuthor } from "../../redux/gameAuthor/gameAuthorActions";
+import { addGame } from "../../redux/games/gamesActions";
+import { errorMessage } from "../../redux/notification/notificationActions";
 import Notification from "../../components/Notification";
 import "./adminaddgame.scss";
 
@@ -87,92 +87,58 @@ interface Game {
   discount: number;
 }
 
-interface Author {
-  authorName: string;
-  authorDescription: string;
-  authorsGames: Array<Game>;
-  yearOfFoundationOfTheCompany: Date;
-  _id: string;
-}
-
 const AdminAddGame: React.FC = () => {
+  const [fileInputState, setFileInputState] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<Array<File>>([]);
+  const [previews, setPreviews] = useState<Array<object>>([]);
+  const maxNumberOfImages = 6;
+
   const dispatch = useDispatch();
+
   const { successMsg, errorMsg } = useSelector((state: RootState) => state.notification);
-  const { allGameAuthors } = useSelector((state: RootState) => state.gameAuthor);
+
   const numericalInputs = ["numberOfPhysicalCopies", "price"];
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
-  useEffect(() => {
-    dispatch(getAllAuthors());
-  }, []);
-
-  const checkingTheExistenceOfTheAuthor = (game: Game) => {
-    let isAuthorAlreadyExist = false;
-    allGameAuthors.forEach((author: Author) => {
-      if (author.authorName === game.author) {
-        author.authorsGames.push(game);
-        dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
-        isAuthorAlreadyExist = true;
+  const handleFileInputChange = (e: any) => {
+    try {
+      const files = e.target.files;
+      if (files.length > maxNumberOfImages) {
+        setPreviews([]);
+        setFileInputState("");
+        throw new RangeError(`The maximum number of images is ${maxNumberOfImages}`);
       }
+      setFileInputState(e.target.value);
+
+      // File preview
+      const fileList: Array<File> = Array.from(e.target.files);
+      const mappedFiles = fileList.map((file: any) => ({
+        ...file,
+        preview: URL.createObjectURL(file),
+      }));
+      setPreviews(mappedFiles);
+      setSelectedFiles(fileList);
+    } catch (e) {
+      dispatch(errorMessage(e.message));
+    }
+  };
+
+  const removeImgClickHandler = (srcIdString: string) => {
+    let fileIndexForDelete = maxNumberOfImages + 1;
+    previews.forEach((item: any, index) => {
+      if (item.preview === srcIdString) fileIndexForDelete = index;
     });
-    if (!isAuthorAlreadyExist) {
-      const newAuthor = {
-        authorName: game.author,
-        authorsGames: [game],
-      };
-      dispatch(adminAddAuthor({ ...newAuthor, userId }));
-    }
-  };
+    const updatedPreviewsAfterDeleting = previews;
+    const updatedSelectedFilesAfterDeleting = selectedFiles;
 
-  const [fileInputState, setFileInputState] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [previewSource, setPreviewSource] = useState([]);
+    updatedPreviewsAfterDeleting.splice(fileIndexForDelete, 1);
+    updatedSelectedFilesAfterDeleting.splice(fileIndexForDelete, 1);
 
-  const handleFileInputChange = (e) => {
-    const files = e.target.files;
-    previewFile(files);
-    setSelectedFiles(files);
-    setFileInputState(e.target.value);
-  };
+    setSelectedFiles(updatedSelectedFilesAfterDeleting);
+    setPreviews(updatedPreviewsAfterDeleting);
 
-  const previewFile = (files) => {
-    const tempArr = [];
-
-    if (files) {
-      for (let key in files) {
-        if (key !== "length" && key !== "item") {
-          const reader = new FileReader();
-          reader.readAsDataURL(files[key]);
-          reader.onloadend = () => {
-            tempArr.push(reader.result);
-            setPreviewSource(tempArr);
-          };
-        }
-      }
-    }
-    
-  };
-
-  useEffect(() => {
-    console.log('test');
-  }, [previewSource.length])
-
-  const submitFilesHandler = (gameName: string, userId: string, e) => {
-    e?.preventDefault();
-
-    if (!selectedFiles.length) return;
-
-    for (let key in selectedFiles) {
-      if (key !== "length" && key !== "item") {
-        const reader = new FileReader();
-        reader.readAsDataURL(selectedFiles[key]);
-        reader.onloadend = () => {
-          setTimeout(() => {
-            dispatch(uploadGameImages(reader.result, gameName, userId));
-          }, 0);
-        };
-      }
-    }
+    document.querySelector(`[src*="${srcIdString}"]`)?.remove();
+    document.querySelector(`[id*="${srcIdString}"]`)?.remove();
   };
 
   return (
@@ -181,21 +147,28 @@ const AdminAddGame: React.FC = () => {
       {errorMsg && <Notification values={{ errorMsg }} />}
       <h2 className="title">Add new game</h2>
 
-      <form id="image-form" onSubmit={submitFilesHandler} style={{ marginLeft: "50%" }}>
-        <input type="file" multiple name="images" onChange={handleFileInputChange} value={fileInputState} />
+      <form style={{ marginLeft: "50%" }}>
+        <input type="file" multiple onChange={handleFileInputChange} value={fileInputState} />
       </form>
 
-      {previewSource &&
-        previewSource.map((file, index) => (
-          <img src={file} alt={`img-${index}`} key={file} style={{ height: "300px" }} />
-        ))}
+      <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+        {previews &&
+          previews.map((file: any) => {
+            return (
+              <div key={file.preview}>
+                <button id={file.preview} onClick={() => removeImgClickHandler(file.preview)}>
+                  &times;
+                </button>
+                <img src={file.preview} style={{ width: "300px" }} />
+              </div>
+            );
+          })}
+      </div>
 
       <Formik
         initialValues={initialValues}
         onSubmit={(values, { resetForm }) => {
-          dispatch(addGame({ ...values, userId }));
-          checkingTheExistenceOfTheAuthor(values);
-          submitFilesHandler(values.gameName, userId);
+          dispatch(addGame({ ...values }, selectedFiles, userId));
         }}
         validationSchema={validationSchema}
         enableReinitialize={true}
