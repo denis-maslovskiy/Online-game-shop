@@ -109,11 +109,9 @@ const AdminEditAchievement: React.FC = () => {
     dispatch(getAllAchievements());
   }, []);
 
-  const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
-    // @ts-ignore
+  const selectHandleChange = (event: any) => {
     const achievementId = event.target.value;
-    // @ts-ignore
-    const achievementData = allAchievements.find((achieve) => {
+    const achievementData = allAchievements.find((achieve: FormValues) => {
       return achieve._id === achievementId;
     });
 
