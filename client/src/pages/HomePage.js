@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Image } from "cloudinary-react";
 import { useDispatch, useSelector } from "react-redux";
-import image from "../img/3.jpg";
-import { getAllGames, clearGameData } from "../redux/games/gamesActions";
+import noImageAvailable from "../img/no-image-available.jpg";
+import { getAllGames } from "../redux/games/gamesActions";
 import { getAllAuthors } from "../redux/gameAuthor/gameAuthorActions";
 import "../styles/content.scss";
 
@@ -25,10 +26,6 @@ const HomePage = () => {
     );
   }
 
-  const linkClickHandler = (gameId) => {
-    dispatch(clearGameData())
-  }
-
   return (
     <main className="container">
       {filteredGames.length && filteredGames[0] !== "No matches found." ? (
@@ -36,9 +33,22 @@ const HomePage = () => {
           {filteredGames &&
             filteredGames.map((game) => (
               <button className="content__card-btn" key={game._id}>
-                <Link to={`/selected-game/${game._id}`} className="link" onClick={linkClickHandler}>
+                <Link to={`/selected-game/${game._id}`} className="link">
                   <div className="link__card card">
-                    <img src={image} className="card__picture" alt={game.gameName} />
+                    {game.imgSource.length ? (
+                      <Image
+                        cloudName="dgefehkt9"
+                        publicId={game.imgSource[0]}
+                        className="card__picture"
+                        alt={game.gameName + " image"}
+                      />
+                    ) : (
+                      <img
+                        src={noImageAvailable}
+                        className="card__picture"
+                        alt={"No available image for " + game.gameName}
+                      />
+                    )}
                     <div className="card_description">
                       <h2>{game.gameName}</h2>
                       <h3>{game.genre}</h3>
@@ -57,7 +67,20 @@ const HomePage = () => {
               <button className="content__card-btn" key={game._id}>
                 <Link to={`/selected-game/${game._id}`} className="link">
                   <div className="link__card card">
-                    <img src={image} className="card__picture" alt={game.gameName} />
+                    {game.imgSource.length ? (
+                      <Image
+                        cloudName="dgefehkt9"
+                        publicId={game.imgSource[0]}
+                        className="card__picture"
+                        alt={game.gameName + " image"}
+                      />
+                    ) : (
+                      <img
+                        src={noImageAvailable}
+                        className="card__picture"
+                        alt={"No available image for " + game.gameName}
+                      />
+                    )}
                     <div className="card_description">
                       <h2>{game.gameName}</h2>
                       <h3>{game.genre}</h3>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Image } from "cloudinary-react";
 import { useDispatch, useSelector } from "react-redux";
 import ClearIcon from "@material-ui/icons/Clear";
 import Notification from "../components/Notification";
@@ -6,7 +7,7 @@ import { getUserData, removeGameFromBasket, purchaseGame } from "../redux/user/u
 import { clearInfoMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
-import image from "../img/3.jpg";
+import noImageAvailable from "../img/no-image-available.jpg";
 import "../styles/basket.scss";
 
 const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
@@ -41,7 +42,16 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
       {itemsInBasket.map((item) => {
         return (
           <div className="order__game game" key={item.dateAddedToBasket}>
-            <img className="game__picture" src={image} alt={item.gameName} />
+            {item?.imgSource?.length ? (
+              <Image
+                cloudName="dgefehkt9"
+                publicId={item.imgSource[0]}
+                className="card__picture"
+                alt={item.gameName + " image"}
+              />
+            ) : (
+              <img src={noImageAvailable} className="card__picture" alt={"No available image for " + item.gameName} />
+            )}
             <div className="game__text">
               <span>{item.gameName}</span>
               <span>{item.price} $</span>
