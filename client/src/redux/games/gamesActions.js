@@ -80,7 +80,6 @@ export const addGame = (newGame, selectedFiles, userId) => {
         };
       });
     } catch (e) {
-      console.log(e);
       dispatch(errorMessage(e.response.data.message));
     }
   };
@@ -117,7 +116,6 @@ export const adminUpdateGameData = (gameId, game) => {
       dispatch(updateGameArray(game));
       dispatch(successMessage(message));
     } catch (e) {
-      console.log(e);
       dispatch(errorMessage(e.response.data.message));
     }
   };
@@ -132,7 +130,6 @@ export const deleteGame = (gameId, userId) => {
       dispatch(updateGameArrayAfterDeletingTheGame(gameId));
       dispatch(infoMessage(message));
     } catch (e) {
-      console.log(e);
       dispatch(errorMessage(e.response.data.message));
     }
   };
