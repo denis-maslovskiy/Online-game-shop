@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps } from "formik";
+// @ts-ignore
+import { Image } from "cloudinary-react";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -10,13 +12,19 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { adminUpdateGameData, getAllGames, deleteGame } from "../../redux/games/gamesActions";
+import {
+  adminUpdateGameData,
+  getAllGames,
+  deleteGame,
+  adminUploadGameImagesWhenEditingGame,
+} from "../../redux/games/gamesActions";
 import {
   getAllAuthors,
   adminUpdateGameAuthorData,
   adminDeleteGameAuthor,
   adminAddAuthor,
 } from "../../redux/gameAuthor/gameAuthorActions";
+import { errorMessage } from "../../redux/notification/notificationActions";
 import Notification from "../../components/Notification";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
@@ -33,6 +41,7 @@ interface FormValues {
   isDigital: boolean;
   _id: string;
   discount: number;
+  imgSource: Array<string>;
 }
 
 interface Game {
@@ -108,10 +117,17 @@ const initialEmptyForm = {
   isDigital: false,
   _id: "",
   discount: 0,
+  imgSource: [],
 };
 
 const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthors, userId }: IProps) => {
+  const [fileInputState, setFileInputState] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<Array<File>>([]);
+  const [previews, setPreviews] = useState<Array<object>>([]);
+
   const dispatch = useDispatch();
+
+  const maxNumberOfImages = 6;
 
   const updateGameInAuthorsArray = (game: Game) => {
     let previousAuthor: Author = {
@@ -135,13 +151,13 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
       if (author.authorName === game.author) {
         if (previousAuthor.authorName !== game.author) {
           author.authorsGames.push(game); // Add a game to a new author
-          dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+          dispatch(adminUpdateGameAuthorData(author._id, { ...author }, userId));
 
           previousAuthor.authorsGames.forEach((prevAuthorGame, index) => {
             if (prevAuthorGame.gameName === game.gameName) {
               previousAuthor.authorsGames.splice(index, 1); // Delete the game from the previous author
               if (previousAuthor.authorsGames.length) {
-                return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor, userId }));
+                return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor }, userId));
               } else {
                 return dispatch(adminDeleteGameAuthor(previousAuthor._id, { userId }));
               }
@@ -151,11 +167,10 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
           author.authorsGames.forEach((item, index) => {
             if (item.gameName === game.gameName) {
               author.authorsGames[index] = game;
-              return dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+              return dispatch(adminUpdateGameAuthorData(author._id, { ...author }, userId));
             }
           });
         }
-
         isAuthorAlreadyExist = true;
       }
     });
@@ -165,7 +180,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
         if (prevAuthorGame.gameName === game.gameName) {
           previousAuthor.authorsGames.splice(index, 1); // Delete the game from the previous author
           if (previousAuthor.authorsGames.length) {
-            return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor, userId }));
+            return dispatch(adminUpdateGameAuthorData(previousAuthor._id, { ...previousAuthor }, userId));
           } else {
             return dispatch(adminDeleteGameAuthor(previousAuthor._id, { userId }));
           }
@@ -180,9 +195,111 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
     }
   };
 
+  const handleFileInputChange = (e: any) => {
+    try {
+      const files = e.target.files;
+      if (initialGameData?.imgSource.length + files.length > maxNumberOfImages) {
+        setFileInputState("");
+        setPreviews([]);
+        throw new RangeError(
+          `The maximum number of images is ${maxNumberOfImages}. You already have ${initialGameData?.imgSource.length}`
+        );
+      }
+      setFileInputState(e.target.value);
+
+      // File preview
+      const fileList: Array<File> = Array.from(e.target.files);
+      const mappedFiles = fileList.map((file: any) => ({
+        ...file,
+        preview: URL.createObjectURL(file),
+      }));
+      setPreviews(mappedFiles);
+      setSelectedFiles(fileList);
+    } catch (e) {
+      dispatch(errorMessage(e.message));
+    }
+  };
+
+  const removeImgClickHandler = (imgId: string) => {
+    const index = initialGameData?.imgSource.indexOf(imgId, 0);
+    initialGameData?.imgSource.splice(index, 1);
+    document.querySelector(`[src*="${imgId}"]`)?.remove();
+    document.querySelector(`[id*="${imgId}"]`)?.remove();
+    dispatch(adminUpdateGameData(initialGameData._id, { ...initialGameData, userId }));
+  };
+
+  const removePreviewImgClickHandler = (srcIdString: string) => {
+    let fileIndexForDelete = maxNumberOfImages + 1;
+    previews.forEach((file: any, index) => {
+      if (file.preview === srcIdString) fileIndexForDelete = index;
+    });
+    const updatedPreviewsAfterDeleting = previews;
+    const updatedSelectedFilesAfterDeleting = selectedFiles;
+
+    updatedPreviewsAfterDeleting.splice(fileIndexForDelete, 1);
+    updatedSelectedFilesAfterDeleting.splice(fileIndexForDelete, 1);
+
+    setSelectedFiles(updatedSelectedFilesAfterDeleting);
+    setPreviews(updatedPreviewsAfterDeleting);
+
+    document.querySelector(`[src*="${srcIdString}"]`)?.remove();
+    document.querySelector(`[id*="${srcIdString}"]`)?.remove();
+  };
+
+  const submitFilesHandler = (e: React.SyntheticEvent) => {
+    e?.preventDefault();
+    if (!selectedFiles.length) return;
+    dispatch(adminUploadGameImagesWhenEditingGame(selectedFiles, initialGameData._id, userId));
+  };
+
   return (
     <>
       <h2 className="title">Edit Game</h2>
+      <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+        {initialGameData?.imgSource?.map((imgId) => (
+          <div key={imgId}>
+            <button
+              id={imgId}
+              onClick={() => removeImgClickHandler(imgId)}
+              style={{ position: "relative", bottom: "80%", left: "12%" }}
+            >
+              &times;
+            </button>
+            <Image cloudName="dgefehkt9" publicId={imgId} width="200" />
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+        <h3>New images</h3>
+        {previews &&
+          previews.map((file: any) => {
+            return (
+              <div key={file.preview}>
+                <button id={file.preview} onClick={() => removePreviewImgClickHandler(file.preview)}>
+                  &times;
+                </button>
+                <img src={file.preview} style={{ width: "300px" }} />
+              </div>
+            );
+          })}
+      </div>
+
+      <form id="image-form" onSubmit={submitFilesHandler} style={{ marginLeft: "50%" }}>
+        <input
+          id="input-test"
+          type="file"
+          multiple
+          name="images"
+          onChange={handleFileInputChange}
+          value={fileInputState}
+          disabled={!Boolean(initialGameData.gameName)}
+        />
+        <button type="submit" disabled={!Boolean(initialGameData.gameName)}>
+          Upload new images
+        </button>
+      </form>
+
       <Formik
         initialValues={{
           gameName: initialGameData.gameName,
@@ -196,9 +313,9 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
           isDigital: initialGameData.isDigital,
           _id: initialGameData._id,
           discount: initialGameData.discount,
+          imgSource: initialGameData.imgSource,
         }}
         onSubmit={(values) => {
-          const { userId } = JSON.parse(localStorage.getItem("userData")!);
           dispatch(adminUpdateGameData(values._id, { ...values, userId }));
           updateGameInAuthorsArray(values);
         }}
@@ -216,6 +333,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                         // @ts-ignore
                         control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
                         label={input.label}
+                        disabled={!Boolean(initialGameData.gameName)}
                       />
                     )}
                   </Field>
@@ -238,13 +356,19 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 <Field key={input.name} name={input.name}>
                   {({ field }: FieldProps<FormValues>) => (
                     <div className="form__div">
-                      <TextField {...field} required label={input.label} variant="outlined" />
+                      <TextField
+                        {...field}
+                        required
+                        label={input.label}
+                        variant="outlined"
+                        disabled={!Boolean(initialGameData.gameName)}
+                      />
                     </div>
                   )}
                 </Field>
               );
             })}
-            <button type="submit" className="add-game-button">
+            <button type="submit" className="add-game-button" disabled={!Boolean(initialGameData.gameName)}>
               Save changes
             </button>
             <button type="button" className="delete-game-button" onClick={() => deleteGameClickHandler(values._id)}>
@@ -296,7 +420,7 @@ const AdminEditGame: React.FC = () => {
           if (!author.authorsGames.length) {
             dispatch(adminDeleteGameAuthor(author._id, { userId }));
           } else {
-            dispatch(adminUpdateGameAuthorData(author._id, { ...author, userId }));
+            dispatch(adminUpdateGameAuthorData(author._id, { ...author }, userId));
           }
         }
       });
