@@ -5,6 +5,8 @@ import { RootState } from "../../redux/rootReducer";
 import "react-datepicker/dist/react-datepicker.css";
 import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps, FormikErrors, FormikTouched } from "formik";
+// @ts-ignore
+import { Image } from "cloudinary-react";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -19,6 +21,7 @@ interface FormValues {
   authorsGames: Array<Game>;
   yearOfFoundationOfTheCompany: Date;
   _id: string;
+  authorLogo: string;
 }
 
 interface IProps {
@@ -44,6 +47,7 @@ interface Author {
   authorDescription: string;
   authorsGames: Array<Game>;
   yearOfFoundationOfTheCompany: Date;
+  authorLogo: string;
   _id: string;
 }
 
@@ -70,27 +74,76 @@ const initialEmptyForm = {
   authorDescription: "",
   authorsGames: [],
   yearOfFoundationOfTheCompany: new Date(),
+  authorLogo: "",
   _id: "",
 };
 
 const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
   const dispatch = useDispatch();
+  const [fileInputState, setFileInputState] = useState("");
+  const [selectedFile, setSelectedFile] = useState<Blob>();
+  const [previewSource, setPreviewSource] = useState<string | ArrayBuffer | null>("");
+
+  const { userId } = JSON.parse(localStorage.getItem("userData")!);
+
+  useEffect(() => {
+    setPreviewSource("");
+    setFileInputState("");
+    setSelectedFile(undefined);
+  }, [initialGameAuthorData]);
+
+  const handleFileInputChange = (e: any) => {
+    const file = e.target.files[0];
+    previewFile(file);
+    setSelectedFile(file);
+    setFileInputState(e.target.value);
+  };
+
+  const previewFile = (file: File) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewSource(reader.result);
+    };
+  };
 
   return (
     <>
       <h2>Edit Game Author</h2>
+      <div>
+        <form style={{ marginLeft: "50%" }}>
+          <input
+            type="file"
+            onChange={handleFileInputChange}
+            value={fileInputState}
+            disabled={!Boolean(initialGameAuthorData.authorName)}
+          />
+        </form>
+
+        {previewSource ? (
+          // @ts-ignore
+          <img src={previewSource} alt="chosen" style={{ width: "300px", marginLeft: "50%" }} />
+        ) : initialGameAuthorData.authorLogo ? (
+          <Image
+            cloudName="dgefehkt9"
+            publicId={initialGameAuthorData.authorLogo}
+            width="300"
+            style={{ marginLeft: "50%" }}
+          />
+        ) : undefined}
+      </div>
+
       <Formik
         initialValues={{
           authorDescription: initialGameAuthorData.authorDescription,
           yearOfFoundationOfTheCompany: initialGameAuthorData.yearOfFoundationOfTheCompany,
           authorName: initialGameAuthorData.authorName,
           authorsGames: initialGameAuthorData.authorsGames,
+          authorLogo: initialGameAuthorData.authorLogo,
           _id: initialGameAuthorData._id,
         }}
         onSubmit={(values) => {
-          const { userId } = JSON.parse(localStorage.getItem("userData")!);
-          console.log(values, values.yearOfFoundationOfTheCompany);
-          dispatch(adminUpdateGameAuthorData(values._id, { ...values, userId }));
+          dispatch(adminUpdateGameAuthorData(values._id, { ...values }, userId, selectedFile));
         }}
         enableReinitialize={true}
         validationSchema={validationSchema}
@@ -142,13 +195,11 @@ const AdminEditGameAuthor: React.FC = () => {
     dispatch(getAllAuthors());
   }, []);
 
-  const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
-    // @ts-ignore
-    const authorId = event.target.value;
+  const selectHandleChange = (e: { target: HTMLInputElement }) => {
+    const authorId = e.target.value;
     const gameAuthorData = allGameAuthors.find((author: Author) => {
       return author._id === authorId;
     });
-
     setInitialGameAuthorData(gameAuthorData);
   };
 
