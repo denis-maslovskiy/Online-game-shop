@@ -1,22 +1,27 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Image } from "cloudinary-react";
 import { getSelectedGameAuthor } from "../redux/gameAuthor/gameAuthorActions";
 import { getAllGames } from "../redux/games/gamesActions";
+import { DependenciesContext } from "../context/DependenciesContext";
 
 const SelectedGameAuthor = () => {
   const dispatch = useDispatch();
-  const hrefSplittedArray = window.location.href.split("/");
-  const gameAuthorId = hrefSplittedArray[hrefSplittedArray.length - 1];
 
   useEffect(() => {
     dispatch(getSelectedGameAuthor(gameAuthorId));
     dispatch(getAllGames());
   }, []);
 
+  const { cloudName } = useContext(DependenciesContext);
+  const location = useLocation();
+
   const { selectedGameAuthor } = useSelector((state) => state.gameAuthor);
   const { allGames } = useSelector((state) => state.games);
+
+  const locationSplittedArray = location.pathname.split("/");
+  const gameAuthorId = locationSplittedArray[locationSplittedArray.length - 1];
 
   const getGameId = (gameName, gameId) => {
     if (gameId) {
@@ -35,7 +40,7 @@ const SelectedGameAuthor = () => {
   return (
     <>
       {selectedGameAuthor?.authorLogo && (
-        <Image cloudName="dgefehkt9" publicId={selectedGameAuthor?.authorLogo} width="300" />
+        <Image cloudName={cloudName} publicId={selectedGameAuthor?.authorLogo} width="300" />
       )}
       {selectedGameAuthor?.authorsGames?.length &&
         selectedGameAuthor?.authorsGames?.map((game) => {
