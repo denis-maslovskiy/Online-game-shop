@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import Notification from "../components/Notification";
-import { useAuth } from "../hooks/authHook";
 import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { loginUser } from "../redux/authentication/authenticationActions";
+import { DependenciesContext } from "../context/DependenciesContext";
 import "../styles/auth.scss";
 
 const CustomTextInput = ({ label, ...props }) => {
@@ -26,7 +26,7 @@ const Authorization = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { loginUser, clearErrorMessage, errorMsg } = props;
   const history = useHistory();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useContext(DependenciesContext);
 
   const onInputClickHandler = () => {
     clearErrorMessage();
@@ -40,10 +40,10 @@ const Authorization = (props) => {
   };
 
   useEffect(() => {
-    if(isAuthenticated){
+    if (isAuthenticated) {
       history.push("/");
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
   return (
     <>
@@ -54,12 +54,8 @@ const Authorization = (props) => {
           password: "",
         }}
         validationSchema={Yup.object({
-          email: Yup.string()
-            .email("Invalid email address")
-            .required("Required"),
-          password: Yup.string()
-            .min(6, "Must be at least 6 characters")
-            .required("Required"),
+          email: Yup.string().email("Invalid email address").required("Required"),
+          password: Yup.string().min(6, "Must be at least 6 characters").required("Required"),
         })}
         onSubmit={submit}
       >

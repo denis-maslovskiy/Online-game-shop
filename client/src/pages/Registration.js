@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Formik, useField, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
-import { useAuth } from '../hooks/authHook';
 import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { registerUser } from "../redux/authentication/authenticationActions";
 import Notification from "../components/Notification";
+import { DependenciesContext } from "../context/DependenciesContext";
 import "../styles/auth.scss";
 import "../styles/notification.scss";
+
+const schema = Yup.object({
+  username: Yup.string()
+    .min(3, "Must be at least 3 characters")
+    .max(15, "Must be no more than 15 characters")
+    .required("Required"),
+  email: Yup.string().email("Invalid email address").required("Required"),
+  password: Yup.string().min(6, "Must be at least 6 characters").required("Required"),
+});
 
 const CustomTextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -26,20 +35,9 @@ const CustomTextInput = ({ label, ...props }) => {
 const Registration = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const history = useHistory();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useContext(DependenciesContext);
 
   const { errorMsg, successMsg, registerUser, clearErrorMessage } = props;
-
-  const schema = Yup.object({
-    username: Yup.string()
-      .min(3, "Must be at least 3 characters")
-      .max(15, "Must be no more than 15 characters")
-      .required("Required"),
-    email: Yup.string().email("Invalid email address").required("Required"),
-    password: Yup.string()
-      .min(6, "Must be at least 6 characters")
-      .required("Required"),
-  });
 
   const onInputClickHandler = () => {
     clearErrorMessage();
@@ -52,19 +50,15 @@ const Registration = (props) => {
     setSubmitting(false);
   };
 
-  if(isAuthenticated) {
-    history.push('/');
+  if (isAuthenticated) {
+    history.push("/");
     return null;
   }
 
   return (
     <>
-      {isSubmitting && errorMsg && (
-        <Notification values={{ successMsg, errorMsg }} />
-      )}
-      {isSubmitting && successMsg && (
-        <Notification values={{ successMsg, errorMsg }} />
-      )}
+      {isSubmitting && errorMsg && <Notification values={{ successMsg, errorMsg }} />}
+      {isSubmitting && successMsg && <Notification values={{ successMsg, errorMsg }} />}
       <Formik
         initialValues={{
           username: "",
