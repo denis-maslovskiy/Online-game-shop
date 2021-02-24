@@ -21,13 +21,10 @@ router.post(
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        return (
-          res,
-          status(400).json({
-            errors: errors.array(),
-            message: "Incorrect data during registration.",
-          })
-        );
+        return res.status(400).json({
+          errors: errors.array(),
+          message: "Incorrect data during registration.",
+        });
       }
 
       const { username, email, password } = req.body;
