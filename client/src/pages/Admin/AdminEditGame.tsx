@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 import * as Yup from "yup";
@@ -25,6 +25,7 @@ import {
   adminAddAuthor,
 } from "../../redux/gameAuthor/gameAuthorActions";
 import { errorMessage } from "../../redux/notification/notificationActions";
+import { DependenciesContext } from "../../context/DependenciesContext";
 import Notification from "../../components/Notification";
 import "./admineditgame.scss";
 import "./adminaddgame.scss";
@@ -126,7 +127,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
   const [previews, setPreviews] = useState<Array<object>>([]);
 
   const dispatch = useDispatch();
-
+  const { cloudName } = useContext(DependenciesContext);
   const maxNumberOfImages = 6;
 
   const updateGameInAuthorsArray = (game: Game) => {
@@ -195,10 +196,10 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
     }
   };
 
-  const handleFileInputChange = (e: any) => {
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const files = e.target.files;
-      if (initialGameData?.imgSource.length + files.length > maxNumberOfImages) {
+      const files = e.target!.files;
+      if (initialGameData?.imgSource.length + files!.length > maxNumberOfImages) {
         setFileInputState("");
         setPreviews([]);
         throw new RangeError(
@@ -208,7 +209,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
       setFileInputState(e.target.value);
 
       // File preview
-      const fileList: Array<File> = Array.from(e.target.files);
+      const fileList: Array<File> = Array.from(files!);
       const mappedFiles = fileList.map((file: any) => ({
         ...file,
         preview: URL.createObjectURL(file),
@@ -265,7 +266,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
             >
               &times;
             </button>
-            <Image cloudName="dgefehkt9" publicId={imgId} width="200" />
+            <Image cloudName={cloudName} publicId={imgId} width="200" />
           </div>
         ))}
       </div>
@@ -382,12 +383,12 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
 };
 
 const AdminEditGame: React.FC = () => {
+  const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
+
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
   const { successMsg, infoMsg, errorMsg } = useSelector((state: RootState) => state.notification);
   const { allGameAuthors } = useSelector((state: RootState) => state.gameAuthor);
-  const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
-
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {

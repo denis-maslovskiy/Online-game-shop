@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import { RootState } from "../../redux/rootReducer";
@@ -13,6 +13,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { getAllAuthors, adminUpdateGameAuthorData } from "../../redux/gameAuthor/gameAuthorActions";
+import { DependenciesContext } from "../../context/DependenciesContext";
 import Notification from "../../components/Notification";
 
 interface FormValues {
@@ -79,11 +80,12 @@ const initialEmptyForm = {
 };
 
 const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
-  const dispatch = useDispatch();
   const [fileInputState, setFileInputState] = useState("");
   const [selectedFile, setSelectedFile] = useState<Blob>();
   const [previewSource, setPreviewSource] = useState<string | ArrayBuffer | null>("");
 
+  const dispatch = useDispatch();
+  const { cloudName } = useContext(DependenciesContext);
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
@@ -92,8 +94,8 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
     setSelectedFile(undefined);
   }, [initialGameAuthorData]);
 
-  const handleFileInputChange = (e: any) => {
-    const file = e.target.files[0];
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target!.files![0];
     previewFile(file);
     setSelectedFile(file);
     setFileInputState(e.target.value);
@@ -122,15 +124,17 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
 
         {previewSource ? (
           // @ts-ignore
-          <img src={previewSource} alt="chosen" style={{ width: "300px", marginLeft: "50%" }} />
-        ) : initialGameAuthorData.authorLogo ? (
-          <Image
-            cloudName="dgefehkt9"
-            publicId={initialGameAuthorData.authorLogo}
-            width="300"
-            style={{ marginLeft: "50%" }}
-          />
-        ) : undefined}
+          <img src={previewSource} alt="Chosen image" style={{ width: "300px", marginLeft: "50%" }} />
+        ) : (
+          initialGameAuthorData.authorLogo && (
+            <Image
+              cloudName={cloudName}
+              publicId={initialGameAuthorData.authorLogo}
+              width="300"
+              style={{ marginLeft: "50%" }}
+            />
+          )
+        )}
       </div>
 
       <Formik
@@ -186,10 +190,11 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
 };
 
 const AdminEditGameAuthor: React.FC = () => {
+  const [initialGameAuthorData, setInitialGameAuthorData] = useState(initialEmptyForm);
+
   const dispatch = useDispatch();
   const { successMsg, infoMsg, errorMsg } = useSelector((state: RootState) => state.notification);
   const { allGameAuthors } = useSelector((state: RootState) => state.gameAuthor);
-  const [initialGameAuthorData, setInitialGameAuthorData] = useState(initialEmptyForm);
 
   useEffect(() => {
     dispatch(getAllAuthors());

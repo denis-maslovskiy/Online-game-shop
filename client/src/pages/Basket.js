@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Image } from "cloudinary-react";
 import { useDispatch, useSelector } from "react-redux";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -6,16 +6,17 @@ import Notification from "../components/Notification";
 import { getUserData, removeGameFromBasket, purchaseGame } from "../redux/user/userActions";
 import { clearInfoMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { updateGameData } from "../redux/games/gamesActions";
+import { DependenciesContext } from "../context/DependenciesContext";
 import { getGameInfo } from "../helpers/gameHelpers";
 import noImageAvailable from "../img/no-image-available.jpg";
 import "../styles/basket.scss";
 
 const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
-  const fifteenMinutes = 900000;
-  const oneMinute = 60000;
-
   const [minutes, setMinutes] = useState();
   const [seconds, setSeconds] = useState();
+
+  const fifteenMinutes = 900000;
+  const oneMinute = 60000;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,6 +38,7 @@ const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
 };
 
 const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
+  const { cloudName } = useContext(DependenciesContext);
   return (
     <>
       {itemsInBasket.map((item) => {
@@ -44,13 +46,13 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
           <div className="order__game game" key={item.dateAddedToBasket}>
             {item?.imgSource?.length ? (
               <Image
-                cloudName="dgefehkt9"
+                cloudName={cloudName}
                 publicId={item.imgSource[0]}
                 className="card__picture"
-                alt={item.gameName + " image"}
+                alt={`${item.gameName} image`}
               />
             ) : (
-              <img src={noImageAvailable} className="card__picture" alt={"No available image for " + item.gameName} />
+              <img src={noImageAvailable} className="card__picture" alt={`No available image for ${item.gameName}`} />
             )}
             <div className="game__text">
               <span>{item.gameName}</span>
@@ -77,13 +79,13 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
 
 const Basket = () => {
   const [itemsInBasket, setItemsInBasket] = useState([]);
+
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { successMsg, infoMsg } = useSelector((state) => state.notification);
 
   let totalPrice = 0,
     youWillPay = 0;
-
   const userId = JSON.parse(localStorage.getItem("userData")).userId;
 
   useEffect(() => {
