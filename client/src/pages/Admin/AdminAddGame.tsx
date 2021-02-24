@@ -100,10 +100,10 @@ const AdminAddGame: React.FC = () => {
   const numericalInputs = ["numberOfPhysicalCopies", "price"];
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
-  const handleFileInputChange = (e: any) => {
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const files = e.target.files;
-      if (files.length > maxNumberOfImages) {
+      const files = e.target!.files;
+      if (files!.length > maxNumberOfImages) {
         setPreviews([]);
         setFileInputState("");
         throw new RangeError(`The maximum number of images is ${maxNumberOfImages}`);
@@ -111,7 +111,7 @@ const AdminAddGame: React.FC = () => {
       setFileInputState(e.target.value);
 
       // File preview
-      const fileList: Array<File> = Array.from(e.target.files);
+      const fileList: Array<File> = Array.from(files!);
       const mappedFiles = fileList.map((file: any) => ({
         ...file,
         preview: URL.createObjectURL(file),
