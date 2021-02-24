@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { Image } from "cloudinary-react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
 import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
+import { DependenciesContext } from "../context/DependenciesContext";
 import Notification from "../components/Notification";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
@@ -75,6 +76,32 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
   );
 };
 
+const SliderShow = ({ arrayOfImgs, cloudName }) => {
+  let inputRadios = [],
+    images = [],
+    labels = [];
+
+  arrayOfImgs.map((item, index) => {
+    inputRadios.push(<input type="radio" name="r" id={item.id} key={item.id} />);
+    images.push(
+      <div className={index ? "slide" : "slide s1"} key={item.id}>
+        <Image cloudName={cloudName} publicId={item.imgId} width="300" crop="scale" />
+      </div>
+    );
+    labels.push(<label htmlFor={item.id} className="bar" key={`label-${item.id}`} />);
+  });
+
+  return (
+    <div className="slidershow middle">
+      <div className="slides">
+        {inputRadios}
+        {images}
+      </div>
+      <div className="navigation">{labels}</div>
+    </div>
+  );
+};
+
 const SelectedGame = () => {
   const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(false);
   const [isPhysical, setIsPhysical] = useState(false);
@@ -82,6 +109,7 @@ const SelectedGame = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [gameData, setGameData] = useState(null);
   const [gamePrice, setGamePrice] = useState(0);
+  const [arrayOfImgs, setArrayOfImgs] = useState([]);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -95,24 +123,22 @@ const SelectedGame = () => {
       fieldName: "numberOfPhysicalCopies",
     },
   ]);
-  const [arrayOfImgs, setArrayOfImgs] = useState([]);
+  
   const dispatch = useDispatch();
+  const location = useLocation();
+  const history = useHistory();
+  const { cloudName } = useContext(DependenciesContext);
+  const { user } = useSelector((state) => state.user);
+  const { successMsg, errorMsg } = useSelector((state) => state.notification);
+
+  const userId = JSON.parse(localStorage.getItem("userData")).userId;
+  const locationSplittedArray = location.pathname.split("/");
+  const gameId = locationSplittedArray[locationSplittedArray.length - 1];
+  const PHYSICAL = "Physical";
 
   useEffect(() => {
     dispatch(getUserData(userId));
   }, []);
-
-  const { user } = useSelector((state) => state.user);
-  const { successMsg, errorMsg } = useSelector((state) => state.notification);
-  const userId = JSON.parse(localStorage.getItem("userData")).userId;
-  const locationHrefArray = window.location.href.split("/");
-  const gameId = locationHrefArray[locationHrefArray.length - 1];
-  const PHYSICAL = "Physical";
-
-  const history = useHistory();
-
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     (async function () {
@@ -150,6 +176,9 @@ const SelectedGame = () => {
       dispatch(updateGameData(game._id, game));
     })();
   }, [textFields, gameId]);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   const addToBasketButtonHandler = (gameType, deliveryMethod) => {
     dispatch(clearSuccessMessage());
@@ -194,34 +223,7 @@ const SelectedGame = () => {
           <h2 className="game-name">{textFields[5].value}</h2>
         </div>
       )}
-      {arrayOfImgs.length && (
-        <div className="slidershow middle">
-          <div className="slides">
-            {arrayOfImgs?.map((item) => (
-              <input type="radio" name="r" id={item.id} key={item.id} />
-            ))}
-            {arrayOfImgs?.map((item, index) => {
-              if (index === 0) {
-                return (
-                  <div className="slide s1" key={item.id}>
-                    <Image cloudName="dgefehkt9" publicId={item.imgId} width="300" crop="scale" />
-                  </div>
-                );
-              }
-              return (
-                <div className="slide" key={item.id}>
-                  <Image cloudName="dgefehkt9" publicId={item.imgId} width="300" crop="scale" />
-                </div>
-              );
-            })}
-          </div>
-          <div className="navigation">
-            {arrayOfImgs?.map((item) => (
-              <label htmlFor={item.id} className="bar" key={item.id} />
-            ))}
-          </div>
-        </div>
-      )}
+      {arrayOfImgs.length && <SliderShow arrayOfImgs={arrayOfImgs} cloudName={cloudName} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
       {successMsg && <Notification values={{ successMsg }} />}
       <div className="content-area">
