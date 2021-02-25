@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useHistory, Link, useLocation } from "react-router-dom";
 import { AppBar, Toolbar, IconButton, Typography, Badge, MenuItem, Menu, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
@@ -8,19 +8,29 @@ import { useSelector, useDispatch } from "react-redux";
 import { getSelectedGameAuthor } from "../redux/gameAuthor/gameAuthorActions";
 import { Filter } from "./Filter";
 import { Sorting } from "./Sorting";
-import { useAuth } from "../hooks/authHook";
 import { useStyles } from "../hooks/useStyles";
+import { DependenciesContext } from "../context/DependenciesContext";
 import "../styles/navbar.scss";
 
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [isHomePage, setIsHomePage] = useState(false);
-  const classes = useStyles();
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const { isAuthenticated, logout, isAdmin } = useAuth();
+
+  const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
-  const dispatch = useDispatch();
+  const { allGames } = useSelector((state) => state.games);
+  const { allGameAuthors } = useSelector((state) => state.gameAuthor);
+  const { isAuthenticated, logout, isAdmin } = useContext(DependenciesContext);
+  const classes = useStyles();
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  let optionAutocompleteArray = [];
+  const mobileMenuId = "primary-search-account-menu-mobile";
+
+  useEffect(() => {
+    const isHomePage = Boolean(location.pathname === "/");
+    setIsHomePage(isHomePage);
+  }, [location.pathname]);
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -55,10 +65,6 @@ export const Navbar = () => {
     { linkName: "Basket", path: "/basket", id: "2" },
   ];
 
-  const { allGames } = useSelector((state) => state.games);
-  const { allGameAuthors } = useSelector((state) => state.gameAuthor);
-
-  let optionAutocompleteArray = [];
   if (allGames.length && allGameAuthors.length) {
     optionAutocompleteArray = allGames.concat(allGameAuthors);
   }
@@ -84,12 +90,6 @@ export const Navbar = () => {
     }
   };
 
-  useEffect(() => {
-    const isHomePage = Boolean(location.pathname === "/");
-    setIsHomePage(isHomePage);
-  }, [location.pathname]);
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}

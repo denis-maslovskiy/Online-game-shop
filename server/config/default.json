@@ -1,5 +1,8 @@
 {
     "port": 5000,
     "mongoUri": "mongodb+srv://Denis:12345qwe@cluster0.ovymb.mongodb.net/app?retryWrites=true&w=majority",
-    "jwtSecret": "denis-internship"
+    "jwtSecret": "denis-internship",
+    "cloud_name": "dgefehkt9",
+    "api_key": "672589235467456",
+    "api_secret": "V7Ye-Olv1Qg9erP0yiiCE0zI1vA"
 }

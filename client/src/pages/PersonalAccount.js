@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { Image } from "cloudinary-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../redux/user/userActions";
+import { DependenciesContext } from "../context/DependenciesContext";
 import Achievements from "../components/Achievements";
-import image from "../img/3.jpg";
+import noImageAvailable from "../img/no-image-available.jpg";
 import "../styles/personal-account.scss";
 
 const PersonalAccount = () => {
-  const dispatch = useDispatch();
   const [isReadyToDisplayUserInfo, setIsReadyToDisplayUserInfo] = useState(false);
   const [isCheckboxActive, setIsCheckboxActive] = useState(false);
   const [purchasedGames, setPurchasedGames] = useState([]);
@@ -28,8 +29,10 @@ const PersonalAccount = () => {
     },
   ]);
 
-  const userId = JSON.parse(localStorage.getItem("userData")).userId;
+  const dispatch = useDispatch();
+  const { cloudName } = useContext(DependenciesContext);
   const { user } = useSelector((state) => state.user);
+  const userId = JSON.parse(localStorage.getItem("userData")).userId;
 
   useEffect(() => {
     dispatch(getUserData(userId));
@@ -95,7 +98,16 @@ const PersonalAccount = () => {
           </div>
           {purchasedGames.map((item) => (
             <div className="orders__game game" key={item.dateAddedToBasket}>
-              <img className="game__picture" src={image} alt={item.gameName} />
+              {item?.imgSource?.length ? (
+                <Image
+                  cloudName={cloudName}
+                  publicId={item.imgSource[0]}
+                  className="card__picture"
+                  alt={`${item.gameName} image`}
+                />
+              ) : (
+                <img src={noImageAvailable} className="card__picture" alt={`No available image for ${item.gameName}`} />
+              )}
               <div className="game__text">
                 <span>{item.gameName}</span>
                 <span>

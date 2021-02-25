@@ -1,9 +1,16 @@
 const { Router } = require("express");
+const cloudinary = require("cloudinary").v2;
+const config = require("config");
 const Game = require("../models/Game");
 const User = require("../models/User");
 const GameAuthor = require("../models/GameAuthor");
 const Achievement = require("../models/Achievement");
 const router = Router();
+cloudinary.config({
+  cloud_name: config.get("cloud_name"),
+  api_key: config.get("api_key"),
+  api_secret: config.get("api_secret"),
+});
 
 router.use(async (req, res, next) => {
   try {
@@ -53,6 +60,8 @@ router.post("/create-game", async (req, res) => {
       isDigital,
       numberOfPhysicalCopies,
       discount,
+      plannedDiscount: 0,
+      imgSource: [],
     });
     await newGame.save();
 
@@ -60,7 +69,7 @@ router.post("/create-game", async (req, res) => {
       message: "Game has been added successfully",
       game: {
         id: newGame._id,
-        name: newGame.gameName,
+        gameName: newGame.gameName,
         author: newGame.author,
         genre: newGame.genre,
         price: newGame.price,
@@ -72,6 +81,8 @@ router.post("/create-game", async (req, res) => {
         isDigital: newGame.isDigital,
         numberOfPhysicalCopies: newGame.numberOfPhysicalCopies,
         discount: newGame.discount,
+        plannedDiscount: newGame.plannedDiscount,
+        imgSource: newGame.imgSource,
       },
     });
   } catch (e) {
@@ -93,6 +104,7 @@ router.put("/:id", async (req, res) => {
       isDigital,
       numberOfPhysicalCopies,
       discount,
+      imgSource,
       plannedDiscount,
       plannedDiscountStartsOn,
       plannedDiscountEndsOn,
@@ -111,6 +123,7 @@ router.put("/:id", async (req, res) => {
         isDigital,
         numberOfPhysicalCopies,
         discount,
+        imgSource,
         plannedDiscount,
         plannedDiscountStartsOn,
         plannedDiscountEndsOn,
@@ -126,6 +139,18 @@ router.delete("/:id", async (req, res) => {
   try {
     await Game.remove({ _id: req.params.id });
     res.status(200).json({ message: "Game has been deleted successfully" });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+router.post("/upload-image", async (req, res) => {
+  try {
+    const { fileStr } = req.body;
+    const uploadResponse = await cloudinary.uploader.upload(fileStr, {
+      upload_preset: "lqxfbwbj",
+    });
+    res.status(200).json({ message: "Image uploaded", uploadResponse });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -248,7 +273,7 @@ router.post("/create-game-author", async (req, res) => {
 
 router.put("/edit-game-author-info/:id", async (req, res) => {
   try {
-    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany } = req.body;
+    const { authorName, authorDescription, authorsGames, yearOfFoundationOfTheCompany, authorLogo } = req.body;
     await GameAuthor.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -256,6 +281,7 @@ router.put("/edit-game-author-info/:id", async (req, res) => {
         authorDescription,
         authorsGames,
         yearOfFoundationOfTheCompany,
+        authorLogo,
       }
     );
     res.status(200).json({ message: "Author info has been edited successfully" });
