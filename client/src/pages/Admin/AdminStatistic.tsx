@@ -68,7 +68,7 @@ const AdminStatistic: React.FC = () => {
   allUsers.forEach((user: User) => {
     if (user?.purchasedGames.length) numberOfGamePurchased += user.purchasedGames.length;
     user?.purchasedGames.forEach((game: PurchasedGame) => {
-      gamesBoughtFor += game.price;
+      gamesBoughtFor += +game.price;
       // @ts-ignore
       howManyAndWhatGamesWerePurchased[game.gameName]
         ? // @ts-ignore
@@ -141,7 +141,7 @@ const AdminStatistic: React.FC = () => {
       <div>
         <p>Total users: {allUsers.length}</p>
         <p>Number of games purchased: {numberOfGamePurchased}</p>
-        <p>Games bought for {gamesBoughtFor} $</p>
+        <p>Games bought for {gamesBoughtFor.toFixed(2)} $</p>
         <p>Users per month: {usersPerMonth}</p>
         <p>Users for the last month: {usersForTheLastMonth}</p>
         <p>Number of purchased physical copies of the game: {numberOfPurchasedPhysicalCopiesOfTheGame}</p>
