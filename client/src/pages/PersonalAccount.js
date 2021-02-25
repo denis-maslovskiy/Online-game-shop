@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../redux/user/userActions";
-import Achievements from "../components/Achievements";
 import image from "../img/3.jpg";
 import "../styles/personal-account.scss";
 
@@ -36,7 +35,7 @@ const PersonalAccount = () => {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(user).length !== 0) {
+    if (Object.keys(user).length) {
       userData.map((item) => {
         if (item.fieldName === "dateOfRegistration") {
           return (item.value = user[item.fieldName].split("T")[0]);
@@ -58,10 +57,6 @@ const PersonalAccount = () => {
       setIsUserDataUpdated(false);
     }
   }, [userData, isUserDataUpdate, user]);
-
-  const updatingUserDataTriggered = () => {
-    setIsUserDataUpdated(true);
-  };
 
   const checkboxChangeHandler = (e) => {
     setIsCheckboxActive((prevState) => !prevState);
@@ -109,9 +104,10 @@ const PersonalAccount = () => {
         </div>
         <h2 className="block-title">Achievements</h2>
         <div className="account-info__achievements achievements">
-          {isReadyToDisplayUserInfo && (
-            <Achievements user={user} updatingUserDataTriggered={updatingUserDataTriggered} />
-          )}
+          {isReadyToDisplayUserInfo &&
+            (user?.achievements?.length
+              ? user?.achievements.map((achieve) => <p key={achieve.achievementText}>{achieve.achievementText}</p>)
+              : "No achievements. Try to update, maybe they will appear!")}
         </div>
       </div>
     </div>
