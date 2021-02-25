@@ -7,13 +7,13 @@ import { DependenciesContext } from "./context/DependenciesContext";
 import "./styles/body.scss";
 
 function App() {
-  const { token, login, logout, userId, isAdmin } = useAuth();
+  const { token, logout, userId, isAdmin } = useAuth();
   const isAuthenticated = !!token;
   const routes = useRoutes();
   const cloudName = "dgefehkt9";
 
   return (
-    <DependenciesContext.Provider value={{ token, login, logout, userId, isAuthenticated, isAdmin, cloudName }}>
+    <DependenciesContext.Provider value={{ token, logout, userId, isAuthenticated, isAdmin, cloudName }}>
       <BrowserRouter>
         <Navbar />
         <div>{routes}</div>

@@ -12,13 +12,10 @@ export const setCurrentUser = (decoded) => {
 export const registerUser = (userData) => {
   return async (dispatch) => {
     try {
-      const response = await axios.post("/api/auth/registration", { ...userData });
-      dispatch(successMessage(response.data.message));
-      dispatch(setCurrentUser(response.data.user));
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({...response.data, isAdmin: response.data.user.isAdmin})
-      );
+      const { data } = await axios.post("/api/auth/registration", { ...userData });
+      dispatch(successMessage(data.message));
+      dispatch(setCurrentUser(data.user));
+      localStorage.setItem("userData", JSON.stringify({ ...data, userId: data.user.id, isAdmin: data.user.isAdmin }));
       window.location.href = "/";
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
@@ -29,16 +26,12 @@ export const registerUser = (userData) => {
 export const loginUser = (userData) => {
   return async (dispatch) => {
     try {
-      const response = await axios.post("/api/auth/login", { ...userData });
-      dispatch(setCurrentUser(response.data));
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({...response.data, isAdmin: response.data.user.isAdmin})
-      );
+      const { data } = await axios.post("/api/auth/login", { ...userData });
+      dispatch(setCurrentUser(data));
+      localStorage.setItem("userData", JSON.stringify({ ...data, userId: data.userId, isAdmin: data.user.isAdmin }));
       window.location.href = "/";
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
-      console.log(e);
     }
   };
 };

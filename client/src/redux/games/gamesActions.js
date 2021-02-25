@@ -88,8 +88,8 @@ export const addGame = (newGame, selectedFiles, userId) => {
 export const getAllGames = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get("/api/games/get-all-games");
-      dispatch(setAllGames(response.data));
+      const { data } = await axios.get("/api/games/get-all-games");
+      dispatch(setAllGames(data));
     } catch (e) {
       console.log(e.response.data.message);
     }
