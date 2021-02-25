@@ -8,8 +8,6 @@ import AdminAddGame from "./AdminAddGame";
 import AdminEditGame from "./AdminEditGame";
 import AdminStatistic from "./AdminStatistic";
 import AdminEditGameAuthor from "./AdminEditGameAuthor";
-import AdminAddAchievement from "./AdminAddAchievement";
-import AdminEditAchievement from "./AdminEditAchievement";
 import AdminPlanningFutureDiscounts from './AdminPlanningFutureDiscounts';
 import "./admin.scss";
 
@@ -40,8 +38,6 @@ const Admin = () => {
     "Statistic",
     "Add new game",
     "Edit game",
-    "Add new achievement",
-    "Edit achievement",
     "Edit game author",
     "Planning future discounts"
   ];
@@ -81,8 +77,6 @@ const Admin = () => {
       {adminOption === "Edit game" && <AdminEditGame />}
       {adminOption === "Statistic" && <AdminStatistic />}
       {adminOption === "Edit game author" && <AdminEditGameAuthor />}
-      {adminOption === "Add new achievement" && <AdminAddAchievement />}
-      {adminOption === "Edit achievement" && <AdminEditAchievement />}
       {adminOption === "Planning future discounts" && <AdminPlanningFutureDiscounts />}
     </>
   );
