@@ -40,20 +40,22 @@ export const updateGameArrayAfterDeletingTheGame = (deletedGame) => {
 export const addGame = (newGame) => {
   return async (dispatch) => {
     try {
-      const response = await axios.post("/api/admin/create-game", { ...newGame });
-      dispatch(successMessage(response.data.message));
+      const {
+        data: { message },
+      } = await axios.post("/api/admin/create-game", { ...newGame });
+      dispatch(successMessage(message));
     } catch (e) {
       console.log(e);
       dispatch(errorMessage(e.response.data.message));
     }
-  }
-}
+  };
+};
 
 export const getAllGames = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get("/api/games/get-all-games");
-      dispatch(setAllGames(response.data));
+      const { data } = await axios.get("/api/games/get-all-games");
+      dispatch(setAllGames(data));
     } catch (e) {
       console.log(e.response.data.message);
     }
@@ -74,7 +76,9 @@ export const updateGameData = (gameId, game) => {
 export const adminUpdateGameData = (gameId, game) => {
   return async (dispatch) => {
     try {
-      const {data:{message}} = await axios.put(`/api/admin/${gameId}`, game);
+      const {
+        data: { message },
+      } = await axios.put(`/api/admin/${gameId}`, game);
       dispatch(updateGameArray(game));
       dispatch(successMessage(message));
     } catch (e) {
@@ -87,9 +91,11 @@ export const adminUpdateGameData = (gameId, game) => {
 export const deleteGame = (gameId, userId) => {
   return async (dispatch) => {
     try {
-      const {data:{message}} = await axios.delete(`/api/admin/${gameId}`, { data: { ...userId } });
+      const {
+        data: { message },
+      } = await axios.delete(`/api/admin/${gameId}`, { data: { ...userId } });
       dispatch(updateGameArrayAfterDeletingTheGame(gameId));
-      dispatch(infoMessage(message))
+      dispatch(infoMessage(message));
     } catch (e) {
       console.log(e);
       dispatch(errorMessage(e.response.data.message));

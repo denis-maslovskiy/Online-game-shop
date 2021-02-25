@@ -7,14 +7,12 @@ import { AuthContext } from "./context/AuthContext";
 import "./styles/body.scss";
 
 function App() {
-  const { token, login, logout, userId } = useAuth();
+  const { token, logout, userId } = useAuth();
   const isAuthenticated = !!token;
   const routes = useRoutes();
 
   return (
-    <AuthContext.Provider
-      value={{ token, login, logout, userId, isAuthenticated }}
-    >
+    <AuthContext.Provider value={{ token, logout, userId, isAuthenticated }}>
       <BrowserRouter>
         <Navbar />
         <div>{routes}</div>

@@ -26,8 +26,8 @@ export const updateAchievementArrayAfterDeletingTheAchievement = (deletedAchieve
 export const getAllAchievements = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get("/api/achievement/get-all-achievements");
-      dispatch(setAllAchievements(response.data));
+      const { data } = await axios.get("/api/achievement/get-all-achievements");
+      dispatch(setAllAchievements(data));
     } catch (e) {
       console.log(e.response.data.message);
     }
