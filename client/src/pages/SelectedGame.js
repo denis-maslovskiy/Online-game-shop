@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { Image } from "cloudinary-react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
+import { getGameInfo } from "../helpers/gameHelpers";
 import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
 import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
+import { DependenciesContext } from "../context/DependenciesContext";
 import Notification from "../components/Notification";
-import { getGameInfo } from "../helpers/gameHelpers";
-import img1 from "../img/1.jpg";
-import img2 from "../img/2.jpg";
-import img3 from "../img/3.jpg";
-import img4 from "../img/4.jpg";
-import img5 from "../img/5.jpg";
-import img6 from "../img/6.jpg";
 import "../styles/selected-game.scss";
 import "../styles/carousel.scss";
 
@@ -80,6 +76,32 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
   );
 };
 
+const SliderShow = ({ arrayOfImgs, cloudName }) => {
+  let inputRadios = [],
+    images = [],
+    labels = [];
+
+  arrayOfImgs.map((item, index) => {
+    inputRadios.push(<input type="radio" name="r" id={item.id} key={item.id} />);
+    images.push(
+      <div className={index ? "slide" : "slide s1"} key={item.id}>
+        <Image cloudName={cloudName} publicId={item.imgId} width="300" crop="scale" />
+      </div>
+    );
+    labels.push(<label htmlFor={item.id} className="bar" key={`label-${item.id}`} />);
+  });
+
+  return (
+    <div className="slidershow middle">
+      <div className="slides">
+        {inputRadios}
+        {images}
+      </div>
+      <div className="navigation">{labels}</div>
+    </div>
+  );
+};
+
 const SelectedGame = () => {
   const [isReadyToDisplayGameInfo, setIsReadyToDisplayGameInfo] = useState(false);
   const [isPhysical, setIsPhysical] = useState(false);
@@ -87,6 +109,7 @@ const SelectedGame = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [gameData, setGameData] = useState(null);
   const [gamePrice, setGamePrice] = useState(0);
+  const [arrayOfImgs, setArrayOfImgs] = useState([]);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -100,37 +123,33 @@ const SelectedGame = () => {
       fieldName: "numberOfPhysicalCopies",
     },
   ]);
+  
   const dispatch = useDispatch();
-
+  const location = useLocation();
+  const history = useHistory();
+  const { cloudName } = useContext(DependenciesContext);
   const { user } = useSelector((state) => state.user);
   const { successMsg, errorMsg } = useSelector((state) => state.notification);
+
   const userId = JSON.parse(localStorage.getItem("userData")).userId;
+  const locationSplittedArray = location.pathname.split("/");
+  const gameId = locationSplittedArray[locationSplittedArray.length - 1];
+  const PHYSICAL = "Physical";
 
   useEffect(() => {
     dispatch(getUserData(userId));
   }, []);
 
-  const history = useHistory();
-
-  const locationHrefArray = window.location.href.split("/");
-  const gameId = locationHrefArray[locationHrefArray.length - 1];
-
-  const arrayOfImgs = [
-    { img: img1, id: "r1" },
-    { img: img2, id: "r2" },
-    { img: img3, id: "r3" },
-    { img: img4, id: "r4" },
-    { img: img5, id: "r5" },
-    { img: img6, id: "r6" },
-  ];
-
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
-
   useEffect(() => {
-    async function func() {
+    (async function () {
       const game = await getGameInfo(gameId);
       setGameData(game);
+
+      const updatedImgArray = [];
+      game.imgSource.forEach((imageId, index) => {
+        updatedImgArray.push({ imgId: imageId, id: `r${index + 1}` });
+      });
+      setArrayOfImgs(updatedImgArray);
 
       textFields.map((item) => {
         return (item.value = game[item.fieldName]);
@@ -155,9 +174,11 @@ const SelectedGame = () => {
       // Increase game rating
       game.rating = game.rating + 1;
       dispatch(updateGameData(game._id, game));
-    }
-    func();
-  }, [textFields, getGameInfo, gameId]);
+    })();
+  }, [textFields, gameId]);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   const addToBasketButtonHandler = (gameType, deliveryMethod) => {
     dispatch(clearSuccessMessage());
@@ -171,16 +192,17 @@ const SelectedGame = () => {
         gameId: gameData._id,
         gameType: gameType,
         discount: gameData.discount,
+        imgSource: gameData.imgSource,
       };
 
       if (deliveryMethod) briefInformationAboutTheGame.deliveryMethod = deliveryMethod;
 
-      if (Object.keys(user).length !== 0) {
+      if (Object.keys(user).length) {
         user.gamesInTheBasket.push(briefInformationAboutTheGame);
         dispatch(addGameInTheBasket(userId, user));
       }
 
-      if (briefInformationAboutTheGame.gameType === "Physical") {
+      if (briefInformationAboutTheGame.gameType === PHYSICAL) {
         gameData.numberOfPhysicalCopies = gameData.numberOfPhysicalCopies - 1;
         dispatch(updateGameData(gameId, gameData));
         setGameData(gameData);
@@ -201,32 +223,7 @@ const SelectedGame = () => {
           <h2 className="game-name">{textFields[5].value}</h2>
         </div>
       )}
-      <div className="slidershow middle">
-        <div className="slides">
-          {arrayOfImgs.map((item) => (
-            <input type="radio" name="r" id={item.id} key={item.id} />
-          ))}
-          {arrayOfImgs.map((item, index) => {
-            if (index === 0) {
-              return (
-                <div className="slide s1" key={item.id}>
-                  <img src={item.img} alt="GameImage" />
-                </div>
-              );
-            }
-            return (
-              <div className="slide" key={item.id}>
-                <img src={item.img} alt="GameImage" />
-              </div>
-            );
-          })}
-        </div>
-        <div className="navigation">
-          {arrayOfImgs.map((item) => (
-            <label htmlFor={item.id} className="bar" key={item.id} />
-          ))}
-        </div>
-      </div>
+      {arrayOfImgs.length && <SliderShow arrayOfImgs={arrayOfImgs} cloudName={cloudName} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
       {successMsg && <Notification values={{ successMsg }} />}
       <div className="content-area">
