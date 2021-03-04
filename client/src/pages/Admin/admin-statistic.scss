@@ -1,0 +1,100 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.container-title-block {
+    @include flex-display($justify-content: center);
+    @include dark-bg();
+    width: 70%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+}
+
+.container-title {
+    margin: 0.25% 0;
+    color: white;
+    @include text-style(28px, bold);
+    text-align: center;
+}
+
+.admin-statistic-container {
+    width: 90%;
+    color: white;
+    margin: 2% auto;
+
+    &__content {
+        @include flex-display($flex-direction: column);
+    }
+}
+
+.admin-statistic-content {
+
+    &__statistic {
+        @include flex-display($flex-direction: column, $align-items: center);
+        @include dark-bg();
+        width: 70%;
+        margin: 0 auto;
+        margin-top: 1%;
+        padding: 1% 0;
+
+        & > p {
+            @include text-style(20px);
+            margin: .5% 0;
+            text-align: center;
+        }
+
+        & > p > span {
+            @include text-style(22px);
+            color: $light-green-color;
+        }
+    }
+
+    &__charts {
+        @include dark-bg();
+        @include flex-display($justify-content: center);
+        width: 70%;
+        margin: 0 auto;
+        margin-top: 1%;
+
+        @media (max-width: 1539px) {
+            @include flex-display($flex-direction: column, $align-items: center);
+        }
+
+        @media (max-width: 590px) {
+            height: 400px;
+        }
+    }
+
+    &__statistic-achievements {
+        width: 40%;
+    }
+
+    @media (max-width: 830px) {
+        &__statistic {
+            width: 100%;
+        };
+        &__charts {
+            width: 100%;
+        };
+        &__statistic-achievements {
+            width: 70%;
+        }
+    }
+}
+
+text {
+    @include text-style(16px);
+    fill: white;
+}
+
+.statistic-achievements {
+    @include flex-display($flex-direction: column, $align-items: center);
+    @include dark-bg();
+    margin: 0 auto;
+    margin-top: 1%;
+    padding: 1% 0;
+    text-align: center;
+
+    & > p {
+        margin: .5% 0;
+    }
+}
