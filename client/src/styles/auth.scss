@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import './mixins.scss';
 
 .box {
     width: 300px;
@@ -8,7 +9,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #272727;
+    @include dark-bg(1);
     text-align: center;
 
     &__title {
