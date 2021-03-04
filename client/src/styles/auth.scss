@@ -23,7 +23,7 @@
         display: block;
         margin: 20px auto;
         text-align: center;
-        border: 2px solid $blue-color;
+        border: 2px solid $custom-light-blue;
         padding: 14px 10px;
         width: 200px;
         outline: none;
@@ -62,7 +62,7 @@
 
         &__link {
             text-decoration: none;
-            color: $blue-color;
+            color: $custom-light-blue;
         }
     }
 }

@@ -1,59 +1,80 @@
 @import './mixins.scss';
 @import './variables.scss';
 
-.container {
+.basket-container {
+    margin: 0 auto;
     width: 80%;
     border-radius: 24px;
     padding: 1%;
 
     &__titles {
         text-align: center;
-        @include text-style(32px)
+        @include text-style(32px, bold);
+        color: white;
+        @include dark-bg();
     }
 }
 
-.order {
-    border-bottom: 2px solid $blue-color;
+.basket-order {
+    border-bottom: 2px solid $custom-light-blue;
 
-    &__game {
+    &__basket-game {
         @include flex-display(nowrap, row, flex-start, center);
-        background-color: white;
+        @include dark-bg();
         margin-bottom: 3%;
         width: 100%;
-        max-width: 1000px;
         border-radius: 24px;
     }
 
     &__empty-basket-text {
-        @include text-style(24px);
-        color: grey;
+        @include text-style(24px, bold);
+        color: white;
     }
 }
 
-.game {
-
+.basket-game {
     &__text {
         @include flex-display(nowrap, row, space-between, stretch);
         @include text-style(24px, bold);
+        color: white;
         width: 100%;
         margin: 0 3%;
+
+        & > span {
+            text-align: center;
+            max-width: 300px;
+            min-width: 85px;
+            margin: 0 20px;
+        }
+
+        @media (max-width: 1150px) {
+            @include flex-display($flex-direction: column, $align-items: center);
+            
+            & > span {
+                max-width: 100%;
+                min-width: 0;
+                margin: 5px 0;
+            }
+        }
     }
 
     &__picture {
         height: 150px;
         width: 150px;
         margin: 2%;
+        border: 1px solid white;
     }
 }
 
 .price-summary {
     @include flex-display(nowrap, column, flex-start, stretch);
-    background-color: white;
+    @include dark-bg();
     padding: 2%;
     border-radius: 24px;
 
     &__text {
         @include text-style(24px);
+        color: white;
         margin-bottom: 1%;
     }
 }
@@ -62,44 +83,45 @@
     @include custom-btn(24px);
 
     &_disabled {
-        border: 2px solid grey;
+        border: 2px solid $custom-grey;
+        cursor: not-allowed;
 
         &:hover {
-            background: grey;
+            background: $custom-grey;
             color: white;
         }
     }
     
 }
 
-.remove-game {
-    @include custom-btn(none, 8px 12px, 2%, 2px solid $blue-color, 24px, $blue-color);
+.remove-basket-game {
+    @include custom-btn(none, 8px 12px, 2%, 2px solid $light-red-color, 24px, $light-red-color);
 }
 
 .timer {
     @include text-style(22px);
+    color: white;
     width: 75px;
 }
 
-@media (max-width: 599px) {
+@media (max-width: 860px) {
 
-    .order {
-        &__game {
+    .basket-order {
+        &__basket-game {
             flex-direction: column;
             padding: 10px 0;
-            width: 70%;
+            width: 100%;
             margin: 1% auto;
         }
     }
 
-    .game {
+    .basket-game {
         &__text {
-            flex-direction: column;
-            align-items: center;
+            @include flex-display($flex-direction: column, $align-items: center);
         }
 
         &__picture {
-            width: 90%;
+            width: 60%;
         }
     }
 }

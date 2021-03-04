@@ -1,13 +1,7 @@
 @import './variables.scss';
 
-@mixin phone($phone-width, $max-width) {
-    @media (max-width: $phone-width) {
-        max-width: $max-width;
-    }
-}
-
 @mixin text-style($font-size, $font-weight: normal) {
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: $font-size;
     font-weight: $font-weight;
 }
@@ -29,7 +23,7 @@
     border: $border;
     padding: $padding;
     outline: none;
-    color: black;
+    color: white;
     border-radius: $border-radius;
     transition: .25s;
     @include text-style($font-size);
@@ -38,4 +32,9 @@
     &:hover {
         background: $bg-hover;
     }
+}
+
+@mixin dark-bg($opacity: 0.9) {
+    background: $custom-black;
+    opacity: $opacity;
 }

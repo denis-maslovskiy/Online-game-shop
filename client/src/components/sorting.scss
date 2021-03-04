@@ -1,3 +1,6 @@
+@import '../styles/variables.scss';
+@import '../styles/mixins.scss';
+
 .sorting-block {
     width: 200px;
     height: 150px;
@@ -5,21 +8,35 @@
 
     &__section-name {
         text-align: center;
+        color: white;
+        @include text-style(24px, bold);
     }
 
     &__sorting-option {
         display: flex;
-        align-items: center;
     }
 }
 
 .sorting-option {
     &__title {
         width: 45%;
-        height: 0px;
+        color: white;
+        padding-top: 4%;
+        @include text-style(20px, bold);
     }
 }
 
 .MuiFormControl-root {
     width: 45%;
+}
+
+.MuiFormLabel-root.MuiInputLabel-root.MuiFormLabel-filled, 
+.MuiList-root.MuiMenu-list.MuiList-padding {
+    color: white;
+}
+
+.MuiButtonBase-root.MuiListItem-root.MuiMenuItem-root.MuiMenuItem-gutters.MuiListItem-gutters.MuiListItem-button {
+    &:hover {
+        background-color: $custom-dark-blue;
+    }
 }

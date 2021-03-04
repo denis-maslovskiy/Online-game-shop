@@ -3,39 +3,68 @@
 
 .filter-block {
     width: 400px;
-    height: 300px;
+    height: 400px;
+    color: white;
 
     &__filter {
         padding: 10px;
-        background-color: $app-bg;
+        background-color: $custom-middle-blue;
     }
 
     &__section-name {
-        @include text-style(24px);
+        @include text-style(24px, bold);
         position: relative;
         left: 30%;
     }
 
+    &__button-container {
+        width: 80%;
+        @include flex-display($justify-content: center);
+    }
+}
+
+.button-container {
     &__button {
-        width: 100%;
-        text-align: left;
-        border: none;
-        height: 18%;
-        color: white;
-        background-color: #3f51b5;
-        cursor: pointer;
-        @include text-style(24px);
+        background-color: $custom-middle-blue;
+        @include custom-btn(none, 12px 42px, 2%, 2px solid white, 24px, $custom-dark-blue);
+        @include text-style(20px, bold);
+
+        &:hover {
+            padding: 12px 52px;
+        }
     }
 }
 
 .filter {
     &__option {
-        display: flex;
-        align-items: center;
+        @include flex-display($align-items: center);
     }
 
     &__input {
         width: 50%;
         margin-bottom: 2%;
     }
+}
+
+.option {
+    &__title {
+        color: white;
+        @include text-style(20px, bold);
+    }
+}
+
+ul[role="menu"].MuiList-root {
+    background-color: $custom-middle-blue;
+}
+
+.MuiFormLabel-root.MuiInputLabel-root.Mui-focused {
+    color: white;
+}
+
+.MuiPaper-root.MuiMenu-paper.MuiPopover-paper.MuiPaper-elevation8.MuiPaper-rounded {
+    background-color: $custom-middle-blue;
+}
+
+.MuiInput-root.MuiInput-underline:after {
+    border-bottom: 2px solid white;
 }

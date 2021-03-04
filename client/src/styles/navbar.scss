@@ -3,7 +3,12 @@
 
 #navbar {
     position: static;
-    margin-bottom: 3%;
+    height: 6vh;
+    justify-content: center;
+
+    @media (max-height: 730px) {
+        height: 9vh;
+    }
 }
 
 .navbar-links {
@@ -11,6 +16,10 @@
     text-decoration: none;
     font-size: 1.1rem;
     font-weight: bold;
+
+    &:hover, &:focus {
+        text-decoration: underline;
+    }
 }
 
 .mobile-menu-link {
@@ -32,10 +41,23 @@
     max-width: 350px;
 }
 
-ul[role=menu] {
-    background: $app-bg;
-}
-
 #navbar__search {
     width: 250px;
+}
+
+.MuiAutocomplete-listbox {
+    background: $custom-middle-blue;
+    color: white;
+    border: 1px solid white;
+}
+
+.MuiAutocomplete-option[data-focus="true"] {
+
+    &:hover, &:focus, &:active {
+        background: $custom-dark-blue;
+    }
+}
+
+.MuiInputBase-input.MuiInput-input.MuiAutocomplete-input.MuiAutocomplete-inputFocused.MuiInputBase-inputAdornedEnd {
+    color: white;
 }

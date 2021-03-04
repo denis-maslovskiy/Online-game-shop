@@ -1,12 +1,45 @@
 @import '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-.MuiFormControl-root {
-    width: 20%;
+.admin-edit-game-container {
+    width: 90%;
+    margin: 2% auto;
+
+    &__existing-images {
+        width: 70%;
+        margin: 0 auto;
+        margin-top: 1%;
+        @include flex-display($flex-wrap: wrap, $justify-content: center);
+        @include dark-bg(1);
+        padding: 1% 0;
+
+        @media (max-width: 700px) {
+            width: 90%;
+        }
+    }
 }
 
-#test {
-    margin-left: 0.5%;
+.image-preview {
+    &__no-pictures {
+        @include text-style(18px);
+        color: white;
+        text-align: center
+    }
+}
+
+.image-upload__uploader[aria-disabled="true"] {
+    @include custom-btn(none, 8px 10px);
+    border: 2px solid $custom-grey;
+    cursor: not-allowed;
+    margin: 1% 0;
+
+    &:hover {
+        background: $custom-grey;
+    }
+}
+
+.MuiFormControl-root {
+    width: 20%;
 }
 
 .delete-game-button {
@@ -15,5 +48,82 @@
     &:hover {
         font-weight: bold;
     }
+
+    &:disabled {
+        @include custom-btn(24px, $border: 2px solid $custom-grey, $bg-hover: $custom-grey);
+        border: 2px solid $custom-grey;
+        cursor: not-allowed;
+
+        &:hover {
+            background: $custom-grey;
+        }
+    }
+}
+
+.add-game-button {
+    &:disabled {
+        @include custom-btn(24px, $border: 2px solid $custom-grey, $bg-hover: $custom-grey);
+        border: 2px solid $custom-grey;
+        cursor: not-allowed;
+
+        &:hover {
+            background: $custom-grey;
+        }
+    }
+}
+
+.select-game-container, .select-game-author-container {
+    width: 60%;
+    margin: 0 auto;
+    @include flex-display($justify-content: center);
+    @include dark-bg(1);
+    padding: 0 0 1% 0;
+
+    &__select-game.MuiFormControl-root, &__select-game-author.MuiFormControl-root {
+        width: 250px;
+    }
+
+    @media (max-width: 500px) {
+        width: 70%;
+        padding: 0 1% 2% 1%;
+    }
+}
+
+.select-game, .select-game-author {
+    &__select.MuiInput-underline {
+        border-bottom: 1px solid white;
+    }
+
+    &__label.MuiInputLabel-animated {
+        color: white;
+    }
+}
+
+div.edit-game-title, div.edit-game-author-title {
+    width: 20%;
+
+    @media (max-width: 1050px) {
+        width: 50%;
+    }
+}
+
+.image-upload__form {
+    @include flex-display($flex-direction: column, $align-items: center);
+}
+
+.MuiSvgIcon-root.MuiSelect-icon {
+    color: white;
+}
+
+.MuiSelect-select.MuiInputBase-input {
+    color: white;
+}
+
+input.MuiSelect-nativeInput {
+    color: white;
+}
+
+label.MuiFormControlLabel-root.Mui-disabled {
+    cursor: not-allowed;
 }
 

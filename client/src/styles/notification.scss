@@ -1,7 +1,12 @@
 @import './variables.scss';
+@import './mixins.scss';
+
+.notification-container {
+    position: absolute;
+    @include flex-display($flex-direction: column);
+}
 
 .alert {
-    position: absolute;
     display: flex;
     max-width: 280px;
     padding: 15px;
@@ -18,7 +23,8 @@
     }
 
     &-info {
-        background-color: #FFC300;
+        background-color: $custom-middle-yellow;
+        color: black;
     }
 
     &__close-btn {
@@ -43,7 +49,7 @@
 
         &--info {
             &:hover {
-                background-color: #F7DC6F;
+                background-color: $custom-light-yellow;
             }
         }
     }
