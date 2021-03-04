@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { PieChart, Pie, Cell } from "recharts";
 import { RootState } from "../../redux/rootReducer";
 import { getAllUsers } from "../../redux/user/userActions";
 import { getAllAchievements } from "../../redux/achievement/achievementActions";
+import "./admin-statistic.scss";
 
 interface User {
   dateOfRegistration: Date;
@@ -94,9 +95,42 @@ const AdminStatistic: React.FC = () => {
     { name: "Physical", value: numberOfPurchasedPhysicalCopiesOfTheGame },
     { name: "Digital", value: numberOfPurchasedDigitalCopiesOfTheGame },
   ];
-  const PhysicalDigitalChartColors: Array<string> = ["#0088FE", "#00C49F"];
+  const PhysicalDigitalChartColors: Array<string> = [];
   const HowManyAndWhatGamesWerePurchasedChartData = [];
   const HowManyAndWhatGamesWerePurchasedChartColors: Array<string> = [];
+
+  const defaultChartSettings = {
+    width: 500,
+    height: 300,
+    cx: 200,
+    cy: 150,
+  };
+  const [chartSettings, setChartSettings] = useState(defaultChartSettings);
+
+  useEffect(() => {
+    // This solution is too hackish,
+    // but this is the only way to set the correct resolution for the charts
+    // and avoid any errors/rerenders
+    if (window.innerWidth <= 590) {
+      setTimeout(() => {
+        setChartSettings({ width: 290, height: 200, cx: 200, cy: 125 });
+        document.querySelectorAll("svg.recharts-surface").forEach((chart) => {
+          chart.setAttribute("viewBox", "0 0 500 300");
+        });
+      }, 0);
+    }
+  }, []);
+
+  window.onresize = function () {
+    if (window.innerWidth <= 590) {
+      setChartSettings({ width: 290, height: 200, cx: 200, cy: 125 });
+      document.querySelectorAll("svg.recharts-surface").forEach((chart) => {
+        chart.setAttribute("viewBox", "0 0 500 300");
+      });
+    } else {
+      setChartSettings(defaultChartSettings);
+    }
+  };
 
   for (let key in howManyAndWhatGamesWerePurchased) {
     // @ts-ignore
@@ -104,6 +138,10 @@ const AdminStatistic: React.FC = () => {
     HowManyAndWhatGamesWerePurchasedChartColors.push(
       "#" + (Math.random().toString(16) + "000000").substring(2, 8).toUpperCase()
     );
+  }
+
+  for (let i = 0; i < 2; i++) {
+    PhysicalDigitalChartColors.push("#" + (Math.random().toString(16) + "000000").substring(2, 8).toUpperCase());
   }
 
   const renderCustomizedLabel = ({
@@ -136,62 +174,82 @@ const AdminStatistic: React.FC = () => {
   }
 
   return (
-    <div>
-      <h2>Statistic</h2>
-      <div>
-        <p>Total users: {allUsers.length}</p>
-        <p>Number of games purchased: {numberOfGamePurchased}</p>
-        <p>Games bought for {gamesBoughtFor.toFixed(2)} $</p>
-        <p>Users per month: {usersPerMonth}</p>
-        <p>Users for the last month: {usersForTheLastMonth}</p>
-        <p>Number of purchased physical copies of the game: {numberOfPurchasedPhysicalCopiesOfTheGame}</p>
-        <p>Number of purchased digital copies of the game: {numberOfPurchasedDigitalCopiesOfTheGame}</p>
-        <PieChart width={800} height={400}>
-          <Pie
-            data={PhysicalDigitalChartData}
-            cx={300}
-            cy={200}
-            // @ts-ignore
-            label={renderCustomizedLabel}
-            outerRadius={80}
-            dataKey="value"
-          >
-            {PhysicalDigitalChartData.map((entry, index) => (
-              <Cell
-                key={PhysicalDigitalChartColors[index]}
-                fill={PhysicalDigitalChartColors[index % PhysicalDigitalChartColors.length]}
-              />
-            ))}
-          </Pie>
-        </PieChart>
-        <PieChart width={800} height={400}>
-          <Pie
-            data={HowManyAndWhatGamesWerePurchasedChartData}
-            cx={300}
-            cy={200}
-            // @ts-ignore
-            label={renderCustomizedLabel}
-            outerRadius={80}
-            dataKey="value"
-          >
-            {HowManyAndWhatGamesWerePurchasedChartData.map((entry, index) => (
-              <Cell
-                key={HowManyAndWhatGamesWerePurchasedChartColors[index]}
-                fill={
-                  HowManyAndWhatGamesWerePurchasedChartColors[
-                    index % HowManyAndWhatGamesWerePurchasedChartColors.length
-                  ]
-                }
-              />
-            ))}
-          </Pie>
-        </PieChart>
+    <div className="admin-statistic-container">
+      <div className="container-title-block">
+        <h2 className="container-title">Statistic</h2>
       </div>
-      <div>
-        <h3>List of all available achievements</h3>
-        {ArrayOfAllAvailableAchievements.map((item) => (
-          <p key={item}>{item}</p>
-        ))}
+      <div className="admin-statistic-container__admin-statistic-content admin-statistic-content">
+        <div className="admin-statistic-content__statistic">
+          <p>
+            Total users: <span>{allUsers.length}</span>
+          </p>
+          <p>
+            Number of games purchased: <span>{numberOfGamePurchased}</span>
+          </p>
+          <p>
+            Games bought for <span>{gamesBoughtFor.toFixed(2)} $</span>
+          </p>
+          <p>
+            Users per month: <span>{usersPerMonth}</span>
+          </p>
+          <p>
+            Users for the last month: <span>{usersForTheLastMonth}</span>
+          </p>
+          <p>
+            Number of purchased physical copies of the game: <span>{numberOfPurchasedPhysicalCopiesOfTheGame}</span>
+          </p>
+          <p>
+            Number of purchased digital copies of the game: <span>{numberOfPurchasedDigitalCopiesOfTheGame}</span>
+          </p>
+        </div>
+        <div className="admin-statistic-content__charts">
+          <PieChart width={chartSettings.width} height={chartSettings.height}>
+            <Pie
+              data={PhysicalDigitalChartData}
+              cx={chartSettings.cx}
+              cy={chartSettings.cy}
+              // @ts-ignore
+              label={renderCustomizedLabel}
+              outerRadius={80}
+              dataKey="value"
+            >
+              {PhysicalDigitalChartData.map((entry, index) => (
+                <Cell
+                  key={PhysicalDigitalChartColors[index] || 0}
+                  fill={PhysicalDigitalChartColors[index % PhysicalDigitalChartColors.length]}
+                />
+              ))}
+            </Pie>
+          </PieChart>
+          <PieChart width={chartSettings.width} height={chartSettings.height}>
+            <Pie
+              data={HowManyAndWhatGamesWerePurchasedChartData}
+              cx={chartSettings.cx}
+              cy={chartSettings.cy}
+              // @ts-ignore
+              label={renderCustomizedLabel}
+              outerRadius={80}
+              dataKey="value"
+            >
+              {HowManyAndWhatGamesWerePurchasedChartData.map((entry, index) => (
+                <Cell
+                  key={HowManyAndWhatGamesWerePurchasedChartColors[index]}
+                  fill={
+                    HowManyAndWhatGamesWerePurchasedChartColors[
+                      index % HowManyAndWhatGamesWerePurchasedChartColors.length
+                    ]
+                  }
+                />
+              ))}
+            </Pie>
+          </PieChart>
+        </div>
+        <div className="admin-statistic-content__statistic-achievements statistic-achievements">
+          <h3>List of all available achievements</h3>
+          {ArrayOfAllAvailableAchievements.map((item) => (
+            <p key={item}>{item}</p>
+          ))}
+        </div>
       </div>
     </div>
   );

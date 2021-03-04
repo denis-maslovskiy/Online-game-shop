@@ -74,52 +74,72 @@ const PersonalAccount = () => {
 
   return (
     <div className="container">
-      <h2 className="block-title">User Info</h2>
-      <div className="user-info">
-        {isReadyToDisplayUserInfo &&
-          userData.map((item) => (
-            <h2 className="user-info__text" key={item.id}>
-              <span className="user-info__title">{item.title}: </span>
-              {item.value}
-            </h2>
-          ))}
+      <div className="container__account-info-block account-info-block">
+        <div className="title-block">
+          <h2 className="title-block__text">User Info</h2>
+        </div>
+        <div className="user-info">
+          {isReadyToDisplayUserInfo &&
+            userData.map((item) => (
+              <h2 className="user-info__text" key={item.id}>
+                <span className="user-info__title">{item.title}: </span>
+                {item.value}
+              </h2>
+            ))}
+        </div>
+
+        <div className="title-block">
+          <h2 className="title-block__text">Achievements</h2>
+        </div>
+        <div className="account-info__achievements achievements">
+          {isReadyToDisplayUserInfo &&
+            (user?.achievements?.length
+              ? user?.achievements.map((achieve) => <p key={achieve.achievementText}>{achieve.achievementText}</p>)
+              : "No achievements. Try to update, maybe they will appear!")}
+        </div>
       </div>
-      <div className="account-info">
-        <div className="account-info__orders orders">
-          <h2 className="block-title">Orders</h2>
-          <div>
-            <label>Old first</label>
-            <input type="checkbox" value={isCheckboxActive} onChange={checkboxChangeHandler} />
+
+      <div className="orders-info">
+        <div className="orders-info__orders orders">
+          <div className="title-block">
+            <h2 className="title-block__text">Orders</h2>
+
+            <div className="title-block__old-first-checkbox old-first-checkbox">
+              <label className="old-first-checkbox__label label">
+                <span className="label__text">Old first</span>
+                <input
+                  type="checkbox"
+                  className="label__input"
+                  value={isCheckboxActive}
+                  onChange={checkboxChangeHandler}
+                />
+                <span className="label__checkmark"></span>
+              </label>
+            </div>
           </div>
+
           {purchasedGames.map((item) => (
             <div className="orders__game game" key={item.dateAddedToBasket}>
               {item?.imgSource?.length ? (
                 <Image
                   cloudName={cloudName}
                   publicId={item.imgSource[0]}
-                  className="card__picture"
+                  className="game__picture"
                   alt={`${item.gameName} image`}
                 />
               ) : (
-                <img src={noImageAvailable} className="card__picture" alt={`No available image for ${item.gameName}`} />
+                <img src={noImageAvailable} className="game__picture" alt={`No available image for ${item.gameName}`} />
               )}
-              <div className="game__text">
-                <span>{item.gameName}</span>
-                <span>
+              <div className="game__text text">
+                <p>{item.gameName}</p>
+                <p>
                   {new Date(item.dateAddedToBasket).getMonth() + 1}.{new Date(item.dateAddedToBasket).getDate()}.
                   {new Date(item.dateAddedToBasket).getFullYear()}
-                </span>
-                <span>{item.price} $</span>
+                </p>
+                <p>{item.price} $</p>
               </div>
             </div>
           ))}
-        </div>
-        <h2 className="block-title">Achievements</h2>
-        <div className="account-info__achievements achievements">
-          {isReadyToDisplayUserInfo &&
-            (user?.achievements?.length
-              ? user?.achievements.map((achieve) => <p key={achieve.achievementText}>{achieve.achievementText}</p>)
-              : "No achievements. Try to update, maybe they will appear!")}
         </div>
       </div>
     </div>

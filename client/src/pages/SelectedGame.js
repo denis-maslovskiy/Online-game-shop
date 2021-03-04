@@ -42,13 +42,23 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
 
   return (
     <div>
-      <Dialog open={isModalOpen} TransitionComponent={ModalTransition} keepMounted onClose={handleCloseModal}>
-        <DialogTitle>Please choose a delivery method for a physical copy of the game</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            We offer you two delivery options: courier delivery, self-pickup. Please choose one option
+      <Dialog
+        className="dialog"
+        open={isModalOpen}
+        TransitionComponent={ModalTransition}
+        keepMounted
+        onClose={handleCloseModal}
+      >
+        <DialogTitle className="dialog__title">
+          Please choose a delivery method for a physical copy of the game
+        </DialogTitle>
+        <DialogContent className="dialog__content content">
+          <DialogContentText className="content__text">
+            We offer you two delivery options: <strong>courier delivery</strong>, <strong>self-pickup</strong>. Please
+            choose one option
           </DialogContentText>
           <button
+            className="content__delivery-type-btn"
             type="button"
             aria-pressed={isButtonPressed(COURIER_DELIVERY)}
             onClick={() => deliveryMethodButtonHandler(COURIER_DELIVERY)}
@@ -56,6 +66,7 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
             Courier delivery
           </button>
           <button
+            className="content__delivery-type-btn"
             type="button"
             aria-pressed={isButtonPressed(SELF_PICKUP)}
             onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}
@@ -63,11 +74,16 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
             Self-pickup
           </button>
         </DialogContent>
-        <DialogActions>
-          <button type="button" onClick={onModalConfirm} disabled={!deliveryMethod}>
+        <DialogActions className="dialog__actions actions">
+          <button
+            className="actions__confirm actions__btn"
+            type="button"
+            onClick={onModalConfirm}
+            disabled={!deliveryMethod}
+          >
             Confirm selection
           </button>
-          <button type="button" onClick={onModalClose}>
+          <button className="actions__close actions__btn" type="button" onClick={onModalClose}>
             Close
           </button>
         </DialogActions>
@@ -85,7 +101,7 @@ const SliderShow = ({ arrayOfImgs, cloudName }) => {
     inputRadios.push(<input type="radio" name="r" id={item.id} key={item.id} />);
     images.push(
       <div className={index ? "slide" : "slide s1"} key={item.id}>
-        <Image cloudName={cloudName} publicId={item.imgId} width="300" crop="scale" />
+        <Image cloudName={cloudName} publicId={item.imgId} width="800" crop="scale" />
       </div>
     );
     labels.push(<label htmlFor={item.id} className="bar" key={`label-${item.id}`} />);
@@ -122,8 +138,9 @@ const SelectedGame = () => {
       value: "No physical copies",
       fieldName: "numberOfPhysicalCopies",
     },
+    { title: "Discount: ", value: 0, fieldName: "discount" },
   ]);
-  
+
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
@@ -131,7 +148,7 @@ const SelectedGame = () => {
   const { user } = useSelector((state) => state.user);
   const { successMsg, errorMsg } = useSelector((state) => state.notification);
 
-  const userId = JSON.parse(localStorage.getItem("userData")).userId;
+  const userId = JSON.parse(localStorage.getItem("userData"))?.userId;
   const locationSplittedArray = location.pathname.split("/");
   const gameId = locationSplittedArray[locationSplittedArray.length - 1];
   const PHYSICAL = "Physical";
@@ -219,8 +236,8 @@ const SelectedGame = () => {
   return (
     <>
       {isReadyToDisplayGameInfo && (
-        <div>
-          <h2 className="game-name">{textFields[5].value}</h2>
+        <div className="game-name">
+          <h2 className="game-name__title">{textFields[5].value}</h2>
         </div>
       )}
       {arrayOfImgs.length && <SliderShow arrayOfImgs={arrayOfImgs} cloudName={cloudName} />}
@@ -229,12 +246,42 @@ const SelectedGame = () => {
       <div className="content-area">
         <div className="content-area__game-info game-info">
           {isReadyToDisplayGameInfo &&
-            textFields.map((item) => (
-              <div key={item.title}>
-                <span className="game-info__text-field-title">{item.title}</span>
-                <p className="game-info__text-field-value">{item.value}</p>
-              </div>
-            ))}
+            textFields.map((item) => {
+              if (item.fieldName === "discount") {
+                return (
+                  <div key={item.title}>
+                    <p className="game-info__text-field-title">
+                      {item.title}
+                      <span className="game-info__text-field-value">{item.value}%</span>
+                    </p>
+                  </div>
+                );
+              }
+              if (item.fieldName === "releaseDate") {
+                return (
+                  <div key={item.title}>
+                    <p className="game-info__text-field-title">
+                      {item.title}
+                      <span className="game-info__text-field-value">
+                        {new Date(item.value).getMonth() + 1}
+                        {"-"}
+                        {new Date(item.value).getDate()}
+                        {"-"}
+                        {new Date(item.value).getFullYear()}
+                      </span>
+                    </p>
+                  </div>
+                );
+              }
+              return (
+                <div key={item.title}>
+                  <p className="game-info__text-field-title">
+                    {item.title}
+                    <span className="game-info__text-field-value">{item.value}</span>
+                  </p>
+                </div>
+              );
+            })}
         </div>
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
