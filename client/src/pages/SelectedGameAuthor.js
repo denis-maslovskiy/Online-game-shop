@@ -54,12 +54,12 @@ const SelectedGameAuthor = () => {
           <div className="selected-game-author-container__author-description-block">
             <div>
               <span>
-                <strong>Description:</strong> {selectedGameAuthor?.authorDescription}
+                <strong className="static-field">Description:</strong> {selectedGameAuthor?.authorDescription}
               </span>
             </div>
             <div>
               <span>
-                <strong>Year of foundation of the company: </strong>
+                <strong className="static-field">Year of foundation of the company: </strong>
                 {new Date(selectedGameAuthor?.yearOfFoundationOfTheCompany).getMonth() + 1}
                 {"-"}
                 {new Date(selectedGameAuthor?.yearOfFoundationOfTheCompany).getDate()}

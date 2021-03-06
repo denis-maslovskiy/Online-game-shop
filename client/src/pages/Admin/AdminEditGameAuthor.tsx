@@ -199,14 +199,17 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
               }
               if (input.name === "yearOfFoundationOfTheCompany") {
                 return (
-                  <div key={input.name}>
-                    <DatePicker
-                      selected={new Date(values.yearOfFoundationOfTheCompany)}
-                      dateFormat="MM-dd-yyyy"
-                      name="yearOfFoundationOfTheCompany"
-                      onChange={(date) => setFieldValue("yearOfFoundationOfTheCompany", date)}
-                      disabled={!Boolean(initialGameAuthorData.authorName)}
-                    />
+                  <div className="form__div" key={input.name}>
+                    <div className="form__datepicker">
+                      <label>{input.label}</label>
+                      <DatePicker
+                        selected={new Date(values.yearOfFoundationOfTheCompany)}
+                        dateFormat="MM-dd-yyyy"
+                        name="yearOfFoundationOfTheCompany"
+                        onChange={(date) => setFieldValue("yearOfFoundationOfTheCompany", date)}
+                        disabled={!Boolean(initialGameAuthorData.authorName)}
+                      />
+                    </div>
                   </div>
                 );
               }
@@ -241,7 +244,7 @@ const AdminEditGameAuthor: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="edit-game-author-container">
       <div className="container-title-block edit-game-author-title">
         <h2 className="container-title">Edit Game Author</h2>
       </div>
@@ -269,7 +272,7 @@ const AdminEditGameAuthor: React.FC = () => {
       {infoMsg && <Notification values={{ infoMsg }} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
       {initialGameAuthorData && <RenderGameForm initialGameAuthorData={initialGameAuthorData} />}
-    </>
+    </div>
   );
 };
 

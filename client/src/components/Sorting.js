@@ -33,7 +33,7 @@ export const Sorting = () => {
 
   const sortTrigger = (isSortActive) => {
     if (isSortActive) {
-      document.getElementById("sort-icon").style.color = "red";
+      document.getElementById("sort-icon").style.color = "#2196F3";
     } else {
       document.getElementById("sort-icon").style.color = "white";
     }
@@ -102,18 +102,17 @@ export const Sorting = () => {
         onClose={handleClose}
       >
         <div className="sorting-block">
-          <h2 className="sorting-block__section-name">Sorting</h2>
+          <h2 className="sorting-block__section-name">Sort</h2>
           <div className="sorting-block__sorting-option sorting-option">
-            <span className="sorting-option__title">Select sort:</span>
             <FormControl>
-              <InputLabel id="demo-customized-select-label">Sorting</InputLabel>
+              <InputLabel id="demo-customized-select-label">By:</InputLabel>
               <Select
                 labelId="demo-customized-select-label"
                 id="demo-customized-select"
-                value={sortType}
+                value={sortType || 'None'}
                 onChange={handleChange}
               >
-                <MenuItem value="">
+                <MenuItem value="None">
                   <em>None</em>
                 </MenuItem>
                 {sortValues.map((item) => {

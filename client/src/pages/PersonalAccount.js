@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Image } from "cloudinary-react";
 import { useDispatch, useSelector } from "react-redux";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 import { getUserData } from "../redux/user/userActions";
 import { DependenciesContext } from "../context/DependenciesContext";
 import noImageAvailable from "../img/no-image-available.jpg";
@@ -82,7 +83,7 @@ const PersonalAccount = () => {
           {isReadyToDisplayUserInfo &&
             userData.map((item) => (
               <h2 className="user-info__text" key={item.id}>
-                <span className="user-info__title">{item.title}: </span>
+                <span className="user-info__title static-field">{item.title}: </span>
                 {item.value}
               </h2>
             ))}
@@ -105,16 +106,12 @@ const PersonalAccount = () => {
             <h2 className="title-block__text">Orders</h2>
 
             <div className="title-block__old-first-checkbox old-first-checkbox">
-              <label className="old-first-checkbox__label label">
-                <span className="label__text">Old first</span>
-                <input
-                  type="checkbox"
-                  className="label__input"
-                  value={isCheckboxActive}
-                  onChange={checkboxChangeHandler}
-                />
-                <span className="label__checkmark"></span>
-              </label>
+              <FormControlLabel
+                aria-required
+                value={isCheckboxActive}
+                control={<Checkbox name="oldFirst" color="primary" onChange={checkboxChangeHandler} />}
+                label="Old first"
+              />
             </div>
           </div>
 

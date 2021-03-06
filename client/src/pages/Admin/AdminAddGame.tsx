@@ -192,6 +192,7 @@ const AdminAddGame: React.FC = () => {
                 return (
                   <div className="form__div" key={input.name}>
                     <TextField
+                      autoComplete="off"
                       className="form__input"
                       required
                       label={input.label}
@@ -209,6 +210,7 @@ const AdminAddGame: React.FC = () => {
                   <div className="form__div" key={input.name}>
                     <TextField
                       disabled
+                      autoComplete="off"
                       className="form__input"
                       required
                       label={input.label}
@@ -226,6 +228,7 @@ const AdminAddGame: React.FC = () => {
                     <TextField
                       className="form__input"
                       required
+                      autoComplete="off"
                       label={input.label}
                       variant="filled"
                       onChange={handleChange}
@@ -239,13 +242,15 @@ const AdminAddGame: React.FC = () => {
               if (input.name === "releaseDate") {
                 return (
                   <div className="form__div" key={input.name}>
-                    <label>{input.label}</label>
-                    <DatePicker
-                      selected={new Date(values.releaseDate || Date.now())}
-                      dateFormat="MM-dd-yyyy"
-                      name="releaseDate"
-                      onChange={(date) => setFieldValue("releaseDate", date)}
-                    />
+                    <div className="form__datepicker">
+                      <label>{input.label}</label>
+                      <DatePicker
+                        selected={new Date(values.releaseDate || Date.now())}
+                        dateFormat="MM-dd-yyyy"
+                        name="releaseDate"
+                        onChange={(date) => setFieldValue("releaseDate", date)}
+                      />
+                    </div>
                   </div>
                 );
               }
@@ -254,6 +259,7 @@ const AdminAddGame: React.FC = () => {
                   <TextField
                     className="form__input"
                     required
+                    autoComplete="off"
                     label={input.label}
                     variant="filled"
                     onChange={handleChange}

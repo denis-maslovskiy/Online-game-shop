@@ -1,26 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Formik, useField, Form } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
+import { TextField } from "@material-ui/core";
 import Notification from "../components/Notification";
 import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { loginUser } from "../redux/authentication/authenticationActions";
 import { DependenciesContext } from "../context/DependenciesContext";
 import "../styles/auth.scss";
-
-const CustomTextInput = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
-
-  return (
-    <>
-      <label htmlFor={props.id || props.name}>{label}</label>
-      <input {...field} {...props} />
-      {meta.touched && meta.error ? <div>{meta.error}</div> : null}
-    </>
-  );
-};
 
 const Authorization = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,25 +48,44 @@ const Authorization = (props) => {
         })}
         onSubmit={submit}
       >
-        {(props) => (
+        {({handleChange, handleBlur, isSubmitting, errors, touched}) => (
           <Form className="box">
             <h1 className="box__title">Authorization</h1>
-            <CustomTextInput
-              className="box__input"
-              name="email"
-              type="text"
-              placeholder="Email"
-              onClick={onInputClickHandler}
-            />
-            <CustomTextInput
-              className="box__input"
-              name="password"
-              type="password"
-              placeholder="Password"
-              onClick={onInputClickHandler}
-            />
+
+            <div className="form__div">
+              <TextField
+                className="form__input auth-input"
+                required
+                label="Email"
+                variant="filled"
+                name="email"
+                autoComplete="off"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onClick={onInputClickHandler}
+                error={Boolean(errors.email)}
+                helperText={touched.email ? errors.email : ""}
+              />
+            </div>
+
+            <div className="form__div">
+              <TextField
+                className="form__input auth-input"
+                required
+                label="Password"
+                variant="filled"
+                name="password"
+                type="password"
+                autoComplete="off"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onClick={onInputClickHandler}
+                error={Boolean(errors.password)}
+                helperText={touched.password ? errors.password : ""}
+              />
+            </div>
             <button className="box__submit-btn" type="submit">
-              {props.isSubmitting ? "Loading..." : "Log In"}
+              {isSubmitting ? "Loading..." : "Log In"}
             </button>
             <div className="box__bottom-text">
               Don't have an account?{" "}

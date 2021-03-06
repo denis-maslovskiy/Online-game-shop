@@ -166,16 +166,19 @@ const AdminStatistic: React.FC = () => {
   };
 
   const ArrayOfAllAvailableAchievements: Array<string> = [];
+  let firstAchievementsColumnLength = 0;
 
   if (allAchievements.length) {
     allAchievements.forEach((achieve: Achieve) => {
       ArrayOfAllAvailableAchievements.push(achieve.achievementText);
     });
+
+    firstAchievementsColumnLength = Math.ceil(ArrayOfAllAvailableAchievements.length / 2);
   }
 
   return (
     <div className="admin-statistic-container">
-      <div className="container-title-block">
+      <div className="container-title-block statistic">
         <h2 className="container-title">Statistic</h2>
       </div>
       <div className="admin-statistic-container__admin-statistic-content admin-statistic-content">
@@ -245,10 +248,24 @@ const AdminStatistic: React.FC = () => {
           </PieChart>
         </div>
         <div className="admin-statistic-content__statistic-achievements statistic-achievements">
-          <h3>List of all available achievements</h3>
-          {ArrayOfAllAvailableAchievements.map((item) => (
-            <p key={item}>{item}</p>
-          ))}
+          <h3 className="static-field">List of all available achievements</h3>
+
+          <div className="statistic-achievements__container">
+            <div>
+              {ArrayOfAllAvailableAchievements.map((item, index) => {
+                if (index < firstAchievementsColumnLength) {
+                  return <p key={item}>{item}</p>;
+                }
+              })}
+            </div>
+            <div>
+              {ArrayOfAllAvailableAchievements.map((item, index) => {
+                if (index >= firstAchievementsColumnLength) {
+                  return <p key={item}>{item}</p>;
+                }
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>

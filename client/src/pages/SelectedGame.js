@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Image } from "cloudinary-react";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Checkbox, FormControlLabel } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
@@ -52,12 +52,12 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
         <DialogTitle className="dialog__title">
           Please choose a delivery method for a physical copy of the game
         </DialogTitle>
-        <DialogContent className="dialog__content content">
-          <DialogContentText className="content__text">
+        <DialogContent className="dialog__dialog-content dialog-content">
+          <DialogContentText className="dialog-content__text">
             We offer you two delivery options: <strong>courier delivery</strong>, <strong>self-pickup</strong>. Please
             choose one option
           </DialogContentText>
-          <button
+          {/* <button
             className="content__delivery-type-btn"
             type="button"
             aria-pressed={isButtonPressed(COURIER_DELIVERY)}
@@ -72,7 +72,23 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
             onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}
           >
             Self-pickup
-          </button>
+          </button> */}
+          <div className="dialog-content__checkboxes">
+            <div>
+              <FormControlLabel
+                checked={isButtonPressed(COURIER_DELIVERY)}
+                control={<Checkbox name="CourierDelivery" color="primary" onChange={() => deliveryMethodButtonHandler(COURIER_DELIVERY)} />}
+                label="Courier delivery"
+              />
+            </div>
+            <div>
+              <FormControlLabel
+                checked={isButtonPressed(SELF_PICKUP)}
+                control={<Checkbox name="SelfPickup" color="primary" onChange={() => deliveryMethodButtonHandler(SELF_PICKUP)} />}
+                label="Self-pickup"
+              />
+            </div>
+          </div>
         </DialogContent>
         <DialogActions className="dialog__actions actions">
           <button
@@ -81,7 +97,7 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
             onClick={onModalConfirm}
             disabled={!deliveryMethod}
           >
-            Confirm selection
+            Confirm
           </button>
           <button className="actions__close actions__btn" type="button" onClick={onModalClose}>
             Close
@@ -251,7 +267,7 @@ const SelectedGame = () => {
                 return (
                   <div key={item.title}>
                     <p className="game-info__text-field-title">
-                      {item.title}
+                      <span className="static-field">{item.title}</span>
                       <span className="game-info__text-field-value">{item.value}%</span>
                     </p>
                   </div>
@@ -261,7 +277,7 @@ const SelectedGame = () => {
                 return (
                   <div key={item.title}>
                     <p className="game-info__text-field-title">
-                      {item.title}
+                      <span className="static-field">{item.title}</span>
                       <span className="game-info__text-field-value">
                         {new Date(item.value).getMonth() + 1}
                         {"-"}
@@ -276,7 +292,7 @@ const SelectedGame = () => {
               return (
                 <div key={item.title}>
                   <p className="game-info__text-field-title">
-                    {item.title}
+                    <span className="static-field">{item.title}</span>
                     <span className="game-info__text-field-value">{item.value}</span>
                   </p>
                 </div>
@@ -285,7 +301,7 @@ const SelectedGame = () => {
         </div>
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
-            <h2 className="buy-game__title">Digital Copy</h2>
+            <h2 className="buy-game__title static-field">Digital Copy</h2>
             {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isDigital && (
               <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Digital")}>
@@ -299,7 +315,7 @@ const SelectedGame = () => {
             )}
           </div>
           <div className="buy-game__physical-copy">
-            <h2 className="buy-game__title">Physical Copy</h2>
+            <h2 className="buy-game__title static-field">Physical Copy</h2>
             {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isPhysical && (
               <button className="buy-game__button" onClick={handleOpenModal}>

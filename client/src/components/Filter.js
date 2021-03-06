@@ -69,7 +69,7 @@ export const Filter = () => {
 
   const filterTrigger = (isFilterActive) => {
     if (isFilterActive) {
-      document.getElementById("filter-icon").style.color = "red";
+      document.getElementById("filter-icon").style.color = "#2196F3";
     } else {
       document.getElementById("filter-icon").style.color = "white";
     }
@@ -150,7 +150,7 @@ export const Filter = () => {
                     case "Game Name":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">{item.inputName}</span>
+                          {/* <span className="option__title">{item.inputName}</span> */}
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -165,7 +165,7 @@ export const Filter = () => {
                     case "Author":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">{item.inputName}</span>
+                          {/* <span className="option__title">{item.inputName}</span> */}
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -180,7 +180,7 @@ export const Filter = () => {
                     case "Genre":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">{item.inputName}</span>
+                          {/* <span className="option__title">{item.inputName}</span> */}
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -195,7 +195,7 @@ export const Filter = () => {
                     case "Number of copies":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">{item.inputName}</span>
+                          {/* <span className="option__title">{item.inputName}</span> */}
                           <TextField
                             className="filter__input"
                             type="number"

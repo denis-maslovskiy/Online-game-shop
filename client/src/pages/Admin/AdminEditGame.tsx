@@ -256,6 +256,19 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
     dispatch(adminUploadGameImagesWhenEditingGame(selectedFiles, initialGameData._id, userId));
   };
 
+  if (!selectedFiles.length) {
+    console.log("no preview");
+    if (document.getElementById("uploader-submit-btn")) {
+      document.getElementById("uploader-submit-btn")!.style.display = "none";
+    }
+  } else {
+    if (document.getElementById("uploader-submit-btn")) {
+      document.getElementById("uploader-submit-btn")!.style.display = "block";
+    }
+  }
+
+  console.log(selectedFiles, selectedFiles.length);
+
   return (
     <div className="admin-edit-game-container">
       <div className="admin-edit-game-container__existing-images image-preview">
@@ -286,7 +299,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
             className="image-upload__uploader"
             aria-disabled={!Boolean(initialGameData.gameName)}
           >
-            Click to upload images
+            Click to choose images
           </label>
           <input
             id="image-upload-input"
@@ -297,6 +310,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
             disabled={!Boolean(initialGameData.gameName)}
           />
           <button
+            id="uploader-submit-btn"
             type="submit"
             className="image-upload__uploader"
             disabled={!Boolean(initialGameData.gameName) || !Boolean(selectedFiles.length)}
@@ -387,14 +401,17 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
 
               if (input.name === "releaseDate") {
                 return (
-                  <div key={input.name}>
-                    <DatePicker
-                      selected={new Date(values.releaseDate || Date.now())}
-                      dateFormat="MM-dd-yyyy"
-                      name="releaseDate"
-                      onChange={(date) => setFieldValue("releaseDate", date)}
-                      disabled={!Boolean(initialGameData.gameName)}
-                    />
+                  <div className="form__div" key={input.name}>
+                    <div className="form__datepicker">
+                      <label>{input.label}</label>
+                      <DatePicker
+                        selected={new Date(values.releaseDate || Date.now())}
+                        dateFormat="MM-dd-yyyy"
+                        name="releaseDate"
+                        onChange={(date) => setFieldValue("releaseDate", date)}
+                        disabled={!Boolean(initialGameData.gameName)}
+                      />
+                    </div>
                   </div>
                 );
               }
@@ -502,23 +519,25 @@ const AdminEditGame: React.FC = () => {
 
   return (
     <>
-      <div className="container-title-block edit-game-title">
-        <h2 className="container-title">Edit Game</h2>
-      </div>
-      <div className="select-game-container">
-        <FormControl className="select-game-container__select-game select-game">
-          <InputLabel className="select-game__label">Select game</InputLabel>
-          {/* @ts-ignore */}
-          <Select value={initialGameData?._id} onChange={selectHandleChange} className="select-game__select">
-            {allGames.map((game: FormValues) => {
-              return (
-                <MenuItem value={game._id} key={game._id}>
-                  {game.gameName}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
+      <div className="title-and-select-container">
+        <div className="container-title-block edit-game-title">
+          <h2 className="container-title">Edit Game</h2>
+        </div>
+        <div className="select-game-container">
+          <FormControl className="select-game-container__select-game select-game">
+            <InputLabel className="select-game__label">Select game</InputLabel>
+            {/* @ts-ignore */}
+            <Select value={initialGameData?._id} onChange={selectHandleChange} className="select-game__select">
+              {allGames.map((game: FormValues) => {
+                return (
+                  <MenuItem value={game._id} key={game._id}>
+                    {game.gameName}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </div>
       </div>
 
       {successMsg && <Notification values={{ successMsg }} />}

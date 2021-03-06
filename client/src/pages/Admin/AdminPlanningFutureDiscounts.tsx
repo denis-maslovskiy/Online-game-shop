@@ -68,7 +68,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
 
   return (
     <div className="admin-add-game-container">
-      <div className="container-title-block planning-future-discounts-title">
+      <div className="container-title-block add-game-title">
         <h2 className="container-title">Admin Planning Future Discounts</h2>
       </div>
       <div className="planning-future-discounts">
@@ -95,29 +95,35 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
               disabled={!selectedResult.length}
             />
           </div>
-          <div>
-            <DatePicker
-              selected={plannedDiscountDates.startsOn}
-              dateFormat="MM-dd-yyyy"
-              name="plannedDiscountStartsOn"
-              disabled={!selectedResult.length}
-              onChange={(date) =>
-                // @ts-ignore
-                setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, startsOn: date }))
-              }
-            />
+          <div className="form__div">
+            <div className="form__datepicker">
+              <label>Starts On</label>
+              <DatePicker
+                selected={plannedDiscountDates.startsOn}
+                dateFormat="MM-dd-yyyy"
+                name="plannedDiscountStartsOn"
+                disabled={!selectedResult.length}
+                onChange={(date) =>
+                  // @ts-ignore
+                  setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, startsOn: date }))
+                }
+              />
+            </div>
           </div>
-          <div>
-            <DatePicker
-              selected={plannedDiscountDates.endsOn}
-              dateFormat="MM-dd-yyyy"
-              name="plannedDiscountEndsOn"
-              disabled={!selectedResult.length}
-              onChange={(date) =>
-                // @ts-ignore
-                setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, endsOn: date }))
-              }
-            />
+          <div className="form__div">
+            <div className="form__datepicker">
+              <label>Ends On</label>
+              <DatePicker
+                selected={plannedDiscountDates.endsOn}
+                dateFormat="MM-dd-yyyy"
+                name="plannedDiscountEndsOn"
+                disabled={!selectedResult.length}
+                onChange={(date) =>
+                  // @ts-ignore
+                  setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, endsOn: date }))
+                }
+              />
+            </div>
           </div>
           <button className="add-game-button" onClick={saveButtonClickHandler} disabled={!selectedResult.length}>
             Save changes
