@@ -23,13 +23,14 @@
     border: $border;
     padding: $padding;
     outline: none;
-    color: white;
+    color: $bg-hover;
     border-radius: $border-radius;
     transition: .25s;
     @include text-style($font-size);
     cursor: pointer;
     
     &:hover {
+        color: white;
         background: $bg-hover;
     }
 }

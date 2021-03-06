@@ -13,6 +13,10 @@
         color: white;
         @include dark-bg();
     }
+
+    @media (max-width: 500px) {
+        width: 95%;
+    }
 }
 
 .basket-order {
@@ -61,15 +65,29 @@
     &__picture {
         height: 150px;
         width: 150px;
-        margin: 2%;
+        margin: 20px;
         border: 1px solid white;
+    }
+
+    &__timer {
+        position: relative;
+        float: right;
+        bottom: 220px;
+
+        @media (max-width: 1350px) {
+            bottom: 210px;
+        }
+
+        @media (max-width: 1100px) {
+            bottom: 200px;
+        }
     }
 }
 
 .price-summary {
     @include flex-display(nowrap, column, flex-start, stretch);
     @include dark-bg();
-    padding: 2%;
+    padding: 20px;
     border-radius: 24px;
 
     &__text {
@@ -95,13 +113,20 @@
 }
 
 .remove-basket-game {
-    @include custom-btn(none, 8px 12px, 2%, 2px solid $light-red-color, 24px, $light-red-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 20px;
+
+    & > svg.MuiSvgIcon-root {
+        color: $light-red-color
+    }
 }
 
 .timer {
-    @include text-style(22px);
-    color: white;
-    width: 75px;
+    @include text-style(28px);
+    color: $static-field-color;
+    width: 105px;
 }
 
 @media (max-width: 860px) {
@@ -111,7 +136,7 @@
             flex-direction: column;
             padding: 10px 0;
             width: 100%;
-            margin: 1% auto;
+            margin: 10px auto;
         }
     }
 
@@ -123,5 +148,10 @@
         &__picture {
             width: 60%;
         }
+    }
+
+    .basket-game__timer {
+        bottom: 53px;
+        right: 10px;
     }
 }

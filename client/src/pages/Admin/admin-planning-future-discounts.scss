@@ -2,7 +2,7 @@
 @import '../../styles/variables.scss';
 
 .planning-future-discounts {
-    width: 90%;
+    width: 100%;
     margin: 2% auto;
 
     &__pfd-content {
@@ -12,18 +12,15 @@
         margin: 0 auto;
         @include flex-display($align-items: center, $flex-direction: column);
 
-        @media (max-width: 720px) {
+        @media (max-width: 750px) {
             width: 100%;
         }
     }
 }
 
-.planning-future-discounts-title {
-    width: 50%;
-    padding: 0 10px;
-
-    @media (max-width: 720px) {
-        width: 80%;
+.container-title-block.add-game-title {
+    @media (max-width: 750px) {
+        width: 100%;
     }
 }
 
@@ -37,6 +34,7 @@ input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
 
 div.autocomplete-field {
     width: 400px;
+    margin: 10px 0;
 
     @media(max-width: 530px) {
         width: 300px;

@@ -5,6 +5,10 @@
 .admin-add-game-container {
     width: 90%;
     margin: 2% auto;
+
+    @media (max-width: 390px) {
+        width: 98%;
+    }
 }
 
 #image-upload-input {
@@ -20,7 +24,7 @@
     margin: 0 auto;
     margin-top: 1%;
     background-color: #1d1d1d;
-    padding: 1% 0;
+    padding: 10px 0;
     color: white;
 
     &__form {
@@ -34,22 +38,26 @@
     }
 
     &__uploader {
-        @include custom-btn(none, 8px 10px, 2%, 2px solid $light-green-color, 24px, $light-green-color);
+        @include custom-btn(16px, 8px 10px, 2%, 2px solid $light-green-color, 24px, $light-green-color);
         margin: 2% 0;
+        width: 190px;
 
         &[type="submit"] {
-            @include custom-btn(none, 12px 14px, 2%, 2px solid $light-green-color, 24px, $light-green-color);
+            @include custom-btn(none, 8px 10px, 2%, 2px solid $light-green-color, 24px, $light-green-color);
+            width: 214px;
         }
 
         &:disabled {
             @include custom-btn(none, 8px 10px, 2%, 2px solid $custom-grey, 24px, $custom-grey);
             border: 2px solid $custom-grey;
             cursor: not-allowed;
+            color: $custom-grey;
 
             &[type="submit"] {
-                @include custom-btn(none, 12px 14px, 2%, 2px solid $custom-grey, 24px, $custom-grey);
+                @include custom-btn(none, 8px 10px, 2%, 2px solid $custom-grey, 24px, $custom-grey);
                 border: 2px solid $custom-grey;
                 cursor: not-allowed;
+                width: 214px;
             }
 
             &:hover {
@@ -76,25 +84,60 @@
     }
 
     &__remove-image-btn {
-        @include custom-btn(none, 8px 12px, 2%, 2px solid $red-color, 24px, $red-color);
         position: absolute;
-        margin: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: -5px;
         padding: 1px 6px;
+
+        & > svg.MuiSvgIcon-root {
+            color: $light-red-color
+        }
     }
 }
 
-input[name="releaseDate"], input[name="yearOfFoundationOfTheCompany"],
-input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
+input[name="releaseDate"], input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
     border: none;
     border-radius: 24px;
-    width: 200px;
+    width: 300px;
     height: 20px;
     text-align: center;
-    @include text-style(17px)
+    @include text-style(17px);
+
+    @media (max-width: 530px) {
+        width: 200px;
+    }
+
+    @media(max-width: 390px) {
+        width: 150px;
+    }
+}
+
+.react-datepicker-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+input[name="yearOfFoundationOfTheCompany"] {
+    border: none;
+    border-radius: 24px;
+    width: 145px;
+    height: 20px;
+    text-align: center;
+    @include text-style(17px);
+
+    @media (max-width: 530px) {
+        width: 200px;
+    }
+
+    @media(max-width: 390px) {
+        width: 150px;
+    }
 }
 
 .form {
-    background-color: #1d1d1d;
+    @include dark-bg(0.97);
     padding: 1% 0;
     color: white;
     width: 70%;
@@ -109,16 +152,16 @@ input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
     }
 
     &__input.MuiFormControl-root {
-        background: white;
+        background: $blue-input-bg !important;
         width: 400px;
 
         & > label.MuiFormLabel-root.MuiInputLabel-root.Mui-focused,
         label.MuiFormLabel-root.MuiInputLabel-root.MuiFormLabel-filled {
-            color: #5c6bc0;
+            color: white;
         }
 
         & > label.MuiFormLabel-root.MuiInputLabel-root {
-            color: black;
+            color: white;
         }
 
         & > div.MuiInputBase-root.MuiFilledInput-root.MuiFilledInput-underline.Mui-disabled.Mui-disabled.MuiInputBase-formControl {
@@ -135,10 +178,28 @@ input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
     }
 
     &__div {
-        margin: 1% 0;
+        margin: 10px 0;
 
         & > label {
             margin-right: 10px;
+        }
+    }
+
+    &__datepicker {
+        width: 400px;
+        margin: 0 auto;
+        @include flex-display($justify-content: space-between);
+
+        & > label {
+            color: white;
+        }
+
+        @media(max-width: 530px) {
+            width: 300px;
+        }
+
+        @media(max-width: 390px) {
+            width: 250px;
         }
     }
 }
@@ -153,11 +214,8 @@ input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
 }
 
 .add-game-button {
-    @include custom-btn(24px);
-
-    &:hover {
-        font-weight: bold;
-    }
+    @include custom-btn(20px);
+    width: 240px;
 
     &_disabled {
         border: 2px solid $custom-grey;
@@ -174,7 +232,35 @@ input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
 }
 
 @media (max-width: 700px) {
-    .form,.image-upload,.container-title-block.add-game-title {
-        width: 90%;
+    .form,.image-upload {
+        width: 100%;
     }
 }
+
+.MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-filled.Mui-disabled.Mui-required {
+    color: grey;
+}
+
+// DatePicker
+.react-datepicker__header,.react-datepicker__month-container {
+    background-color: $blue-input-bg;
+}
+
+.react-datepicker__current-month, .react-datepicker__day-name, .react-datepicker__day {
+    color: white;
+}
+
+.react-datepicker__day:hover, .react-datepicker__month-text:hover, .react-datepicker__quarter-text:hover, .react-datepicker__year-text:hover {
+    background-color: $custom-middle-blue;
+}
+
+.react-datepicker__day--selected{
+    background-color: $custom-dark-blue;
+}
+
+@media (max-width: 425px) {
+    .react-datepicker-popper {
+        left: -70px !important;
+    }
+}
+

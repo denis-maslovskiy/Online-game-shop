@@ -125,7 +125,9 @@
 .card {
     display: flex;
     justify-content: space-around;
-    width: 100%;
+    width: 400px;
+    max-width: 400px;
+    padding: 0 5px;
     @include text-style(16px);
 
     &__picture {
@@ -156,7 +158,8 @@
     &__title {
         text-align: center;
         color: white;
-        letter-spacing: 4px;
+        letter-spacing: 2px;
+        padding: 10px 0;
         @include dark-bg();
         margin-bottom: 10px;
         -webkit-text-stroke: 1px black;
@@ -185,6 +188,7 @@
     &__text-on-image {
         margin: 0 auto;
         text-align: center;
+        padding: 5px 0;
         @include text-style(20px);
         color: white;
         @include dark-bg();

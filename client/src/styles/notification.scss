@@ -7,8 +7,10 @@
 }
 
 .alert {
-    display: flex;
-    max-width: 280px;
+    @include flex-display($justify-content: space-around, $align-items: center);
+    position: absolute;
+    width: 100%;
+    max-width: 300px;
     padding: 15px;
     color: white;
     border-radius: 24px;
@@ -28,7 +30,7 @@
     }
 
     &__close-btn {
-        border: 2px solid white;
+        border: none;
         background: none;
         border-radius: 24px;
         color: white;

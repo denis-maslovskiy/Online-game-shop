@@ -7,9 +7,9 @@
     @include flex-display($flex-direction: column, $align-items: center);
 
     &__author-description-block {
-        width: 60%;
-        margin: 2% auto;
-        padding: 1% 0;
+        width: 690px;
+        margin: 10px auto;
+        padding: 10px 5px;
         @include flex-display($flex-direction: column, $justify-content: center);
         @include text-style(18px);
         @include dark-bg();
@@ -19,15 +19,25 @@
         & > div {
             margin: 1% 0;
         }
+
+        @media (max-width: 800px) {
+            width: 490px;
+        }
     }
 }
 
 .game-links-container {
     width: 70%;
-    margin: 3% auto;
+    margin: 20px auto;
+    min-width: 700px;
 
     &__game-link {
         text-decoration: none;
+    }
+
+    @media (max-width: 800px) {
+        width: 70%;
+        min-width: 0;
     }
 }
 
@@ -48,8 +58,8 @@
     margin-top: 2%;
     width: 700px;
 
-    @media (max-width: 850px) {
-        width: 400px;
+    @media (max-width: 800px) {
+        width: 500px;
     }
     
     @media (max-width: 500px) {
@@ -67,7 +77,7 @@
     max-height: 400px;
 
     @media (max-width: 800px) {
-        width: 400px;
+        width: 500px;
         max-height: 250px;
     }
 
@@ -80,5 +90,27 @@
 .selected-author-game {
     @media (max-width: 759px) {
         width: 100%;
+    }
+}
+
+@media (max-width: 580px) {
+    .game-name.game-author-title-block, .author-logo, .game-links-container {
+        width: 400px;
+    }
+
+    .selected-game-author-container__author-description-block {
+        width: 390px;
+    }
+}
+
+@media (max-width: 460px) {
+    .game-name.game-author-title-block, .author-logo,
+    .selected-game-author-container__author-description-block,
+    .game-links-container {
+        width: 280px;
+    }
+
+    .selected-game-author-container__author-description-block {
+        width: 270px;
     }
 }

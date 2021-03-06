@@ -2,7 +2,7 @@
 @import '../styles/mixins.scss';
 
 .filter-block {
-    width: 400px;
+    width: 250px;
     height: 400px;
     color: white;
 
@@ -14,11 +14,10 @@
     &__section-name {
         @include text-style(24px, bold);
         position: relative;
-        left: 30%;
+        text-align: center;
     }
 
     &__button-container {
-        width: 80%;
         @include flex-display($justify-content: center);
     }
 }
@@ -26,11 +25,12 @@
 .button-container {
     &__button {
         background-color: $custom-middle-blue;
-        @include custom-btn(none, 12px 42px, 2%, 2px solid white, 24px, $custom-dark-blue);
+        @include custom-btn(none, 12px 42px, 2%, 2px solid $custom-dark-blue, 24px, $custom-dark-blue);
         @include text-style(20px, bold);
+        color: $custom-dark-blue;
 
         &:hover {
-            padding: 12px 52px;
+            color: white;
         }
     }
 }
@@ -41,15 +41,18 @@
     }
 
     &__input {
-        width: 50%;
+        width: 200px;
+        margin: 0 auto;
         margin-bottom: 2%;
     }
-}
 
-.option {
-    &__title {
-        color: white;
-        @include text-style(20px, bold);
+    &__input.MuiFormControl-root {
+        width: 200px;
+        margin: 0 auto;
+
+        & > div::before {
+            border-bottom: 1px solid white;
+        }
     }
 }
 
@@ -67,4 +70,12 @@ ul[role="menu"].MuiList-root {
 
 .MuiInput-root.MuiInput-underline:after {
     border-bottom: 2px solid white;
+}
+
+div.MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom: 2px solid white;
+}
+
+.MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated {
+  color: white;  
 }

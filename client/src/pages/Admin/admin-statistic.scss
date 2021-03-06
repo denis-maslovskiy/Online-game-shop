@@ -7,6 +7,7 @@
     width: 70%;
     margin: 0 auto;
     margin-bottom: 2%;
+    padding: 10px 0;
 }
 
 .container-title {
@@ -38,13 +39,21 @@
 
         & > p {
             @include text-style(20px);
+            color: $static-field-color;
             margin: .5% 0;
-            text-align: center;
+
+            @media (max-width: 590px) {
+                padding: 5px 15px;
+            }
         }
 
         & > p > span {
             @include text-style(22px);
-            color: $light-green-color;
+            color: white;
+        }
+
+        @media (max-width: 590px) {
+            align-items: flex-start
         }
     }
 
@@ -65,7 +74,7 @@
     }
 
     &__statistic-achievements {
-        width: 40%;
+        width: 70%;
     }
 
     @media (max-width: 830px) {
@@ -76,7 +85,7 @@
             width: 100%;
         };
         &__statistic-achievements {
-            width: 70%;
+            width: 100%;
         }
     }
 }
@@ -94,7 +103,35 @@ text {
     padding: 1% 0;
     text-align: center;
 
-    & > p {
-        margin: .5% 0;
+    & > h3 {
+        padding: 0 5px;
+    }
+
+    &__container {
+        @include flex-display($justify-content: space-around);
+        width: 50%;
+
+        & > div > p {
+            margin: 10px 0;
+        }
+
+        @media (max-width: 1200px) {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+}
+
+div.statistic {
+    @media (max-width: 830px) {
+        width: 100%;
+    }
+}
+
+button.MuiButtonBase-root.MuiButton-root.MuiButton-text {
+    padding: 6px 24px;
+
+    @media (max-width: 599px) {
+        padding: 6px 16px;
     }
 }

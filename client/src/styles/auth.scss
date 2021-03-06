@@ -9,7 +9,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    @include dark-bg(1);
+    @include dark-bg(0.98);
     text-align: center;
 
     &__title {
@@ -47,13 +47,15 @@
         border: 2px solid $light-green-color;
         padding: 14px 40px;
         outline: none;
-        color: white;
+        color: $light-green-color;
         border-radius: 24px;
         transition: .25s;
         cursor: pointer;
+        width: 300px;
 
         &:hover {
             background: $light-green-color;
+            color: white;
         }
     }
 
@@ -72,5 +74,23 @@ form.box {
     color: red;
 }
 
+.MuiFormControl-root.MuiTextField-root.form__input.auth-input{
+    width: 300px;
+}
+
+@media (max-width: 390px) {
+    .box {
+        width: 275px;
+        padding: 20px;
+
+        &__submit-btn {
+            width: 275px;
+        }
+    }
+
+    .MuiFormControl-root.MuiTextField-root.form__input.auth-input {
+        width: 275px;
+    }
+}
 
 

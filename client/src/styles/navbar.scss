@@ -9,6 +9,10 @@
     @media (max-height: 730px) {
         height: 9vh;
     }
+
+    &.MuiAppBar-colorPrimary {
+        background-color: $custom-dark-blue;
+    }
 }
 
 .navbar-links {
@@ -59,5 +63,9 @@
 }
 
 .MuiInputBase-input.MuiInput-input.MuiAutocomplete-input.MuiAutocomplete-inputFocused.MuiInputBase-inputAdornedEnd {
+    color: white;
+}
+
+svg.MuiSvgIcon-root {
     color: white;
 }
