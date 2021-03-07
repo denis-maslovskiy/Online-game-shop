@@ -119,6 +119,15 @@ input[name="releaseDate"], input[name="plannedDiscountStartsOn"], input[name="pl
     align-items: center;
 }
 
+.react-datepicker__input-container > input {
+    background: $blue-input-bg;
+    color: white;
+
+    &:disabled {
+        background: $custom-grey;
+    }
+}
+
 input[name="yearOfFoundationOfTheCompany"] {
     border: none;
     border-radius: 24px;
@@ -202,6 +211,10 @@ input[name="yearOfFoundationOfTheCompany"] {
             width: 250px;
         }
     }
+}
+
+.add-game-upload-form {
+    margin-bottom: 0;
 }
 
 .input-fields {

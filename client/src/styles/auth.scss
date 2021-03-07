@@ -78,6 +78,11 @@ form.box {
     width: 300px;
 }
 
+.MuiFormHelperText-root.MuiFormHelperText-contained.Mui-error.MuiFormHelperText-filled.Mui-required {
+    @include dark-bg(1);
+    margin: 0;
+}
+
 @media (max-width: 390px) {
     .box {
         width: 275px;

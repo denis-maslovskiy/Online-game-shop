@@ -7,9 +7,9 @@
     @include flex-display($flex-direction: column, $align-items: center);
 
     &__author-description-block {
-        width: 690px;
+        width: 700px;
         margin: 10px auto;
-        padding: 10px 5px;
+        padding: 10px 0;
         @include flex-display($flex-direction: column, $justify-content: center);
         @include text-style(18px);
         @include dark-bg();
@@ -17,11 +17,12 @@
         text-align: center;
 
         & > div {
-            margin: 1% 0;
+            margin: 8px 0;
+            padding: 0 10px;
         }
 
         @media (max-width: 800px) {
-            width: 490px;
+            width: 500px;
         }
     }
 }
@@ -95,22 +96,10 @@
 
 @media (max-width: 580px) {
     .game-name.game-author-title-block, .author-logo, .game-links-container {
-        width: 400px;
+        width: 100%;
     }
 
     .selected-game-author-container__author-description-block {
-        width: 390px;
-    }
-}
-
-@media (max-width: 460px) {
-    .game-name.game-author-title-block, .author-logo,
-    .selected-game-author-container__author-description-block,
-    .game-links-container {
-        width: 280px;
-    }
-
-    .selected-game-author-container__author-description-block {
-        width: 270px;
+        width: 100%;
     }
 }

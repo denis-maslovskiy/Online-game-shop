@@ -28,6 +28,7 @@
         @include custom-btn(none, 12px 42px, 2%, 2px solid $custom-dark-blue, 24px, $custom-dark-blue);
         @include text-style(20px, bold);
         color: $custom-dark-blue;
+        margin-top: 20px;
 
         &:hover {
             color: white;
