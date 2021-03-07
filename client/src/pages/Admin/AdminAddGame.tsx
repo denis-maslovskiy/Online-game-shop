@@ -136,7 +136,7 @@ const AdminAddGame: React.FC = () => {
       </div>
 
       <div className="admin-add-game-container__image-upload image-upload">
-        <form className="image-upload__form">
+        <form className="image-upload__form add-game-upload-form">
           <label htmlFor="image-upload-input" className="image-upload__uploader">
             Click to upload images
           </label>
