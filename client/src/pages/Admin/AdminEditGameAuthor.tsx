@@ -124,7 +124,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
 
         {previewSource ? (
           // @ts-ignore
-          <img src={previewSource} alt="Chosen image" style={{ width: "300px", marginLeft: "50%" }} />
+          <img src={previewSource} alt="Preview" style={{ width: "300px", marginLeft: "50%" }} />
         ) : (
           initialGameAuthorData.authorLogo && (
             <Image
@@ -160,7 +160,15 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                   <Field key={input.name} name={input.name}>
                     {({ field }: FieldProps<FormValues>) => (
                       <div>
-                        <TextField {...field} required multiline label={input.label} variant="outlined" />
+                        <TextField
+                          {...field}
+                          required
+                          multiline
+                          label={input.label}
+                          variant="outlined"
+                          error={Boolean(errors[input.name]) && touched[input.name]}
+                          helperText={touched[input.name] ? errors[input.name] : ""}
+                        />
                       </div>
                     )}
                   </Field>
@@ -178,6 +186,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                   </div>
                 );
               }
+              return null;
             })}
             <button type="submit" disabled={checksForButton(isSubmitting, errors, touched)}>
               Save changes
@@ -198,7 +207,7 @@ const AdminEditGameAuthor: React.FC = () => {
 
   useEffect(() => {
     dispatch(getAllAuthors());
-  }, []);
+  }, [dispatch]);
 
   const selectHandleChange = (e: { target: HTMLInputElement }) => {
     const authorId = e.target.value;

@@ -266,7 +266,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
             >
               &times;
             </button>
-            <Image cloudName={cloudName} publicId={imgId} width="200" />
+            <Image cloudName={cloudName} publicId={imgId} width="200" alt="Existing image" />
           </div>
         ))}
       </div>
@@ -275,12 +275,13 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
         <h3>New images</h3>
         {previews &&
           previews.map((file: any) => {
+            console.log(file);
             return (
               <div key={file.preview}>
                 <button id={file.preview} onClick={() => removePreviewImgClickHandler(file.preview)}>
                   &times;
                 </button>
-                <img src={file.preview} style={{ width: "300px" }} />
+                <img src={file.preview} alt="Preview" style={{ width: "300px" }} />
               </div>
             );
           })}
@@ -323,7 +324,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
         enableReinitialize={true}
         validationSchema={validationSchema}
       >
-        {({ values }) => (
+        {({ values, touched, errors }) => (
           <Form className="form">
             {inputs.map((input) => {
               if (input.name === "isDigital" || input.name === "isPhysical") {
@@ -346,7 +347,15 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                   <Field key={input.name} name={input.name}>
                     {({ field }: FieldProps<FormValues>) => (
                       <div className="form__div">
-                        <TextField disabled {...field} required label={input.label} variant="outlined" />
+                        <TextField
+                          disabled
+                          {...field}
+                          required
+                          label={input.label}
+                          variant="outlined"
+                          error={Boolean(errors[input.name]) && touched[input.name] && Boolean(values.isPhysical)}
+                          helperText={touched[input.name] && Boolean(values.isPhysical) ? errors[input.name] : ""}
+                        />
                       </div>
                     )}
                   </Field>
@@ -363,6 +372,8 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                         label={input.label}
                         variant="outlined"
                         disabled={!Boolean(initialGameData.gameName)}
+                        error={Boolean(errors[input.name]) && touched[input.name]}
+                        helperText={touched[input.name] ? errors[input.name] : ""}
                       />
                     </div>
                   )}
@@ -394,7 +405,7 @@ const AdminEditGame: React.FC = () => {
   useEffect(() => {
     dispatch(getAllGames());
     dispatch(getAllAuthors());
-  }, []);
+  }, [dispatch]);
 
   const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
     // @ts-ignore

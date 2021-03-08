@@ -67,11 +67,11 @@ const initialValues = {
   releaseDate: "",
   author: "",
   genre: "",
-  numberOfPhysicalCopies: 0,
-  price: 0,
+  numberOfPhysicalCopies: "",
+  price: "",
   isPhysical: false,
   isDigital: false,
-  discount: 0,
+  discount: "",
 };
 
 interface Game {
@@ -159,7 +159,7 @@ const AdminAddGame: React.FC = () => {
                 <button id={file.preview} onClick={() => removeImgClickHandler(file.preview)}>
                   &times;
                 </button>
-                <img src={file.preview} style={{ width: "300px" }} />
+                <img src={file.preview} alt="Preview" style={{ width: "300px" }} />
               </div>
             );
           })}
@@ -203,6 +203,8 @@ const AdminAddGame: React.FC = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
+                      error={Boolean(errors[input.name]) && touched[input.name]}
+                      helperText={touched[input.name] ? errors[input.name] : ""}
                     />
                   </div>
                 );
@@ -219,6 +221,8 @@ const AdminAddGame: React.FC = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
+                      error={Boolean(errors[input.name]) && touched[input.name] && Boolean(values.isPhysical)}
+                      helperText={touched[input.name] && Boolean(values.isPhysical) ? errors[input.name] : ""}
                     />
                   </div>
                 );
@@ -235,6 +239,8 @@ const AdminAddGame: React.FC = () => {
                       onBlur={handleBlur}
                       name={input.name}
                       type="number"
+                      error={Boolean(errors[input.name]) && touched[input.name]}
+                      helperText={touched[input.name] ? errors[input.name] : ""}
                     />
                   </div>
                 );
@@ -249,6 +255,8 @@ const AdminAddGame: React.FC = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name={input.name}
+                    error={Boolean(errors[input.name]) && touched[input.name]}
+                    helperText={touched[input.name] ? errors[input.name] : ""}
                   />
                 </div>
               );
