@@ -43,7 +43,7 @@ const Authorization = (props) => {
     if (isAuthenticated) {
       history.push("/");
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, history]);
 
   return (
     <>

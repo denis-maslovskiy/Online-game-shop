@@ -8,20 +8,18 @@ import { DependenciesContext } from "../context/DependenciesContext";
 
 const SelectedGameAuthor = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const locationSplittedArray = location.pathname.split("/");
+  const gameAuthorId = locationSplittedArray[locationSplittedArray.length - 1];
 
   useEffect(() => {
     dispatch(getSelectedGameAuthor(gameAuthorId));
     dispatch(getAllGames());
-  }, []);
+  }, [dispatch, gameAuthorId]);
 
   const { cloudName } = useContext(DependenciesContext);
-  const location = useLocation();
-
   const { selectedGameAuthor } = useSelector((state) => state.gameAuthor);
   const { allGames } = useSelector((state) => state.games);
-
-  const locationSplittedArray = location.pathname.split("/");
-  const gameAuthorId = locationSplittedArray[locationSplittedArray.length - 1];
 
   const getGameId = (gameName, gameId) => {
     if (gameId) {

@@ -38,7 +38,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
 
   useEffect(() => {
     dispatch(getAllGames());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const tempArray: Array<string> = [];
@@ -46,7 +46,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
       tempArray.push(game.gameName);
     });
     setGamesNamesArray(tempArray);
-  }, [allGames.length]);
+  }, [allGames]);
 
   const onGameNameChangeHandler = (e: ChangeEvent<{}>, value: Array<string>) => {
     setSelectedResult(value);

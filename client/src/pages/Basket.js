@@ -28,7 +28,7 @@ const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [minutes, seconds]);
+  }, [minutes, seconds, dateAddedToBasket, gameName, removeGameHandler]);
 
   return (
     <div className="timer">
@@ -49,10 +49,10 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
                 cloudName={cloudName}
                 publicId={item.imgSource[0]}
                 className="card__picture"
-                alt={`${item.gameName} image`}
+                alt={item.gameName}
               />
             ) : (
-              <img src={noImageAvailable} className="card__picture" alt={`No available image for ${item.gameName}`} />
+              <img src={noImageAvailable} className="card__picture" alt={item.gameName} />
             )}
             <div className="game__text">
               <span>{item.gameName}</span>
@@ -90,7 +90,7 @@ const Basket = () => {
 
   useEffect(() => {
     dispatch(getUserData(userId));
-  }, []);
+  }, [userId, dispatch]);
 
   useEffect(() => {
     if (Object.keys(user).length !== 0) {

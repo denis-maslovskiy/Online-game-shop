@@ -71,10 +71,12 @@ export const Sorting = () => {
           return b.discount - a.discount;
         });
         break;
+      default:
+        return;
     }
     dispatch(setFilteredArray(allGames));
     handleClose();
-  }, [sortType, allGames]);
+  }, [sortType, allGames, dispatch]);
 
   return (
     <>

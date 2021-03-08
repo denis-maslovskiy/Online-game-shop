@@ -35,7 +35,7 @@ const PersonalAccount = () => {
 
   useEffect(() => {
     dispatch(getUserData(userId));
-  }, []);
+  }, [dispatch, userId]);
 
   useEffect(() => {
     if (Object.keys(user).length) {
@@ -98,10 +98,10 @@ const PersonalAccount = () => {
                   cloudName={cloudName}
                   publicId={item.imgSource[0]}
                   className="card__picture"
-                  alt={`${item.gameName} image`}
+                  alt={item.gameName}
                 />
               ) : (
-                <img src={noImageAvailable} className="card__picture" alt={`No available image for ${item.gameName}`} />
+                <img src={noImageAvailable} className="card__picture" alt={item.gameName} />
               )}
               <div className="game__text">
                 <span>{item.gameName}</span>

@@ -55,7 +55,7 @@ const AdminStatistic: React.FC = () => {
   useEffect(() => {
     dispatch(getAllUsers({ userId }));
     dispatch(getAllAchievements());
-  }, []);
+  }, [dispatch, userId]);
 
   let gamesBoughtFor = 0,
     usersPerMonth = 0,

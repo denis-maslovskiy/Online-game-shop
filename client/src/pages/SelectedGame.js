@@ -81,7 +81,7 @@ const SliderShow = ({ arrayOfImgs, cloudName }) => {
     images = [],
     labels = [];
 
-  arrayOfImgs.map((item, index) => {
+  arrayOfImgs.forEach((item, index) => {
     inputRadios.push(<input type="radio" name="r" id={item.id} key={item.id} />);
     images.push(
       <div className={index ? "slide" : "slide s1"} key={item.id}>
@@ -138,7 +138,7 @@ const SelectedGame = () => {
 
   useEffect(() => {
     dispatch(getUserData(userId));
-  }, []);
+  }, [userId, dispatch]);
 
   useEffect(() => {
     (async function () {
@@ -160,12 +160,12 @@ const SelectedGame = () => {
         const startsOn = game.plannedDiscountStartsOn,
           endsOn = game.plannedDiscountEndsOn;
         if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
-          setGamePrice((game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2));
+          setGamePrice((game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) > 0 ? (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) : 0);
         } else {
-          setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+          setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2) > 0 ? (game?.price * (1 - game?.discount / 100)).toFixed(2) : 0);
         }
       } else {
-        setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+        setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2) > 0 ? (game?.price * (1 - game?.discount / 100)).toFixed(2) : 0);
       }
       setIsDigital(game.isDigital);
       setIsPhysical(game.isPhysical);
@@ -175,7 +175,7 @@ const SelectedGame = () => {
       game.rating = game.rating + 1;
       dispatch(updateGameData(game._id, game));
     })();
-  }, [textFields, gameId]);
+  }, [textFields, gameId, dispatch]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);

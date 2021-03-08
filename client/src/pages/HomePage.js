@@ -16,7 +16,7 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(getAllGames());
     dispatch(getAllAuthors());
-  }, []);
+  }, [dispatch]);
 
   if (filteredGames.length && filteredGames[0] === "No matches found.") {
     return (
@@ -42,13 +42,13 @@ const HomePage = () => {
                         cloudName={cloudName}
                         publicId={game.imgSource[0]}
                         className="card__picture"
-                        alt={`${game.gameName} image`}
+                        alt={game.gameName}
                       />
                     ) : (
                       <img
                         src={noImageAvailable}
                         className="card__picture"
-                        alt={`No available image for ${game.gameName}`}
+                        alt={game.gameName}
                       />
                     )}
                     <div className="card_description">
@@ -74,13 +74,13 @@ const HomePage = () => {
                         cloudName={cloudName}
                         publicId={game.imgSource[0]}
                         className="card__picture"
-                        alt={`${game.gameName} image`}
+                        alt={game.gameName}
                       />
                     ) : (
                       <img
                         src={noImageAvailable}
                         className="card__picture"
-                        alt={`No available image for ${game.gameName}`}
+                        alt={game.gameName}
                       />
                     )}
                     <div className="card_description">
