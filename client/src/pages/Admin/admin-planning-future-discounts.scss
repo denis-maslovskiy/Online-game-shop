@@ -1,0 +1,59 @@
+@import '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.planning-future-discounts {
+    width: 100%;
+    margin: 2% auto;
+
+    &__pfd-content {
+        width: 70%;
+        @include dark-bg(1);
+        padding: 1% 0;
+        margin: 0 auto;
+        @include flex-display($align-items: center, $flex-direction: column);
+
+        @media (max-width: 750px) {
+            width: 100%;
+        }
+    }
+}
+
+.container-title-block.add-game-title {
+    @media (max-width: 750px) {
+        width: 100%;
+    }
+}
+
+input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
+    margin: 2% 0;
+}
+
+#autocomplete-label {
+    color: white;
+}
+
+div.autocomplete-field {
+    width: 400px;
+    margin: 10px 0;
+
+    @media(max-width: 530px) {
+        width: 300px;
+    }
+
+    @media(max-width: 390px) {
+        width: 250px;
+    }
+}
+
+.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-adornedEnd {
+    border-bottom: 1px solid white;
+}
+
+.MuiChip-root.MuiAutocomplete-tag.MuiChip-deletable {
+    color: white;
+    background-color: $custom-dark-blue;
+}
+
+.MuiSvgIcon-root.MuiChip-deleteIcon {
+    color: white;
+}

@@ -1,0 +1,105 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+.selected-game-author-container {
+    width: 90%;
+    margin: 0 auto;
+    @include flex-display($flex-direction: column, $align-items: center);
+
+    &__author-description-block {
+        width: 700px;
+        margin: 10px auto;
+        padding: 10px 0;
+        @include flex-display($flex-direction: column, $justify-content: center);
+        @include text-style(18px);
+        @include dark-bg();
+        color: white;
+        text-align: center;
+
+        & > div {
+            margin: 8px 0;
+            padding: 0 10px;
+        }
+
+        @media (max-width: 800px) {
+            width: 500px;
+        }
+    }
+}
+
+.game-links-container {
+    width: 70%;
+    margin: 20px auto;
+    min-width: 700px;
+
+    &__game-link {
+        text-decoration: none;
+    }
+
+    @media (max-width: 800px) {
+        width: 70%;
+        min-width: 0;
+    }
+}
+
+.authors-game-text {
+    @include text-style(20px);
+    @include flex-display($flex-direction: column, $align-items: center);
+
+    & > p {
+        margin: 10px;
+    }
+
+    @media (max-width: 759px) {
+        @include text-style(16px)
+    }
+}
+
+.game-author-title-block {
+    margin-top: 2%;
+    width: 700px;
+
+    @media (max-width: 800px) {
+        width: 500px;
+    }
+    
+    @media (max-width: 500px) {
+        width: 250px;
+    }
+}
+
+.game-author-title {
+    margin: 1% 0;
+}
+
+.author-logo {
+    width: 700px;
+    margin-top: 2%;
+    max-height: 400px;
+
+    @media (max-width: 800px) {
+        width: 500px;
+        max-height: 250px;
+    }
+
+    @media (max-width: 500px) {
+        width: 250px;
+        height: 150px;
+    }
+}
+
+.selected-author-game {
+    @media (max-width: 759px) {
+        width: 100%;
+    }
+}
+
+@media (max-width: 580px) {
+    .game-name.game-author-title-block, .author-logo, .game-links-container {
+        width: 100%;
+    }
+
+    .selected-game-author-container__author-description-block {
+        width: 100%;
+    }
+}

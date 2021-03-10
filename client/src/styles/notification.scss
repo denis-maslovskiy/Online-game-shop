@@ -1,9 +1,16 @@
 @import './variables.scss';
+@import './mixins.scss';
+
+.notification-container {
+    position: absolute;
+    @include flex-display($flex-direction: column);
+}
 
 .alert {
+    @include flex-display($justify-content: space-around, $align-items: center);
     position: absolute;
-    display: flex;
-    max-width: 280px;
+    width: 100%;
+    max-width: 300px;
     padding: 15px;
     color: white;
     border-radius: 24px;
@@ -18,11 +25,12 @@
     }
 
     &-info {
-        background-color: #FFC300;
+        background-color: $custom-middle-yellow;
+        color: black;
     }
 
     &__close-btn {
-        border: 2px solid white;
+        border: none;
         background: none;
         border-radius: 24px;
         color: white;
@@ -43,7 +51,7 @@
 
         &--info {
             &:hover {
-                background-color: #F7DC6F;
+                background-color: $custom-light-yellow;
             }
         }
     }

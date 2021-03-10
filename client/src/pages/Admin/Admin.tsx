@@ -1,14 +1,10 @@
 import React, { useState } from "react";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import { SwipeableDrawer, Button, List, ListItem, ListItemText } from "@material-ui/core";
 import AdminAddGame from "./AdminAddGame";
 import AdminEditGame from "./AdminEditGame";
 import AdminStatistic from "./AdminStatistic";
 import AdminEditGameAuthor from "./AdminEditGameAuthor";
-import AdminPlanningFutureDiscounts from './AdminPlanningFutureDiscounts';
+import AdminPlanningFutureDiscounts from "./AdminPlanningFutureDiscounts";
 import "./admin.scss";
 
 type Anchor = "left";
@@ -34,13 +30,7 @@ const Admin = () => {
     setAdminOption(text);
   }
 
-  const adminOptions = [
-    "Statistic",
-    "Add new game",
-    "Edit game",
-    "Edit game author",
-    "Planning future discounts"
-  ];
+  const adminOptions = ["Statistic", "Add new game", "Edit game", "Edit game author", "Planning future discounts"];
 
   const list = (anchor: Anchor) => (
     <div role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
@@ -56,11 +46,11 @@ const Admin = () => {
 
   return (
     <>
-      <div>
+      <div className="admin-select-option">
         {(["left"] as Anchor[]).map((anchor) => (
           <React.Fragment key={anchor}>
             <Button id="button" onClick={toggleDrawer(anchor, true)}>
-              Click to choose admin option
+              <span className="admin-select-option__text">Click to choose admin option</span>
             </Button>
             <SwipeableDrawer
               anchor={anchor}

@@ -107,12 +107,29 @@ export const updateGameData = (gameId, game) => {
   };
 };
 
-export const adminUpdateGameData = (gameId, game) => {
+export const adminUpdateGameData = (gameId, game, userId) => {
   return async (dispatch) => {
     try {
       const {
         data: { message },
-      } = await axios.put(`/api/admin/${gameId}`, game);
+      } = await axios.put(`/api/admin/${gameId}`, { ...game, userId });
+
+      const { data } = await axios.get("/api/game-author/get-all-game-authors");
+      let gameAuthor = null;
+
+      data.forEach((author) => {
+        if (author.authorName === game.author) {
+          gameAuthor = author;
+        }
+      });
+
+      gameAuthor.authorsGames.map((authorGame) => {
+        if (authorGame.gameName === game.gameName) {
+          authorGame.imgSource = game.imgSource;
+        }
+      });
+      await axios.put(`/api/admin/edit-game-author-info/${gameAuthor._id}`, { ...gameAuthor, userId });
+
       dispatch(updateGameArray(game));
       dispatch(successMessage(message));
     } catch (e) {
@@ -139,6 +156,14 @@ export const adminUploadGameImagesWhenEditingGame = (selectedFiles, gameId, user
   return async (dispatch) => {
     try {
       const { data } = await axios.get(`/api/games/${gameId}`);
+      const response = await axios.get("/api/game-author/get-all-game-authors");
+      let gameAuthor = null;
+
+      response.data.forEach((author) => {
+        if (author.authorName === data.author) {
+          gameAuthor = author;
+        }
+      });
 
       selectedFiles.forEach((file) => {
         const reader = new FileReader();
@@ -150,6 +175,12 @@ export const adminUploadGameImagesWhenEditingGame = (selectedFiles, gameId, user
           } = await axios.post("/api/admin/upload-image", { fileStr, userId });
           data.imgSource.push(uploadResponse.public_id);
           await axios.put(`/api/admin/${gameId}`, { ...data, userId });
+          gameAuthor.authorsGames.map((game) => {
+            if (game.gameName === data.gameName) {
+              return (game.imgSource = data.imgSource);
+            }
+          });
+          await axios.put(`/api/admin/edit-game-author-info/${gameAuthor._id}`, { ...gameAuthor, userId });
           dispatch(clearSuccessMessage());
           dispatch(successMessage(`Image "${file.name}" uploaded successfully`));
         };

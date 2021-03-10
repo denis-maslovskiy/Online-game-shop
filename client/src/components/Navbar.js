@@ -65,6 +65,11 @@ export const Navbar = () => {
     { linkName: "Basket", path: "/basket", id: "2" },
   ];
 
+  if (isAdmin) {
+    loggedIn.push({ linkName: "Admin Panel", path: "/admin-panel", id: "3" });
+    loggedIn_MobileMenu.push({ linkTo: "/admin-panel", linkName: "Admin Panel", id: 3 });
+  }
+
   if (allGames.length && allGameAuthors.length) {
     optionAutocompleteArray = allGames.concat(allGameAuthors);
   }
@@ -208,17 +213,6 @@ export const Navbar = () => {
                     </Link>
                   </Badge>
                 </IconButton>
-                {isAdmin && (
-                  <>
-                    <IconButton>
-                      <Badge>
-                        <Link to="/admin-panel" className="navbar-links">
-                          Admin Panel
-                        </Link>
-                      </Badge>
-                    </IconButton>
-                  </>
-                )}
               </>
             )}
           </div>

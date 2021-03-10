@@ -19,19 +19,11 @@ export const Filter = () => {
     genresArray: [],
     numberOfCopies: null,
   });
+
   const dispatch = useDispatch();
-
-  const open = Boolean(anchorEl);
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const { allGames } = useSelector((state) => state.games);
+  const open = Boolean(anchorEl);
+  const resultArray = [];
 
   // Create options for Autocomplete
   useEffect(() => {
@@ -54,6 +46,14 @@ export const Filter = () => {
     }
   }, [allGames]);
 
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const onGameNameChangeHandler = (e, value) => {
     setResultObject({ ...resultObject, gameNamesArray: value });
   };
@@ -67,7 +67,14 @@ export const Filter = () => {
     setResultObject({ ...resultObject, numberOfCopies: e.target.value });
   };
 
-  const resultArray = [];
+  const filterTrigger = (isFilterActive) => {
+    if (isFilterActive) {
+      document.getElementById("filter-icon").style.color = "#2196F3";
+    } else {
+      document.getElementById("filter-icon").style.color = "white";
+    }
+  };
+
   const onDone = () => {
     allGames.map((item) => {
       if (
@@ -95,10 +102,13 @@ export const Filter = () => {
       ) {
         resultArray.push("No matches found.");
         dispatch(setFilteredArray(resultArray));
+        filterTrigger(true);
       } else {
         dispatch(setFilteredArray(resultArray));
+        filterTrigger(false);
       }
     } else {
+      filterTrigger("true");
       dispatch(setFilteredArray(resultArray));
     }
   };
@@ -114,12 +124,8 @@ export const Filter = () => {
     <>
       {authorsArray.length && genresArray.length && gameNamesArray.length && (
         <section>
-          <IconButton
-            aria-controls="menu-appbar"
-            color="inherit"
-            onClick={handleMenu}
-          >
-            <FilterListIcon />
+          <IconButton aria-controls="menu-appbar" color="inherit" onClick={handleMenu}>
+            <FilterListIcon id="filter-icon" />
           </IconButton>
           <Menu
             id="menu-appbar"
@@ -144,9 +150,6 @@ export const Filter = () => {
                     case "Game Name":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">
-                            {item.inputName}
-                          </span>
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -154,18 +157,13 @@ export const Filter = () => {
                             options={gameNamesArray}
                             getOptionLabel={(option) => option}
                             onChange={onGameNameChangeHandler}
-                            renderInput={(params) => (
-                              <TextField {...params} label={item.inputLabel} />
-                            )}
+                            renderInput={(params) => <TextField {...params} label={item.inputLabel} />}
                           />
                         </div>
                       );
                     case "Author":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">
-                            {item.inputName}
-                          </span>
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -173,18 +171,13 @@ export const Filter = () => {
                             options={authorsArray}
                             getOptionLabel={(option) => option}
                             onChange={onAuthorChangeHandler}
-                            renderInput={(params) => (
-                              <TextField {...params} label={item.inputLabel} />
-                            )}
+                            renderInput={(params) => <TextField {...params} label={item.inputLabel} />}
                           />
                         </div>
                       );
                     case "Genre":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">
-                            {item.inputName}
-                          </span>
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -192,18 +185,13 @@ export const Filter = () => {
                             options={genresArray}
                             getOptionLabel={(option) => option}
                             onChange={onGenreChangeHandler}
-                            renderInput={(params) => (
-                              <TextField {...params} label={item.inputLabel} />
-                            )}
+                            renderInput={(params) => <TextField {...params} label={item.inputLabel} />}
                           />
                         </div>
                       );
                     case "Number of copies":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          <span className="option__title">
-                            {item.inputName}
-                          </span>
                           <TextField
                             className="filter__input"
                             type="number"
@@ -216,9 +204,11 @@ export const Filter = () => {
                   }
                 })}
               </div>
-              <button className="filter-block__button" onClick={() => onDone()}>
-                Done
-              </button>
+              <div className="filter-block__button-container button-container">
+                <button className="button-container__button" onClick={() => onDone()}>
+                  Done
+                </button>
+              </div>
             </div>
           </Menu>
         </section>

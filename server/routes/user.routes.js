@@ -21,7 +21,7 @@ router.put("/:id", async (req, res) => {
     checkIsGameAlreadyExist.gamesInTheBasket.forEach((obj) => {
       if (obj.gameName === req.body.gamesInTheBasket[req.body.gamesInTheBasket.length - 1].gameName) {
         return res.status(400).json({
-          message: "Such game already exist in the basket.",
+          message: "Such game already exists in the basket.",
         });
       }
     });

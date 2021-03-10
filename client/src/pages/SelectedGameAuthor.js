@@ -5,6 +5,8 @@ import { Image } from "cloudinary-react";
 import { getSelectedGameAuthor } from "../redux/gameAuthor/gameAuthorActions";
 import { getAllGames } from "../redux/games/gamesActions";
 import { DependenciesContext } from "../context/DependenciesContext";
+import noImageAvailable from "../img/no-image-available.jpg";
+import "../styles/selected-game-author.scss";
 
 const SelectedGameAuthor = () => {
   const dispatch = useDispatch();
@@ -39,21 +41,74 @@ const SelectedGameAuthor = () => {
 
   return (
     <>
-      {selectedGameAuthor?.authorLogo && (
-        <Image cloudName={cloudName} publicId={selectedGameAuthor?.authorLogo} width="300" />
-      )}
-      {selectedGameAuthor?.authorsGames?.length &&
-        selectedGameAuthor?.authorsGames?.map((game) => {
-          return (
-            <div key={game.gameName}>
-              <p>{game.gameName}</p>
-              <p>{game.gameDescription}</p>
-              <p>{game.releaseDate}</p>
-              <p>{game.genre}</p>
-              <Link to={`/selected-game/${getGameId(game.gameName, game._id)}`}>Game Link</Link>
+      {selectedGameAuthor && (
+        <div className="selected-game-author-container">
+          <div className="game-name game-author-title-block">
+            <h2 className="game-name__title game-author-title">{selectedGameAuthor?.authorName}</h2>
+          </div>
+          {selectedGameAuthor?.authorLogo ? (
+            <Image cloudName={cloudName} publicId={selectedGameAuthor?.authorLogo} className="author-logo" />
+          ) : (
+            <img src={noImageAvailable} alt="No logo for author" className="author-logo"></img>
+          )}
+          <div className="selected-game-author-container__author-description-block">
+            <div>
+              <span>
+                <strong className="static-field">Description:</strong> {selectedGameAuthor?.authorDescription}
+              </span>
             </div>
-          );
-        })}
+            <div>
+              <span>
+                <strong className="static-field">Year of foundation of the company: </strong>
+                {new Date(selectedGameAuthor?.yearOfFoundationOfTheCompany).getMonth() + 1}
+                {"-"}
+                {new Date(selectedGameAuthor?.yearOfFoundationOfTheCompany).getDate()}
+                {"-"}
+                {new Date(selectedGameAuthor?.yearOfFoundationOfTheCompany).getFullYear()}
+              </span>
+            </div>
+          </div>
+          <div className="game-links-container">
+            {selectedGameAuthor?.authorsGames?.length &&
+              selectedGameAuthor?.authorsGames?.map((game) => (
+                <Link
+                  to={`/selected-game/${getGameId(game.gameName, game._id)}`}
+                  key={game.gameName}
+                  className="game-links-container__game-link"
+                >
+                  <div className="orders__game game selected-author-game">
+                    {game?.imgSource?.length ? (
+                      <Image
+                        cloudName={cloudName}
+                        publicId={game.imgSource[0]}
+                        className="game__picture"
+                        alt={`${game.gameName} image`}
+                      />
+                    ) : (
+                      <img
+                        src={noImageAvailable}
+                        className="game__picture"
+                        alt={`No available image for ${game.gameName}`}
+                      />
+                    )}
+                    <div className="game__text authors-game-text">
+                      <p>{game.gameName}</p>
+                      <p>{game.gameDescription}</p>
+                      <p>
+                        {new Date(game.releaseDate).getMonth() + 1}
+                        {"-"}
+                        {new Date(game.releaseDate).getDate()}
+                        {"-"}
+                        {new Date(game.releaseDate).getFullYear()}
+                      </p>
+                      <p>{game.genre}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };

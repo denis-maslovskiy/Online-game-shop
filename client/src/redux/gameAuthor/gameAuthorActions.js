@@ -1,5 +1,4 @@
 import axios from "axios";
-import { successMessage, errorMessage, infoMessage } from "../notification/notificationActions";
 import {
   SET_ALL_GAME_AUTHORS,
   UPDATE_GAME_AUTHOR_ARRAY,
@@ -36,14 +35,11 @@ export const updateGameArrayAfterDeletingTheGameAuthor = (deletedGameAuthor) => 
 };
 
 export const adminAddAuthor = (newAuthor) => {
-  return async (dispatch) => {
+  return async () => {
     try {
-      const {
-        data: { message },
-      } = await axios.post("/api/admin/create-game-author", { ...newAuthor });
-      dispatch(successMessage(message));
+      await axios.post("/api/admin/create-game-author", { ...newAuthor });
     } catch (e) {
-      dispatch(errorMessage(e.response.data.message));
+      console.log(e.response.data.message)
     }
   };
 };
@@ -89,13 +85,10 @@ export const adminUpdateGameAuthorData = (gameAuthorId, gameAuthor, userId, sele
         }
       }
 
-      const {
-        data: { message },
-      } = await axios.put(`/api/admin/edit-game-author-info/${gameAuthorId}`, { ...gameAuthor, userId });
+      await axios.put(`/api/admin/edit-game-author-info/${gameAuthorId}`, { ...gameAuthor, userId });
       dispatch(updateGameAuthorArray(gameAuthor));
-      dispatch(successMessage(message));
     } catch (e) {
-      dispatch(errorMessage(e.response.data.message));
+      console.log(e.response.data.message)
     }
   };
 };
@@ -103,13 +96,10 @@ export const adminUpdateGameAuthorData = (gameAuthorId, gameAuthor, userId, sele
 export const adminDeleteGameAuthor = (gameAuthorId, userId) => {
   return async (dispatch) => {
     try {
-      const {
-        data: { message },
-      } = await axios.delete(`/api/admin/delete-game-author/${gameAuthorId}`, { data: { ...userId } });
+      await axios.delete(`/api/admin/delete-game-author/${gameAuthorId}`, { data: { ...userId } });
       dispatch(updateGameArrayAfterDeletingTheGameAuthor(gameAuthorId));
-      dispatch(infoMessage(message));
     } catch (e) {
-      dispatch(errorMessage(e.response.data.message));
+      console.log(e.response.data.message)
     }
   };
 };

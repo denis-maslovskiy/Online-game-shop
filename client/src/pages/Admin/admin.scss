@@ -1,0 +1,24 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.admin-select-option {
+    margin-top: 1%;
+
+    &__text {
+        @include text-style(14px, bold);
+        color: white;
+    }
+}
+
+.MuiPaper-root.MuiDrawer-paper.MuiDrawer-paperAnchorLeft.MuiPaper-elevation16 {
+    color: white;
+    background-color: $custom-dark-blue;
+}
+
+.MuiButtonBase-root.MuiListItem-root.MuiListItem-gutters.MuiListItem-button:hover {
+    background-color: $custom-middle-blue;
+}
+
+a.mobile-menu-link {
+    color: white;
+}
