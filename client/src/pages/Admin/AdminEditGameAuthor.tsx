@@ -2,19 +2,16 @@ import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import { RootState } from "../../redux/rootReducer";
-import "react-datepicker/dist/react-datepicker.css";
 import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps, FormikErrors, FormikTouched } from "formik";
 // @ts-ignore
 import { Image } from "cloudinary-react";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
+import { TextField, InputLabel, MenuItem, FormControl, Select } from "@material-ui/core";
+import ClearIcon from "@material-ui/icons/Clear";
 import { getAllAuthors, adminUpdateGameAuthorData } from "../../redux/gameAuthor/gameAuthorActions";
 import { DependenciesContext } from "../../context/DependenciesContext";
 import Notification from "../../components/Notification";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface FormValues {
   authorName: string;
@@ -109,32 +106,57 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
     };
   };
 
+  const removeImgClickHandler = (imgId: string) => {
+    initialGameAuthorData.authorLogo = "";
+    document.querySelector(`[src*="${imgId}"]`)?.remove();
+    document.querySelector(`[id*="${imgId}"]`)?.remove();
+    dispatch(adminUpdateGameAuthorData(initialGameAuthorData._id, { ...initialGameAuthorData }, userId));
+  };
+
   return (
-    <>
-      <h2>Edit Game Author</h2>
-      <div>
-        <form style={{ marginLeft: "50%" }}>
+    <div className="admin-edit-game-author-container">
+      <div className="image-upload">
+        <form className="image-upload__form">
+          <label
+            htmlFor="image-upload-input"
+            className="image-upload__uploader"
+            aria-disabled={!Boolean(initialGameAuthorData.authorName)}
+          >
+            Click to upload logo
+          </label>
+
           <input
+            id="image-upload-input"
             type="file"
             onChange={handleFileInputChange}
             value={fileInputState}
             disabled={!Boolean(initialGameAuthorData.authorName)}
           />
         </form>
-
-        {previewSource ? (
-          // @ts-ignore
-          <img src={previewSource} alt="Preview" style={{ width: "300px", marginLeft: "50%" }} />
-        ) : (
-          initialGameAuthorData.authorLogo && (
-            <Image
-              cloudName={cloudName}
-              publicId={initialGameAuthorData.authorLogo}
-              width="300"
-              style={{ marginLeft: "50%" }}
-            />
-          )
-        )}
+        <div className="image-upload__image-preview image-preview">
+          {previewSource ? (
+            // @ts-ignore
+            <img src={previewSource} alt="Chosen image" className="image-preview__image" />
+          ) : initialGameAuthorData.authorLogo ? (
+            <div>
+              <button
+                id={initialGameAuthorData.authorLogo}
+                onClick={() => removeImgClickHandler(initialGameAuthorData.authorLogo)}
+                className="image-preview__remove-image-btn"
+              >
+                <ClearIcon />
+              </button>
+              <Image
+                cloudName={cloudName}
+                publicId={initialGameAuthorData.authorLogo}
+                className="image-preview__image"
+                alt="Author's Logo"
+              />
+            </div>
+          ) : (
+            <span className="image-preview__no-pictures">There are no logo for this author.</span>
+          )}
+        </div>
       </div>
 
       <Formik
@@ -153,23 +175,26 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
         validationSchema={validationSchema}
       >
         {({ values, errors, touched, isSubmitting, setFieldValue }) => (
-          <Form>
+          <Form className="form">
+            <h3>Edit Game Author Info</h3>
             {inputs.map((input) => {
               if (input.name === "authorDescription") {
                 return (
                   <Field key={input.name} name={input.name}>
                     {({ field }: FieldProps<FormValues>) => (
-                      <div>
+                      <div className="form__div">
                         <TextField
                           {...field}
                           required
                           multiline
                           label={input.label}
-                          variant="outlined"
                           //@ts-ignore
                           error={Boolean(errors[input.name]) && touched[input.name]}
                           //@ts-ignore
                           helperText={touched[input.name] ? errors[input.name] : ""}
+                          variant="filled"
+                          disabled={!Boolean(initialGameAuthorData.authorName)}
+                          className="form__input"
                         />
                       </div>
                     )}
@@ -178,25 +203,29 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
               }
               if (input.name === "yearOfFoundationOfTheCompany") {
                 return (
-                  <div key={input.name}>
-                    <DatePicker
-                      selected={new Date(values.yearOfFoundationOfTheCompany)}
-                      dateFormat="MM-dd-yyyy"
-                      name="yearOfFoundationOfTheCompany"
-                      onChange={(date) => setFieldValue("yearOfFoundationOfTheCompany", date)}
-                    />
+                  <div className="form__div" key={input.name}>
+                    <div className="form__datepicker">
+                      <label>{input.label}</label>
+                      <DatePicker
+                        selected={new Date(values.yearOfFoundationOfTheCompany)}
+                        dateFormat="MM-dd-yyyy"
+                        name="yearOfFoundationOfTheCompany"
+                        onChange={(date) => setFieldValue("yearOfFoundationOfTheCompany", date)}
+                        disabled={!Boolean(initialGameAuthorData.authorName)}
+                      />
+                    </div>
                   </div>
                 );
               }
               return null;
             })}
-            <button type="submit" disabled={checksForButton(isSubmitting, errors, touched)}>
+            <button className="add-game-button" type="submit" disabled={checksForButton(isSubmitting, errors, touched)}>
               Save changes
             </button>
           </Form>
         )}
       </Formik>
-    </>
+    </div>
   );
 };
 
@@ -220,26 +249,35 @@ const AdminEditGameAuthor: React.FC = () => {
   };
 
   return (
-    <>
-      <FormControl>
-        <InputLabel>Select game author</InputLabel>
-        {/* @ts-ignore */}
-        <Select value={initialGameAuthorData?._id} onChange={selectHandleChange}>
-          {allGameAuthors.map((author: Author) => {
-            return (
-              <MenuItem value={author._id} key={author._id}>
-                {author.authorName}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
+    <div className="edit-game-author-container">
+      <div className="container-title-block edit-game-author-title">
+        <h2 className="container-title">Edit Game Author</h2>
+      </div>
+      <div className="select-game-author-container">
+        <FormControl className="select-game-author-container__select-game-author select-game-author">
+          <InputLabel className="select-game-author__label">Select game author</InputLabel>
+          <Select
+            value={initialGameAuthorData?._id}
+            // @ts-ignore
+            onChange={selectHandleChange}
+            className="select-game-author__select"
+          >
+            {allGameAuthors.map((author: Author) => {
+              return (
+                <MenuItem value={author._id} key={author._id}>
+                  {author.authorName}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+      </div>
 
       {successMsg && <Notification values={{ successMsg }} />}
       {infoMsg && <Notification values={{ infoMsg }} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
       {initialGameAuthorData && <RenderGameForm initialGameAuthorData={initialGameAuthorData} />}
-    </>
+    </div>
   );
 };
 

@@ -43,25 +43,28 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
     <>
       {itemsInBasket.map((item) => {
         return (
-          <div className="order__game game" key={item.dateAddedToBasket}>
-            {item?.imgSource?.length ? (
-              <Image
-                cloudName={cloudName}
-                publicId={item.imgSource[0]}
-                className="card__picture"
-                alt={item.gameName}
-              />
-            ) : (
-              <img src={noImageAvailable} className="card__picture" alt={item.gameName} />
-            )}
-            <div className="game__text">
-              <span>{item.gameName}</span>
-              <span>{item.price} $</span>
+          <div key={item.dateAddedToBasket}>
+            <div className="basket-order__basket-game basket-game">
+              {item?.imgSource?.length ? (
+                <Image
+                  cloudName={cloudName}
+                  publicId={item.imgSource[0]}
+                  className="basket-game__picture"
+                  alt={item.gameName}
+                />
+              ) : (
+                <img src={noImageAvailable} className="basket-game__picture" alt={item.gameName} />
+              )}
+              <div className="basket-game__text">
+                <span>{item.gameName}</span>
+                {item.gameType === "Physical" && item.deliveryMethod && <span>{item.deliveryMethod}</span>}
+                <span>{item.price} $</span>
+              </div>
+              <button className="remove-basket-game" onClick={() => removeGameHandler(item.gameName)}>
+                <ClearIcon />
+              </button>
             </div>
-            <button className="remove-game" onClick={() => removeGameHandler(item.gameName)}>
-              <ClearIcon />
-            </button>
-            <div>
+            <div className="basket-game__timer">
               {item.gameType === "Physical" && (
                 <Timer
                   removeGameHandler={removeGameHandler}
@@ -152,21 +155,27 @@ const Basket = () => {
     <>
       {infoMsg && <Notification values={{ infoMsg }} />}
       {successMsg && <Notification values={{ successMsg }} />}
-      <div className="container">
-        <div className="order">
-          <h1 className="container__titles">Order</h1>
+      <div className="basket-container">
+        <div className="basket-order">
+          <h1 className="basket-container__titles title-block">Order</h1>
           {itemsInBasket.length ? (
             <ItemsInBasketList itemsInBasket={itemsInBasket} removeGameHandler={removeGameHandler} />
           ) : (
-            <h1 className="order__empty-basket-text">Basket is empty</h1>
+            <h1 className="basket-order__empty-basket-text">Basket is empty</h1>
           )}
         </div>
         <div className="payment">
-          <h1 className="container__titles">Payment</h1>
+          <h1 className="basket-container__titles">Payment</h1>
           <div className="price-summary">
-            <span className="price-summary__text">Total price: {totalPrice}$</span>
-            <span className="price-summary__text">Personal discount: {user?.personalDiscount}%</span>
-            <span className="price-summary__text">You will pay: {youWillPay.toFixed(2)}$</span>
+            <span className="price-summary__text">
+              <span className="static-field">Total price:</span> {totalPrice}$
+            </span>
+            <span className="price-summary__text">
+              <span className="static-field">Personal discount:</span> {user?.personalDiscount}%
+            </span>
+            <span className="price-summary__text">
+              <span className="static-field">You will pay:</span> {youWillPay.toFixed(2)}$
+            </span>
           </div>
           {itemsInBasket.length ? (
             <button className="purchase-btn" onClick={purchaseClickHandler}>

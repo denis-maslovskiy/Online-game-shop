@@ -1,0 +1,137 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.container-title-block {
+    @include flex-display($justify-content: center);
+    @include dark-bg();
+    width: 70%;
+    margin: 0 auto;
+    margin-bottom: 2%;
+    padding: 10px 0;
+}
+
+.container-title {
+    margin: 0.25% 0;
+    color: white;
+    @include text-style(28px, bold);
+    text-align: center;
+}
+
+.admin-statistic-container {
+    width: 90%;
+    color: white;
+    margin: 2% auto;
+
+    &__content {
+        @include flex-display($flex-direction: column);
+    }
+}
+
+.admin-statistic-content {
+
+    &__statistic {
+        @include flex-display($flex-direction: column, $align-items: center);
+        @include dark-bg();
+        width: 70%;
+        margin: 0 auto;
+        margin-top: 1%;
+        padding: 1% 0;
+
+        & > p {
+            @include text-style(20px);
+            color: $static-field-color;
+            margin: .5% 0;
+
+            @media (max-width: 590px) {
+                padding: 5px 15px;
+            }
+        }
+
+        & > p > span {
+            @include text-style(22px);
+            color: white;
+        }
+
+        @media (max-width: 590px) {
+            align-items: flex-start
+        }
+    }
+
+    &__charts {
+        @include dark-bg();
+        @include flex-display($justify-content: center);
+        width: 70%;
+        margin: 0 auto;
+        margin-top: 1%;
+
+        @media (max-width: 1539px) {
+            @include flex-display($flex-direction: column, $align-items: center);
+        }
+
+        @media (max-width: 590px) {
+            height: 400px;
+        }
+    }
+
+    &__statistic-achievements {
+        width: 70%;
+    }
+
+    @media (max-width: 830px) {
+        &__statistic {
+            width: 100%;
+        };
+        &__charts {
+            width: 100%;
+        };
+        &__statistic-achievements {
+            width: 100%;
+        }
+    }
+}
+
+text {
+    @include text-style(16px);
+    fill: white;
+}
+
+.statistic-achievements {
+    @include flex-display($flex-direction: column, $align-items: center);
+    @include dark-bg();
+    margin: 0 auto;
+    margin-top: 1%;
+    padding: 1% 0;
+    text-align: left;
+
+    & > h3 {
+        padding: 0 5px;
+    }
+
+    &__container {
+        @include flex-display($justify-content: space-around);
+        width: 50%;
+
+        & > div > p {
+            margin: 10px 0;
+        }
+
+        @media (max-width: 1200px) {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+}
+
+div.statistic {
+    @media (max-width: 830px) {
+        width: 100%;
+    }
+}
+
+button.MuiButtonBase-root.MuiButton-root.MuiButton-text {
+    padding: 6px 24px;
+
+    @media (max-width: 599px) {
+        padding: 6px 16px;
+    }
+}

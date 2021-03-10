@@ -6,6 +6,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import { adminUpdateGameData, getAllGames } from "../../redux/games/gamesActions";
 import "react-datepicker/dist/react-datepicker.css";
+import "./admin-planning-future-discounts.scss";
 
 interface Game {
   gameName: string;
@@ -59,63 +60,83 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
           game.plannedDiscount = discountValue;
           game.plannedDiscountStartsOn = plannedDiscountDates.startsOn;
           game.plannedDiscountEndsOn = plannedDiscountDates.endsOn;
-          dispatch(adminUpdateGameData(game._id, { ...game, userId }));
+          dispatch(adminUpdateGameData(game._id, { ...game }, userId));
         }
       });
     });
   };
 
   return (
-    <>
-      <h2>Admin Planning Future Discounts</h2>
-      <div>
-        <Autocomplete
-          multiple
-          id="autocomplete"
-          options={gameNamesArray}
-          getOptionLabel={(option) => option}
-          onChange={onGameNameChangeHandler}
-          renderInput={(params) => <TextField {...params} label="Game Names" />}
-        />
+    <div className="admin-add-game-container">
+      <div className="container-title-block add-game-title">
+        <h2 className="container-title">Admin Planning Future Discounts</h2>
       </div>
-      <div>
-        <TextField
-          type="number"
-          label="Discount value"
-          value={discountValue}
-          onChange={(e) => setDiscountValue(+e.target.value)}
-          InputProps={{ inputProps: { min: 0, max: 100 } }}
-          aria-label={`${discountValue}`}
-          error={Boolean(discountValue < 0)}
-          helperText={Boolean(discountValue < 0) ? "Discount must be greater than or equal to 0" : ""}
-        />
+      <div className="planning-future-discounts">
+        <div className="planning-future-discounts__pfd-content">
+          <div className="autocomplete-field">
+            <Autocomplete
+              multiple
+              id="autocomplete"
+              options={gameNamesArray}
+              getOptionLabel={(option) => option}
+              onChange={onGameNameChangeHandler}
+              renderInput={(params) => <TextField {...params} label="Game Names" />}
+            />
+          </div>
+          <div className="form__div">
+            <TextField
+              type="number"
+              label="Discount value"
+              variant="filled"
+              className="form__input"
+              value={discountValue}
+              onChange={(e) => setDiscountValue(+e.target.value)}
+              InputProps={{ inputProps: { min: 0, max: 100 } }}
+              disabled={!selectedResult.length}
+              error={Boolean(discountValue < 0)}
+              helperText={Boolean(discountValue < 0) ? "Discount must be greater than or equal to 0" : ""}
+            />
+          </div>
+          <div className="form__div">
+            <div className="form__datepicker">
+              <label>Starts On</label>
+              <DatePicker
+                selected={plannedDiscountDates.startsOn}
+                dateFormat="MM-dd-yyyy"
+                name="plannedDiscountStartsOn"
+                disabled={!selectedResult.length}
+                onChange={(date) =>
+                  // @ts-ignore
+                  setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, startsOn: date }))
+                }
+              />
+            </div>
+          </div>
+          <div className="form__div">
+            <div className="form__datepicker">
+              <label>Ends On</label>
+              <DatePicker
+                selected={plannedDiscountDates.endsOn}
+                dateFormat="MM-dd-yyyy"
+                name="plannedDiscountEndsOn"
+                disabled={!selectedResult.length}
+                onChange={(date) =>
+                  // @ts-ignore
+                  setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, endsOn: date }))
+                }
+              />
+            </div>
+          </div>
+          <button
+            className="add-game-button"
+            onClick={saveButtonClickHandler}
+            disabled={!selectedResult.length || Boolean(discountValue < 0)}
+          >
+            Save changes
+          </button>
+        </div>
       </div>
-      <div>
-        <DatePicker
-          selected={plannedDiscountDates.startsOn}
-          dateFormat="MM-dd-yyyy"
-          name="plannedDiscountStartsOn"
-          onChange={(date) =>
-            // @ts-ignore
-            setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, startsOn: date }))
-          }
-        />
-      </div>
-      <div>
-        <DatePicker
-          selected={plannedDiscountDates.endsOn}
-          dateFormat="MM-dd-yyyy"
-          name="plannedDiscountEndsOn"
-          onChange={(date) =>
-            // @ts-ignore
-            setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, endsOn: date }))
-          }
-        />
-      </div>
-      <button onClick={saveButtonClickHandler} disabled={!selectedResult.length || Boolean(discountValue < 0)}>
-        Save changes
-      </button>
-    </>
+    </div>
   );
 };
 

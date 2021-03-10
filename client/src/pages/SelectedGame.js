@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Image } from "cloudinary-react";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Checkbox, FormControlLabel } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
@@ -42,32 +42,48 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
 
   return (
     <div>
-      <Dialog open={isModalOpen} TransitionComponent={ModalTransition} keepMounted onClose={handleCloseModal}>
-        <DialogTitle>Please choose a delivery method for a physical copy of the game</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            We offer you two delivery options: courier delivery, self-pickup. Please choose one option
+      <Dialog
+        className="dialog"
+        open={isModalOpen}
+        TransitionComponent={ModalTransition}
+        keepMounted
+        onClose={handleCloseModal}
+      >
+        <DialogTitle className="dialog__title">
+          Please choose a delivery method for a physical copy of the game
+        </DialogTitle>
+        <DialogContent className="dialog__dialog-content dialog-content">
+          <DialogContentText className="dialog-content__text">
+            We offer you two delivery options: <strong>courier delivery</strong>, <strong>self-pickup</strong>. Please
+            choose one option
           </DialogContentText>
-          <button
-            type="button"
-            aria-pressed={isButtonPressed(COURIER_DELIVERY)}
-            onClick={() => deliveryMethodButtonHandler(COURIER_DELIVERY)}
-          >
-            Courier delivery
-          </button>
-          <button
-            type="button"
-            aria-pressed={isButtonPressed(SELF_PICKUP)}
-            onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}
-          >
-            Self-pickup
-          </button>
+          <div className="dialog-content__checkboxes">
+            <div>
+              <FormControlLabel
+                checked={isButtonPressed(COURIER_DELIVERY)}
+                control={<Checkbox name="CourierDelivery" color="primary" onChange={() => deliveryMethodButtonHandler(COURIER_DELIVERY)} />}
+                label="Courier delivery"
+              />
+            </div>
+            <div>
+              <FormControlLabel
+                checked={isButtonPressed(SELF_PICKUP)}
+                control={<Checkbox name="SelfPickup" color="primary" onChange={() => deliveryMethodButtonHandler(SELF_PICKUP)} />}
+                label="Self-pickup"
+              />
+            </div>
+          </div>
         </DialogContent>
-        <DialogActions>
-          <button type="button" onClick={onModalConfirm} disabled={!deliveryMethod}>
-            Confirm selection
+        <DialogActions className="dialog__actions actions">
+          <button
+            className="actions__confirm actions__btn"
+            type="button"
+            onClick={onModalConfirm}
+            disabled={!deliveryMethod}
+          >
+            Confirm
           </button>
-          <button type="button" onClick={onModalClose}>
+          <button className="actions__close actions__btn" type="button" onClick={onModalClose}>
             Close
           </button>
         </DialogActions>
@@ -85,7 +101,7 @@ const SliderShow = ({ arrayOfImgs, cloudName }) => {
     inputRadios.push(<input type="radio" name="r" id={item.id} key={item.id} />);
     images.push(
       <div className={index ? "slide" : "slide s1"} key={item.id}>
-        <Image cloudName={cloudName} publicId={item.imgId} width="300" crop="scale" />
+        <Image cloudName={cloudName} publicId={item.imgId} width="800" crop="scale" />
       </div>
     );
     labels.push(<label htmlFor={item.id} className="bar" key={`label-${item.id}`} />);
@@ -122,8 +138,9 @@ const SelectedGame = () => {
       value: "No physical copies",
       fieldName: "numberOfPhysicalCopies",
     },
+    { title: "Discount: ", value: 0, fieldName: "discount" },
   ]);
-  
+
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
@@ -131,7 +148,7 @@ const SelectedGame = () => {
   const { user } = useSelector((state) => state.user);
   const { successMsg, errorMsg } = useSelector((state) => state.notification);
 
-  const userId = JSON.parse(localStorage.getItem("userData")).userId;
+  const userId = JSON.parse(localStorage.getItem("userData"))?.userId;
   const locationSplittedArray = location.pathname.split("/");
   const gameId = locationSplittedArray[locationSplittedArray.length - 1];
   const PHYSICAL = "Physical";
@@ -219,8 +236,8 @@ const SelectedGame = () => {
   return (
     <>
       {isReadyToDisplayGameInfo && (
-        <div>
-          <h2 className="game-name">{textFields[5].value}</h2>
+        <div className="game-name">
+          <h2 className="game-name__title">{textFields[5].value}</h2>
         </div>
       )}
       {arrayOfImgs.length && <SliderShow arrayOfImgs={arrayOfImgs} cloudName={cloudName} />}
@@ -229,16 +246,46 @@ const SelectedGame = () => {
       <div className="content-area">
         <div className="content-area__game-info game-info">
           {isReadyToDisplayGameInfo &&
-            textFields.map((item) => (
-              <div key={item.title}>
-                <span className="game-info__text-field-title">{item.title}</span>
-                <p className="game-info__text-field-value">{item.value}</p>
-              </div>
-            ))}
+            textFields.map((item) => {
+              if (item.fieldName === "discount") {
+                return (
+                  <div key={item.title}>
+                    <p className="game-info__text-field-title">
+                      <span className="static-field">{item.title}</span>
+                      <span className="game-info__text-field-value">{item.value}%</span>
+                    </p>
+                  </div>
+                );
+              }
+              if (item.fieldName === "releaseDate") {
+                return (
+                  <div key={item.title}>
+                    <p className="game-info__text-field-title">
+                      <span className="static-field">{item.title}</span>
+                      <span className="game-info__text-field-value">
+                        {new Date(item.value).getMonth() + 1}
+                        {"-"}
+                        {new Date(item.value).getDate()}
+                        {"-"}
+                        {new Date(item.value).getFullYear()}
+                      </span>
+                    </p>
+                  </div>
+                );
+              }
+              return (
+                <div key={item.title}>
+                  <p className="game-info__text-field-title">
+                    <span className="static-field">{item.title}</span>
+                    <span className="game-info__text-field-value">{item.value}</span>
+                  </p>
+                </div>
+              );
+            })}
         </div>
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
-            <h2 className="buy-game__title">Digital Copy</h2>
+            <h2 className="buy-game__title static-field">Digital Copy</h2>
             {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isDigital && (
               <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Digital")}>
@@ -252,7 +299,7 @@ const SelectedGame = () => {
             )}
           </div>
           <div className="buy-game__physical-copy">
-            <h2 className="buy-game__title">Physical Copy</h2>
+            <h2 className="buy-game__title static-field">Physical Copy</h2>
             {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
             {isPhysical && (
               <button className="buy-game__button" onClick={handleOpenModal}>

@@ -1,18 +1,18 @@
 // TODO: Не работает отчистка формы
-// TODO: Сделать кнопку недоступной до тех пор, пока все поля не буду заполнены
 // TODO: Игра добавляется, если чекбоксы isPhysical/isDigital оба пустые
 
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
+import DatePicker from "react-datepicker";
 import { RootState } from "../../redux/rootReducer";
-import TextField from "@material-ui/core/TextField";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { TextField, Checkbox, FormControlLabel } from "@material-ui/core";
+import ClearIcon from "@material-ui/icons/Clear";
 import { Form, Formik, FormikErrors, FormikTouched } from "formik";
 import { addGame } from "../../redux/games/gamesActions";
 import { errorMessage } from "../../redux/notification/notificationActions";
 import Notification from "../../components/Notification";
+import "react-datepicker/dist/react-datepicker.css";
 import "./adminaddgame.scss";
 import { FormControl, FormHelperText } from "@material-ui/core";
 
@@ -35,7 +35,6 @@ const inputs = [
     label: "Game Description",
     name: "gameDescription",
   },
-  { label: "Release date", name: "releaseDate" },
   { label: "Author", name: "author" },
   { label: "Genre", name: "genre" },
   {
@@ -44,6 +43,7 @@ const inputs = [
   },
   { label: "Price", name: "price" },
   { label: "Discount", name: "discount" },
+  { label: "Release date", name: "releaseDate" },
 ];
 
 const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
@@ -51,7 +51,6 @@ const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touch
     isSubmitting ||
     Boolean(errors.gameName && touched.gameName) ||
     Boolean(errors.gameDescription && touched.gameDescription) ||
-    Boolean(errors.releaseDate && touched.releaseDate) ||
     Boolean(errors.author && touched.author) ||
     Boolean(errors.genre && touched.genre) ||
     Boolean(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
@@ -65,7 +64,7 @@ const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touch
 const initialValues = {
   gameName: "",
   gameDescription: "",
-  releaseDate: "",
+  releaseDate: new Date(),
   author: "",
   genre: "",
   numberOfPhysicalCopies: 0,
@@ -74,19 +73,6 @@ const initialValues = {
   isDigital: true,
   discount: 0,
 };
-
-interface Game {
-  gameName: string;
-  gameDescription: string;
-  releaseDate: string;
-  author: string;
-  genre: string;
-  numberOfPhysicalCopies: number;
-  price: number;
-  isPhysical: boolean;
-  isDigital: boolean;
-  discount: number;
-}
 
 const AdminAddGame: React.FC = () => {
   const [fileInputState, setFileInputState] = useState("");
@@ -142,27 +128,38 @@ const AdminAddGame: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="admin-add-game-container">
       {successMsg && <Notification values={{ successMsg }} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
-      <h2 className="title">Add new game</h2>
+      <div className="container-title-block add-game-title">
+        <h2 className="container-title">Add new game</h2>
+      </div>
 
-      <form style={{ marginLeft: "50%" }}>
-        <input type="file" multiple onChange={handleFileInputChange} value={fileInputState} />
-      </form>
+      <div className="admin-add-game-container__image-upload image-upload">
+        <form className="image-upload__form add-game-upload-form">
+          <label htmlFor="image-upload-input" className="image-upload__uploader">
+            Click to upload images
+          </label>
+          <input id="image-upload-input" type="file" multiple onChange={handleFileInputChange} value={fileInputState} />
+        </form>
 
-      <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-        {previews &&
-          previews.map((file: any) => {
-            return (
-              <div key={file.preview}>
-                <button id={file.preview} onClick={() => removeImgClickHandler(file.preview)}>
-                  &times;
-                </button>
-                <img src={file.preview} alt="Preview" style={{ width: "300px" }} />
-              </div>
-            );
-          })}
+        <div className="image-upload__image-preview image-preview">
+          {previews &&
+            previews.map((file: any) => {
+              return (
+                <div key={file.preview}>
+                  <button
+                    className="image-preview__remove-image-btn"
+                    id={file.preview}
+                    onClick={() => removeImgClickHandler(file.preview)}
+                  >
+                    <ClearIcon />
+                  </button>
+                  <img src={file.preview} className="image-preview__image" alt="Preview" />
+                </div>
+              );
+            })}
+        </div>
       </div>
 
       <Formik
@@ -173,7 +170,7 @@ const AdminAddGame: React.FC = () => {
         validationSchema={validationSchema}
         enableReinitialize={true}
       >
-        {({ errors, touched, handleChange, handleBlur, values, isSubmitting }) => (
+        {({ errors, touched, handleChange, handleBlur, values, isSubmitting, setFieldValue }) => (
           <Form className="form">
             <div className="form__checkboxes">
               <FormControl error={!values.isDigital && !values.isPhysical}>
@@ -182,10 +179,20 @@ const AdminAddGame: React.FC = () => {
                   label="Physical"
                 />
                 <FormControlLabel
-                  control={<Checkbox name="isDigital" color="primary" onChange={handleChange} onBlur={handleBlur} defaultChecked />}
+                  control={
+                    <Checkbox
+                      name="isDigital"
+                      color="primary"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      defaultChecked
+                    />
+                  }
                   label="Digital"
                 />
-                {!values.isDigital && !values.isPhysical && <FormHelperText>You must choose at least one type of game</FormHelperText>}
+                {!values.isDigital && !values.isPhysical && (
+                  <FormHelperText>You must choose at least one type of game</FormHelperText>
+                )}
               </FormControl>
             </div>
             {inputs.map((input) => {
@@ -193,10 +200,11 @@ const AdminAddGame: React.FC = () => {
                 return (
                   <div className="form__div" key={input.name}>
                     <TextField
+                      autoComplete="off"
                       className="form__input"
                       required
                       label={input.label}
-                      variant="outlined"
+                      variant="filled"
                       multiline
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -212,10 +220,11 @@ const AdminAddGame: React.FC = () => {
                   <div className="form__div" key={input.name}>
                     <TextField
                       disabled={!values.isPhysical}
+                      autoComplete="off"
                       className="form__input"
                       required={values.isPhysical}
                       label={input.label}
-                      variant="outlined"
+                      variant="filled"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
@@ -250,8 +259,9 @@ const AdminAddGame: React.FC = () => {
                     <TextField
                       className="form__input"
                       required
+                      autoComplete="off"
                       label={input.label}
-                      variant="outlined"
+                      variant="filled"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
@@ -270,7 +280,7 @@ const AdminAddGame: React.FC = () => {
                     <TextField
                       className="form__input"
                       label={input.label}
-                      variant="outlined"
+                      variant="filled"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
@@ -288,13 +298,29 @@ const AdminAddGame: React.FC = () => {
                   </div>
                 );
               }
+              if (input.name === "releaseDate") {
+                return (
+                  <div className="form__div" key={input.name}>
+                    <div className="form__datepicker">
+                      <label>{input.label}</label>
+                      <DatePicker
+                        selected={new Date(values.releaseDate || Date.now())}
+                        dateFormat="MM-dd-yyyy"
+                        name="releaseDate"
+                        onChange={(date) => setFieldValue("releaseDate", date)}
+                      />
+                    </div>
+                  </div>
+                );
+              }
               return (
                 <div className="form__div" key={input.name}>
                   <TextField
                     className="form__input"
                     required
+                    autoComplete="off"
                     label={input.label}
-                    variant="outlined"
+                    variant="filled"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name={input.name}
@@ -317,7 +343,7 @@ const AdminAddGame: React.FC = () => {
           </Form>
         )}
       </Formik>
-    </>
+    </div>
   );
 };
 

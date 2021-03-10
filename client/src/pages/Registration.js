@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
+import { TextField } from "@material-ui/core";
 import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { registerUser } from "../redux/authentication/authenticationActions";
 import Notification from "../components/Notification";
@@ -68,32 +69,60 @@ const Registration = (props) => {
         validationSchema={schema}
         onSubmit={submit}
       >
-        {(props) => (
+        {({handleChange, handleBlur, isSubmitting, errors, touched}) => (
           <Form className="box">
             <h1 className="box__title">Registration</h1>
-            <CustomTextInput
-              className="box__input"
-              name="username"
-              type="text"
-              placeholder="Username"
-              onClick={onInputClickHandler}
-            />
-            <CustomTextInput
-              className="box__input"
-              name="email"
-              type="text"
-              placeholder="Email"
-              onClick={onInputClickHandler}
-            />
-            <CustomTextInput
-              className="box__input"
-              name="password"
-              type="password"
-              placeholder="Password"
-              onClick={onInputClickHandler}
-            />
+
+            <div className="form__div">
+              <TextField
+                className="form__input auth-input"
+                required
+                label="Username"
+                variant="filled"
+                name="username"
+                autoComplete="off"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onClick={onInputClickHandler}
+                error={Boolean(errors.username)}
+                helperText={touched.username ? errors.username : ""}
+              />
+            </div>
+
+            <div className="form__div">
+              <TextField
+                className="form__input auth-input"
+                required
+                label="Email"
+                variant="filled"
+                name="email"
+                autoComplete="off"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onClick={onInputClickHandler}
+                error={Boolean(errors.email)}
+                helperText={touched.email ? errors.email : ""}
+              />
+            </div>
+
+            <div className="form__div">
+              <TextField
+                className="form__input auth-input"
+                required
+                label="Password"
+                variant="filled"
+                name="password"
+                type="password"
+                autoComplete="off"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                onClick={onInputClickHandler}
+                error={Boolean(errors.password)}
+                helperText={touched.password ? errors.password : ""}
+              />
+            </div>
             <button className="box__submit-btn" type="submit">
-              {props.isSubmitting ? "Loading..." : "Sign Up"}
+              {isSubmitting ? "Loading..." : "Sign Up"}
             </button>
             <div className="box__bottom-text">
               Have an account?{" "}

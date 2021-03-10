@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  IconButton,
-  Menu,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@material-ui/core";
+import { IconButton, Menu, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 import SortIcon from "@material-ui/icons/Sort";
 import { useSelector, useDispatch } from "react-redux";
 import { setFilteredArray } from "../redux/games/gamesActions";
@@ -17,14 +10,13 @@ export const Sorting = () => {
   const [sortType, setSortType] = useState("");
 
   const dispatch = useDispatch();
-
+  const { allGames } = useSelector((state) => state.games);
   const sortValues = [
     { value: "popular", label: "Popular", id: 1 },
     { value: "price", label: "Price", id: 2 },
     { value: "new", label: "New", id: 3 },
     { value: "discount", label: "Discount", id: 4 },
   ];
-
   const open = Boolean(anchorEl);
 
   const handleMenu = (event) => {
@@ -39,7 +31,13 @@ export const Sorting = () => {
     setSortType(event.target.value);
   };
 
-  const { allGames } = useSelector((state) => state.games);
+  const sortTrigger = (isSortActive) => {
+    if (isSortActive) {
+      document.getElementById("sort-icon").style.color = "#2196F3";
+    } else {
+      document.getElementById("sort-icon").style.color = "white";
+    }
+  };
 
   useEffect(() => {
     switch (sortType) {
@@ -47,11 +45,13 @@ export const Sorting = () => {
         allGames.sort((a, b) => {
           return b.rating - a.rating;
         });
+        sortTrigger(true);
         break;
       case "price":
         allGames.sort((a, b) => {
           return b.price - a.price;
         });
+        sortTrigger(true);
         break;
       case "new":
         allGames.sort((a, b) => {
@@ -59,6 +59,7 @@ export const Sorting = () => {
           let y = new Date(b.gameAddDate);
           return y.getTime() - x.getTime();
         });
+        sortTrigger(true);
         break;
       case "discount":
         allGames.sort((a, b) => {
@@ -70,9 +71,11 @@ export const Sorting = () => {
           }
           return b.discount - a.discount;
         });
+        sortTrigger(true);
         break;
       default:
-        return;
+        sortTrigger(false);
+        break;
     }
     dispatch(setFilteredArray(allGames));
     handleClose();
@@ -80,12 +83,8 @@ export const Sorting = () => {
 
   return (
     <>
-      <IconButton
-        aria-controls="menu-appbar"
-        color="inherit"
-        onClick={handleMenu}
-      >
-        <SortIcon />
+      <IconButton aria-controls="menu-appbar" color="inherit" onClick={handleMenu}>
+        <SortIcon id="sort-icon" />
       </IconButton>
       <Menu
         id="menu-appbar"
@@ -103,18 +102,17 @@ export const Sorting = () => {
         onClose={handleClose}
       >
         <div className="sorting-block">
-          <h2 className="sorting-block__section-name">Sorting</h2>
+          <h2 className="sorting-block__section-name">Sort</h2>
           <div className="sorting-block__sorting-option sorting-option">
-            <span className="sorting-option__title">Select sort:</span>
             <FormControl>
-              <InputLabel id="demo-customized-select-label">Sorting</InputLabel>
+              <InputLabel id="demo-customized-select-label">By:</InputLabel>
               <Select
                 labelId="demo-customized-select-label"
                 id="demo-customized-select"
-                value={sortType}
+                value={sortType || "None"}
                 onChange={handleChange}
               >
-                <MenuItem value="">
+                <MenuItem value="None">
                   <em>None</em>
                 </MenuItem>
                 {sortValues.map((item) => {

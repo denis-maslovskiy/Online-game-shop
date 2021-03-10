@@ -2,19 +2,127 @@
 @import './variables.scss';
 
 .container {
+    margin: 0 auto;
     width: 80%;
     border-radius: 24px;
     padding: 1%;
+    @include flex-display($flex-direction: row-reverse);
+
+    &__account-info-block {
+        width: 40%;
+        margin-left: 5%;
+    }
+
+    @media (max-width: 700px) {
+        flex-direction: column;
+
+        &__account-info-block {
+            width: 100%;
+            margin-left: 0;
+        }
+    }
+
+    @media (max-width: 1300px) {
+        width: 95%;
+    }
 }
 
-.block-title {
-    @include text-style(32px);
-    text-align: center;
+.title-block {
+    @include flex-display($justify-content: center, $align-items: center);
+    @include dark-bg();
+    padding: 5px 0;
+    margin: 10px 0;
+
+    &__text {
+        @include text-style(32px, bold);
+        text-align: center;
+        color: white;
+        margin: 0;
+    }
+
+    &__old-first-checkbox {
+        position: relative;
+        left: 37%;
+        color: white;
+
+        @media (max-width: 1700px) {
+            left: 30%;
+        }
+
+        @media (max-width: 1300px) {
+            left: 25%;
+        }
+    }
+
+    @media (max-width: 1030px) {
+        flex-direction: column;
+
+        &__text {
+            margin: 1% 0;
+        }
+
+        &__old-first-checkbox {
+            position: initial;
+            margin-bottom: 2%;
+        }
+    }
+}
+
+.label {
+    &__text {
+        margin-right: 10px;
+        @include text-style(16px, bold)
+    }
+
+    &__input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    &__checkmark {
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        background-color: white;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $custom-grey;;
+        }
+
+        input:checked ~ & {
+            background-color: $custom-light-blue;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        input:checked ~ &::after {
+            display: block;
+        }
+
+        &::after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    }
 }
 
 .user-info {
-    width: 90%;
-    background-color: white;
+    @include dark-bg();
     text-align: center;
     border-radius: 24px;
     padding: 2%;
@@ -22,85 +130,87 @@
 
     &__text {
         @include text-style(18px);
+        color: white;
     }
 
     &__title {
         @include text-style(24px);
+        color: white;
     }
 }
 
-.account-info {
-    width: 100%;
+.orders-info {
+    width: 55%;
 
     &__orders, &__achievements {
         width: 100%;
     }
-}
 
-.orders {
-    border-top: 2px solid $blue-color;
-    border-bottom: 2px solid $blue-color;
+    @media (max-width: 700px) {
+        width: 100%;
+    }
 }
 
 .game {
     @include flex-display(nowrap, row, flex-start, center);
+    @include dark-bg();
     max-width: 1100px;
     border-radius: 24px;
     margin: 0 auto 20px auto;
-    background-color: white;
+    padding: 5px;
 
     &__text {
-        @include flex-display(nowrap, row, space-between, stretch);
+        @include flex-display(nowrap, row, space-between, center);
         @include text-style(24px);
+        color: white;
         width: 100%;
-        margin: 0 3%;
+        margin: 0 1%;
+        text-align: center;
+        padding: 0 10px;
 
-        @media (max-width: 759px) {
-            flex-direction: column;
-            align-items: center;
+        @media (max-width: 1100px) {
+            @include flex-display($flex-direction: column, $align-items: center);
             @include text-style(18px);
+            & > p {
+                margin: 1% 0;
+            }
         }
     }
 
     &__picture {
-        height: 150px;
-        width: 150px;
+        height: 100px;
+        width: 100px;
         margin: 2%;
+        border: 1px solid white;
 
         @media (max-width: 759px) {
-            width: 90%;
+            width: 70%;
+            height: 130px;
         }
     }
-
+    
     @media (max-width: 759px) {
         flex-direction: column;
-        width: 90%;
+        width: 70%;
     }
+
+    @media (max-width: 500px) {
+        width: 100%;
+        padding: 5px 0;
+    }
+
 }
 
 .achievements {
-    background-color: white;
+    @include dark-bg();
     text-align: center;
     border-radius: 24px;
-    width: 90%;
-    margin: 20px auto;
+    margin: 10px auto;
     padding: 2%;
-
-    &__title {
-        @include text-style(32px);
-        text-align: center;
-        margin: 20px 0;    
-    }
+    @include text-style(20px);
+    color: white;
 }
 
-.achieve {
-    &__text {
-        @include text-style(18px);
-    }
-
-    &__title {
-        @include text-style(24px);
-    }
+.old-first-checkbox > label > span > span.MuiIconButton-label {
+    color: white;
 }
-
-

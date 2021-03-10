@@ -2,14 +2,17 @@
 @import './mixins.scss';
 
 .content-area {
+    @include dark-bg();
+    @include flex-display(wrap);
     width: 90%;
     margin: 3% auto;
-    border-radius: 24px;
-    @include flex-display(wrap);
+    padding: 1%;
+    color: white;
+    
 
     &__carousel {
-        width: 100%;
         @include flex-display(nowrap, row, center, center);
+        width: 100%;
         color: white;
     }
 
@@ -19,14 +22,15 @@
     }
 
     &__buy-game {
+        @include flex-display(wrap, row, space-around, center);
         width: 49%;
-        @include flex-display(wrap, row, space-around, stretch);
 
         &__digital-copy, &__physical-copy {
             @include flex-display(nowrap, column, flex-start, center);
+
             margin-bottom: 5%;
             @media (max-width: 382px) {
-                border-bottom: 2px solid $blue-color;
+                border-bottom: 2px solid $custom-light-blue;
             }
         }
     }
@@ -38,38 +42,60 @@
 
         &__buy-game {
             width: 100%;
-            border-top: 2px solid $blue-color;
+            margin-top: 2%;
         }
     }
 }
 
 .game-name {
-    width: 100%;
-    text-align: center;
-    text-transform: uppercase;
-    @include text-style(32px);
+    width: 800px;
+    margin: 0 auto;
+    @include dark-bg();
+
+    &__title {
+        width: 100%;
+        text-align: center;
+        text-transform: uppercase;
+        @include text-style(32px, bold);
+        color: white;
+        padding: 5px 0;
+    }
+
+    @media (max-width: 850px) {
+        width: 400px;
+    }
+    @media (max-width: 400px) {
+        width: 300px;
+    }
+    @media (min-width: 2000px) {
+        width: 1000px;
+    }
 }
 
 .game-info {
     &__text-field-title {
-        @include text-style(24px);
+        @include text-style(24px, bold);
     }
 
     &__text-field-value {
-        display: inline-block;
         margin-bottom: 10px;
         @include text-style(18px);
+        color: white;
     }
+}
+
+.static-field {
+    color: $static-field-color !important;
 }
 
 .buy-game {
     &__title {
-        @include text-style(24px);
+        @include text-style(24px, bold);
         margin-top: 5px;
     }
 
     &__price {
-        @include text-style(28px);
+        @include text-style(28px, bold);
         margin-top: 5px;
     }
 
@@ -77,24 +103,24 @@
         @include custom-btn(18px);
 
         &--disable {
-            @include custom-btn(18px);
-            border: 2px solid grey;
+            @include custom-btn(18px, $bg-hover: $custom-grey);
+            border: 2px solid $custom-grey;
+            cursor: not-allowed;
+        }
+    }
 
-            &:hover {
-            background: grey;
-            color: white;
-        }
-        }
+    &__digital-copy, &__physical-copy {
+        @include flex-display(nowrap, column, flex-start, center);
     }
 }
 
+// slider show START
 .slidershow {
-    width: 700px;
+    width: 800px;
     height: 400px;
     overflow: hidden;
-
     
-    @media (max-width: 700px) {
+    @media (max-width: 850px) {
         width: 400px;
         height: 200px;
     }
@@ -115,11 +141,9 @@
 .navigation {
     position: relative;
     bottom: 10%;
-    left: 20%;
-    display: flex;
-
+    @include flex-display($justify-content: center);
     
-    @media (max-width: 700px) {
+    @media (max-width: 850px) {
         bottom: 12%;
         left: 2%;
     }
@@ -134,17 +158,17 @@
 .bar {
     width: 50px;
     height: 10px;
-    border: 2px solid #fff;
+    border: 2px solid white;
     margin: 6px;
     cursor: pointer;
     transition: 0.4s;
 
     &:hover {
-        background: #fff;
+        background: white;
     }
 
-    @media (max-width: 700px) {
-        border: 1px solid #fff;
+    @media (max-width: 850px) {
+        border: 1px solid white;
     }
 }
 
@@ -186,4 +210,84 @@ input[name="r"]{
 }
 #r6:checked ~ .s1 {
     margin-left: -100%;
+}
+
+// slider show END
+
+// dialog START
+.dialog {
+    &__title h2 {
+        @include text-style(22px, bold);
+        letter-spacing: 0;
+        color: $custom-light-grey;
+    }
+}
+
+.dialog-content {
+    @include flex-display($flex-wrap: wrap, $justify-content: end);
+
+    &__text.MuiDialogContentText-root {
+        color: $custom-light-grey;
+    }
+
+    &__delivery-type-btn {
+        @include custom-btn(14px);
+        margin: 5% 2% 5% 0;
+    }
+
+    &__delivery-type-btn[aria-pressed="true"] {
+        background: $light-green-color;
+    }
+
+    &__checkboxes {
+        @include flex-display($flex-direction: column);
+    }
+}
+
+.actions {
+    
+    &.MuiDialogActions-root {
+        padding: 16px 24px;
+
+        @media (max-width: 400px) {
+            flex-direction: column;
+        }
+    }
+
+    &__btn {
+        @include custom-btn(14px);
+        margin: 0;
+        width: 140px;
+
+        @media (max-width: 400px) {
+            margin: 5px;
+        }
+    }
+
+    &__confirm:disabled {
+        background-color: $custom-grey;
+        border: 2px solid $custom-grey;
+        color: white;
+        cursor: not-allowed;
+    }
+
+    &__close {
+        @include custom-btn(14px, 14px 40px, 0, 2px solid $light-red-color, 24px, $light-red-color);
+        @media (max-width: 400px) {
+            margin: 5px;
+        }
+    }
+}
+
+.MuiDialog-paperScrollPaper.MuiDialog-paperWidthSm {
+    background: $custom-middle-blue;
+}
+// dialog END
+
+span.MuiIconButton-label {
+    color: $custom-dark-blue
+}
+
+.MuiTypography-root.MuiFormControlLabel-label.MuiTypography-body1 {
+    color: $custom-light-grey;
 }
