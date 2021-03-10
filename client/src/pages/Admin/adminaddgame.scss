@@ -155,9 +155,9 @@ input[name="yearOfFoundationOfTheCompany"] {
     text-align: center;
     
 
-    &__checkboxes {
-        display: flex;
-        justify-content: center;
+    &__checkboxes.MuiFormControl-root {
+        margin: 0 auto;
+        @include flex-display($flex-direction: row, $flex-wrap: wrap, $justify-content: center);
     }
 
     &__input.MuiFormControl-root {
@@ -210,6 +210,13 @@ input[name="yearOfFoundationOfTheCompany"] {
         @media(max-width: 390px) {
             width: 250px;
         }
+    }
+}
+
+.checkboxes {
+    &__helper-text.MuiFormHelperText-root {
+        width: 100%;
+        text-align: center;
     }
 }
 
