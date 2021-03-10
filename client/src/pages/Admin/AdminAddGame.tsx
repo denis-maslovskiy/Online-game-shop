@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import { RootState } from "../../redux/rootReducer";
-import { TextField, Checkbox, FormControlLabel } from "@material-ui/core";
+import { TextField, Checkbox, FormControlLabel, FormControl, FormHelperText } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import { Form, Formik, FormikErrors, FormikTouched } from "formik";
 import { addGame } from "../../redux/games/gamesActions";
@@ -14,7 +14,6 @@ import { errorMessage } from "../../redux/notification/notificationActions";
 import Notification from "../../components/Notification";
 import "react-datepicker/dist/react-datepicker.css";
 import "./adminaddgame.scss";
-import { FormControl, FormHelperText } from "@material-ui/core";
 
 const validationSchema = Yup.object().shape({
   gameName: Yup.string().required("Game name is a required field"),
@@ -172,29 +171,27 @@ const AdminAddGame: React.FC = () => {
       >
         {({ errors, touched, handleChange, handleBlur, values, isSubmitting, setFieldValue }) => (
           <Form className="form">
-            <div className="form__checkboxes">
-              <FormControl error={!values.isDigital && !values.isPhysical}>
-                <FormControlLabel
-                  control={<Checkbox name="isPhysical" color="primary" onChange={handleChange} onBlur={handleBlur} />}
-                  label="Physical"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      name="isDigital"
-                      color="primary"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      defaultChecked
-                    />
-                  }
-                  label="Digital"
-                />
-                {!values.isDigital && !values.isPhysical && (
-                  <FormHelperText>You must choose at least one type of game</FormHelperText>
-                )}
-              </FormControl>
-            </div>
+            <FormControl error={!values.isDigital && !values.isPhysical} className="form__checkboxes checkboxes">
+              <FormControlLabel
+                control={<Checkbox name="isPhysical" color="primary" onChange={handleChange} onBlur={handleBlur} />}
+                label="Physical"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="isDigital"
+                    color="primary"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    defaultChecked
+                  />
+                }
+                label="Digital"
+              />
+              {!values.isDigital && !values.isPhysical && (
+                <FormHelperText className="checkboxes__helper-text">You must choose at least one type of game</FormHelperText>
+              )}
+            </FormControl>
             {inputs.map((input) => {
               if (input.name === "gameDescription") {
                 return (
@@ -336,7 +333,7 @@ const AdminAddGame: React.FC = () => {
               type="submit"
               id="form-submit"
               className="add-game-button"
-              disabled={checksForButton(isSubmitting, errors, touched)}
+              disabled={checksForButton(isSubmitting, errors, touched) || !values.isDigital && !values.isPhysical}
             >
               Add game
             </button>

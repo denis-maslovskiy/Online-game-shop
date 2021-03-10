@@ -6,7 +6,16 @@ import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps } from "formik";
 // @ts-ignore
 import { Image } from "cloudinary-react";
-import { TextField, Checkbox, FormControlLabel, InputLabel, MenuItem, FormControl, Select } from "@material-ui/core";
+import {
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  FormHelperText,
+} from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import {
   adminUpdateGameData,
@@ -365,12 +374,18 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 return (
                   <Field key={input.name} name={input.name} label={input.label}>
                     {({ field }: FieldProps<FormValues>) => (
-                      <FormControlLabel
-                        // @ts-ignore
-                        control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
-                        label={input.label}
-                        disabled={!Boolean(initialGameData.gameName)}
-                      />
+                      <FormControl error={!values.isDigital && !values.isPhysical}>
+                        <FormControlLabel
+                          // @ts-ignore
+                          control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
+                          label={input.label}
+                          disabled={!Boolean(initialGameData.gameName)}
+                          className={input.name === "isDigital" ? "edit-game-digital-checkbox" : ""}
+                        />
+                        {!values.isDigital && !values.isPhysical && input.name === "isPhysical" && Boolean(initialGameData.gameName) && (
+                          <FormHelperText className="edit-game-checkbox-helper-text">You must choose at least one type of game</FormHelperText>
+                        )}
+                      </FormControl>
                     )}
                   </Field>
                 );
@@ -409,6 +424,30 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                               ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
                               : ""
                           }
+                        />
+                      </div>
+                    )}
+                  </Field>
+                );
+              }
+
+              if (input.name === "gameDescription") {
+                return (
+                  <Field key={input.name} name={input.name}>
+                    {({ field }: FieldProps<FormValues>) => (
+                      <div className="form__div">
+                        <TextField
+                          {...field}
+                          required
+                          label={input.label}
+                          variant="filled"
+                          className="form__input"
+                          multiline
+                          disabled={!Boolean(initialGameData.gameName)}
+                          //@ts-ignore
+                          error={Boolean(errors[input.name]) && touched[input.name]}
+                          //@ts-ignore
+                          helperText={touched[input.name] ? errors[input.name] : ""}
                         />
                       </div>
                     )}
@@ -506,7 +545,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 </Field>
               );
             })}
-            <button type="submit" className="add-game-button" disabled={!Boolean(initialGameData.gameName)}>
+            <button type="submit" className="add-game-button" disabled={!Boolean(initialGameData.gameName) || !values.isDigital && !values.isPhysical}>
               Save changes
             </button>
             <button
