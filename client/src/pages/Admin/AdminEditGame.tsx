@@ -80,8 +80,8 @@ const validationSchema = Yup.object().shape({
   releaseDate: Yup.string().required("Release date is required"),
   author: Yup.string().required("Author is required"),
   genre: Yup.string().required("Genre is required"),
-  numberOfPhysicalCopies: Yup.number().required("Number of physical copies is required"),
-  price: Yup.number().required("Price is required"),
+  numberOfPhysicalCopies: Yup.number().min(0),
+  price: Yup.number().min(0).required("Price is required"),
   isPhysical: Yup.boolean(),
   isDigital: Yup.boolean(),
   discount: Yup.string().min(0).max(100),
@@ -342,19 +342,89 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 );
               }
 
-              if (input.name === "numberOfPhysicalCopies" && !values.isPhysical) {
+              if (input.name === "numberOfPhysicalCopies") {
                 return (
                   <Field key={input.name} name={input.name}>
                     {({ field }: FieldProps<FormValues>) => (
                       <div className="form__div">
                         <TextField
-                          disabled
+                          disabled={!values.isPhysical}
                           {...field}
                           required
                           label={input.label}
                           variant="outlined"
-                          error={Boolean(errors[input.name]) && touched[input.name] && Boolean(values.isPhysical)}
-                          helperText={touched[input.name] && Boolean(values.isPhysical) ? errors[input.name] : ""}
+                          type="number"
+                          InputProps={{ inputProps: { min: 0 } }}
+                          error={
+                            //@ts-ignore
+                            touched[input.name] &&
+                            Boolean(
+                              values.numberOfPhysicalCopies < 0 ||
+                                (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
+                            )
+                          }
+                          helperText={
+                            //@ts-ignore
+                            touched[input.name] &&
+                            values.isPhysical &&
+                            Boolean(
+                              values.numberOfPhysicalCopies < 0 ||
+                                (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
+                            )
+                              ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
+                              : ""
+                          }
+                        />
+                      </div>
+                    )}
+                  </Field>
+                );
+              }
+
+              if (input.name === "discount") {
+                return (
+                  <Field key={input.name} name={input.name}>
+                    {({ field }: FieldProps<FormValues>) => (
+                      <div className="form__div">
+                        <TextField
+                          {...field}
+                          label={input.label}
+                          variant="outlined"
+                          disabled={!Boolean(initialGameData.gameName)}
+                          type="number"
+                          InputProps={{ inputProps: { min: 0 } }}
+                          error={Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))}
+                          helperText={
+                            //@ts-ignore
+                            touched[input.name] &&
+                            Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))
+                              ? "Discount must be greater than or equal to 0"
+                              : ""
+                          }
+                        />
+                      </div>
+                    )}
+                  </Field>
+                );
+              }
+
+              if (input.name === "price") {
+                return (
+                  <Field key={input.name} name={input.name}>
+                    {({ field }: FieldProps<FormValues>) => (
+                      <div className="form__div">
+                        <TextField
+                          {...field}
+                          required
+                          label={input.label}
+                          variant="outlined"
+                          disabled={!Boolean(initialGameData.gameName)}
+                          type="number"
+                          InputProps={{ inputProps: { min: 0 } }}
+                          //@ts-ignore
+                          error={Boolean(errors[input.name]) && touched[input.name]}
+                          //@ts-ignore
+                          helperText={touched[input.name] ? errors[input.name] : ""}
                         />
                       </div>
                     )}
@@ -372,7 +442,9 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                         label={input.label}
                         variant="outlined"
                         disabled={!Boolean(initialGameData.gameName)}
+                        //@ts-ignore
                         error={Boolean(errors[input.name]) && touched[input.name]}
+                        //@ts-ignore
                         helperText={touched[input.name] ? errors[input.name] : ""}
                       />
                     </div>

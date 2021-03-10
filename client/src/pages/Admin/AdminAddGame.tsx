@@ -14,15 +14,16 @@ import { addGame } from "../../redux/games/gamesActions";
 import { errorMessage } from "../../redux/notification/notificationActions";
 import Notification from "../../components/Notification";
 import "./adminaddgame.scss";
+import { FormControl } from "@material-ui/core";
 
 const validationSchema = Yup.object().shape({
-  gameName: Yup.string().required("Game name is required"),
-  gameDescription: Yup.string().required("Game description is required"),
-  releaseDate: Yup.string().required("Release date is required"),
-  author: Yup.string().required("Author is required"),
-  genre: Yup.string().required("Genre is required"),
-  numberOfPhysicalCopies: Yup.number().required("Number of physical copies is required"),
-  price: Yup.number().required("Price is required"),
+  gameName: Yup.string().required("Game name is a required field"),
+  gameDescription: Yup.string().required("Game description is a required field"),
+  releaseDate: Yup.string().required("Release date is a required field"),
+  author: Yup.string().required("Author is a required field"),
+  genre: Yup.string().required("Genre is a required field"),
+  price: Yup.number().min(0).required("Price is a required field"),
+  numberOfPhysicalCopies: Yup.number().min(0),
   isPhysical: Yup.boolean(),
   isDigital: Yup.boolean(),
   discount: Yup.number().min(0).max(100),
@@ -67,11 +68,11 @@ const initialValues = {
   releaseDate: "",
   author: "",
   genre: "",
-  numberOfPhysicalCopies: "",
-  price: "",
+  numberOfPhysicalCopies: 0,
+  price: 0,
   isPhysical: false,
   isDigital: false,
-  discount: "",
+  discount: 0,
 };
 
 interface Game {
@@ -97,7 +98,6 @@ const AdminAddGame: React.FC = () => {
 
   const { successMsg, errorMsg } = useSelector((state: RootState) => state.notification);
 
-  const numericalInputs = ["numberOfPhysicalCopies", "price"];
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,19 +176,16 @@ const AdminAddGame: React.FC = () => {
         {({ errors, touched, handleChange, handleBlur, values, isSubmitting }) => (
           <Form className="form">
             <div className="form__checkboxes">
-              <div>
+              <FormControl>
                 <FormControlLabel
-                  aria-required
                   control={<Checkbox name="isPhysical" color="primary" onChange={handleChange} onBlur={handleBlur} />}
                   label="Is Physical"
                 />
-              </div>
-              <div>
                 <FormControlLabel
                   control={<Checkbox name="isDigital" color="primary" onChange={handleChange} onBlur={handleBlur} />}
                   label="Is Digital"
                 />
-              </div>
+              </FormControl>
             </div>
             {inputs.map((input) => {
               if (input.name === "gameDescription") {
@@ -209,25 +206,44 @@ const AdminAddGame: React.FC = () => {
                   </div>
                 );
               }
-              if (input.name === "numberOfPhysicalCopies" && !values.isPhysical) {
+              if (input.name === "numberOfPhysicalCopies") {
                 return (
                   <div className="form__div" key={input.name}>
                     <TextField
-                      disabled
+                      disabled={!values.isPhysical}
                       className="form__input"
-                      required
+                      required={values.isPhysical}
                       label={input.label}
                       variant="outlined"
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
-                      error={Boolean(errors[input.name]) && touched[input.name] && Boolean(values.isPhysical)}
-                      helperText={touched[input.name] && Boolean(values.isPhysical) ? errors[input.name] : ""}
+                      defaultValue={0}
+                      type="number"
+                      InputProps={{ inputProps: { min: 0 } }}
+                      error={
+                        touched[input.name] &&
+                        values.isPhysical &&
+                        Boolean(
+                          values.numberOfPhysicalCopies < 0 ||
+                            (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
+                        )
+                      }
+                      helperText={
+                        touched[input.name] &&
+                        values.isPhysical &&
+                        Boolean(
+                          values.numberOfPhysicalCopies < 0 ||
+                            (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
+                        )
+                          ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
+                          : ""
+                      }
                     />
                   </div>
                 );
               }
-              if (numericalInputs.includes(input.name)) {
+              if (input.name === "price") {
                 return (
                   <div className="form__div" key={input.name}>
                     <TextField
@@ -239,8 +255,34 @@ const AdminAddGame: React.FC = () => {
                       onBlur={handleBlur}
                       name={input.name}
                       type="number"
+                      defaultValue={0}
+                      InputProps={{ inputProps: { min: 0 } }}
                       error={Boolean(errors[input.name]) && touched[input.name]}
                       helperText={touched[input.name] ? errors[input.name] : ""}
+                    />
+                  </div>
+                );
+              }
+              if (input.name === "discount") {
+                return (
+                  <div className="form__div" key={input.name}>
+                    <TextField
+                      className="form__input"
+                      label={input.label}
+                      variant="outlined"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      name={input.name}
+                      type="number"
+                      defaultValue={0}
+                      InputProps={{ inputProps: { min: 0 } }}
+                      error={Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))}
+                      helperText={
+                        touched[input.name] &&
+                        Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))
+                          ? "Discount must be greater than or equal to 0"
+                          : ""
+                      }
                     />
                   </div>
                 );
@@ -255,7 +297,9 @@ const AdminAddGame: React.FC = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     name={input.name}
+                    //@ts-ignore
                     error={Boolean(errors[input.name]) && touched[input.name]}
+                    //@ts-ignore
                     helperText={touched[input.name] ? errors[input.name] : ""}
                   />
                 </div>
