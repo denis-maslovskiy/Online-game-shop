@@ -57,22 +57,6 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
             We offer you two delivery options: <strong>courier delivery</strong>, <strong>self-pickup</strong>. Please
             choose one option
           </DialogContentText>
-          {/* <button
-            className="content__delivery-type-btn"
-            type="button"
-            aria-pressed={isButtonPressed(COURIER_DELIVERY)}
-            onClick={() => deliveryMethodButtonHandler(COURIER_DELIVERY)}
-          >
-            Courier delivery
-          </button>
-          <button
-            className="content__delivery-type-btn"
-            type="button"
-            aria-pressed={isButtonPressed(SELF_PICKUP)}
-            onClick={() => deliveryMethodButtonHandler(SELF_PICKUP)}
-          >
-            Self-pickup
-          </button> */}
           <div className="dialog-content__checkboxes">
             <div>
               <FormControlLabel

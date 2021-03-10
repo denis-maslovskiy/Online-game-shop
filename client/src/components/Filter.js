@@ -150,7 +150,6 @@ export const Filter = () => {
                     case "Game Name":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          {/* <span className="option__title">{item.inputName}</span> */}
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -165,7 +164,6 @@ export const Filter = () => {
                     case "Author":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          {/* <span className="option__title">{item.inputName}</span> */}
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -180,7 +178,6 @@ export const Filter = () => {
                     case "Genre":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          {/* <span className="option__title">{item.inputName}</span> */}
                           <Autocomplete
                             multiple
                             className="filter__input"
@@ -195,7 +192,6 @@ export const Filter = () => {
                     case "Number of copies":
                       return (
                         <div className="filter__option option" key={item.id}>
-                          {/* <span className="option__title">{item.inputName}</span> */}
                           <TextField
                             className="filter__input"
                             type="number"

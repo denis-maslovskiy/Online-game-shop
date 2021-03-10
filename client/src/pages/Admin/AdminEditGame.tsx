@@ -257,7 +257,6 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
   };
 
   if (!selectedFiles.length) {
-    console.log("no preview");
     if (document.getElementById("uploader-submit-btn")) {
       document.getElementById("uploader-submit-btn")!.style.display = "none";
     }
@@ -266,8 +265,6 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
       document.getElementById("uploader-submit-btn")!.style.display = "block";
     }
   }
-
-  console.log(selectedFiles, selectedFiles.length);
 
   return (
     <div className="admin-edit-game-container">
