@@ -14,7 +14,7 @@ import { addGame } from "../../redux/games/gamesActions";
 import { errorMessage } from "../../redux/notification/notificationActions";
 import Notification from "../../components/Notification";
 import "./adminaddgame.scss";
-import { FormControl } from "@material-ui/core";
+import { FormControl, FormHelperText } from "@material-ui/core";
 
 const validationSchema = Yup.object().shape({
   gameName: Yup.string().required("Game name is a required field"),
@@ -71,7 +71,7 @@ const initialValues = {
   numberOfPhysicalCopies: 0,
   price: 0,
   isPhysical: false,
-  isDigital: false,
+  isDigital: true,
   discount: 0,
 };
 
@@ -176,15 +176,16 @@ const AdminAddGame: React.FC = () => {
         {({ errors, touched, handleChange, handleBlur, values, isSubmitting }) => (
           <Form className="form">
             <div className="form__checkboxes">
-              <FormControl>
+              <FormControl error={!values.isDigital && !values.isPhysical}>
                 <FormControlLabel
                   control={<Checkbox name="isPhysical" color="primary" onChange={handleChange} onBlur={handleBlur} />}
-                  label="Is Physical"
+                  label="Physical"
                 />
                 <FormControlLabel
-                  control={<Checkbox name="isDigital" color="primary" onChange={handleChange} onBlur={handleBlur} />}
-                  label="Is Digital"
+                  control={<Checkbox name="isDigital" color="primary" onChange={handleChange} onBlur={handleBlur} defaultChecked />}
+                  label="Digital"
                 />
+                {!values.isDigital && !values.isPhysical && <FormHelperText>You must choose at least one type of game</FormHelperText>}
               </FormControl>
             </div>
             {inputs.map((input) => {

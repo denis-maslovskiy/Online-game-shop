@@ -85,6 +85,9 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
           value={discountValue}
           onChange={(e) => setDiscountValue(+e.target.value)}
           InputProps={{ inputProps: { min: 0, max: 100 } }}
+          aria-label={`${discountValue}`}
+          error={Boolean(discountValue < 0)}
+          helperText={Boolean(discountValue < 0) ? "Discount must be greater than or equal to 0" : ""}
         />
       </div>
       <div>
@@ -109,7 +112,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
           }
         />
       </div>
-      <button onClick={saveButtonClickHandler} disabled={!selectedResult.length}>
+      <button onClick={saveButtonClickHandler} disabled={!selectedResult.length || Boolean(discountValue < 0)}>
         Save changes
       </button>
     </>

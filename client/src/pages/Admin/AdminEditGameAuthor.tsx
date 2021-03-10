@@ -166,7 +166,9 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                           multiline
                           label={input.label}
                           variant="outlined"
+                          //@ts-ignore
                           error={Boolean(errors[input.name]) && touched[input.name]}
+                          //@ts-ignore
                           helperText={touched[input.name] ? errors[input.name] : ""}
                         />
                       </div>
