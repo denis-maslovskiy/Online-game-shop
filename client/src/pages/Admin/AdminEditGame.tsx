@@ -234,10 +234,6 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
     initialGameData?.imgSource.splice(index, 1);
     document.querySelector(`[src*="${imgId}"]`)?.remove();
     document.querySelector(`[id*="${imgId}"]`)?.remove();
-    allGameAuthors.map((author) => {
-      if (author.authorName === initialGameData.gameName) {
-      }
-    });
     dispatch(adminUpdateGameData(initialGameData._id, { ...initialGameData }, userId));
   };
 
@@ -336,7 +332,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                   >
                     <ClearIcon />
                   </button>
-                  <img src={file.preview} className="image-preview__image" />
+                  <img src={file.preview} className="image-preview__image" alt="Preview" />
                 </div>
               );
             })}
@@ -512,7 +508,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                           className="form__input"
                           disabled={!Boolean(initialGameData.gameName)}
                           type="number"
-                          InputProps={{ inputProps: { min: 0 } }}
+                          InputProps={{ inputProps: { min: 0, step: "any" } }}
                           //@ts-ignore
                           error={Boolean(errors[input.name]) && touched[input.name]}
                           //@ts-ignore
@@ -545,7 +541,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 </Field>
               );
             })}
-            <button type="submit" className="add-game-button" disabled={!Boolean(initialGameData.gameName) || !values.isDigital && !values.isPhysical}>
+            <button type="submit" className="add-game-button" disabled={!Boolean(initialGameData.gameName) || Boolean(!values.isDigital && !values.isPhysical)}>
               Save changes
             </button>
             <button
