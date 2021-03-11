@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Formik, useField, Form } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
@@ -21,18 +21,6 @@ const schema = Yup.object({
   password: Yup.string().min(6, "Must be at least 6 characters").required("Required"),
 });
 
-const CustomTextInput = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
-
-  return (
-    <>
-      <label htmlFor={props.id || props.name}>{label}</label>
-      <input {...field} {...props} />
-      {meta.touched && meta.error ? <div>{meta.error}</div> : null}
-    </>
-  );
-};
-
 const Registration = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const history = useHistory();
@@ -47,7 +35,7 @@ const Registration = (props) => {
   const submit = (userData, { setSubmitting, resetForm }) => {
     registerUser(userData);
     setIsSubmitting(true);
-    resetForm();
+    resetForm({});
     setSubmitting(false);
   };
 
@@ -69,7 +57,7 @@ const Registration = (props) => {
         validationSchema={schema}
         onSubmit={submit}
       >
-        {({handleChange, handleBlur, isSubmitting, errors, touched}) => (
+        {({ handleChange, handleBlur, isSubmitting, errors, touched, values }) => (
           <Form className="box">
             <h1 className="box__title">Registration</h1>
 
@@ -81,10 +69,11 @@ const Registration = (props) => {
                 variant="filled"
                 name="username"
                 autoComplete="off"
+                value={values.username || ""}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.username)}
+                error={Boolean(errors.username) && touched.username}
                 helperText={touched.username ? errors.username : ""}
               />
             </div>
@@ -97,10 +86,11 @@ const Registration = (props) => {
                 variant="filled"
                 name="email"
                 autoComplete="off"
+                value={values.email || ""}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.email)}
+                error={Boolean(errors.email) && touched.email}
                 helperText={touched.email ? errors.email : ""}
               />
             </div>
@@ -114,10 +104,11 @@ const Registration = (props) => {
                 name="password"
                 type="password"
                 autoComplete="off"
+                value={values.password || ""}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.password)}
+                error={Boolean(errors.password) && touched.password}
                 helperText={touched.password ? errors.password : ""}
               />
             </div>

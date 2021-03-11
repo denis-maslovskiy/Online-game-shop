@@ -24,7 +24,7 @@ const Authorization = (props) => {
   const submit = (userData, { setSubmitting, resetForm }) => {
     loginUser(userData);
     setIsSubmitting(true);
-    resetForm();
+    resetForm({});
     setSubmitting(false);
   };
 
@@ -48,7 +48,7 @@ const Authorization = (props) => {
         })}
         onSubmit={submit}
       >
-        {({handleChange, handleBlur, isSubmitting, errors, touched}) => (
+        {({ handleChange, handleBlur, isSubmitting, errors, touched, values }) => (
           <Form className="box">
             <h1 className="box__title">Authorization</h1>
 
@@ -60,10 +60,11 @@ const Authorization = (props) => {
                 variant="filled"
                 name="email"
                 autoComplete="off"
+                value={values.email || ""}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.email)}
+                error={Boolean(errors.email) && touched.email}
                 helperText={touched.email ? errors.email : ""}
               />
             </div>
@@ -77,10 +78,11 @@ const Authorization = (props) => {
                 name="password"
                 type="password"
                 autoComplete="off"
+                value={values.password || ""}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.password)}
+                error={Boolean(errors.password) && touched.password}
                 helperText={touched.password ? errors.password : ""}
               />
             </div>
