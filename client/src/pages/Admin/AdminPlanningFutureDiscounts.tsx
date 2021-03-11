@@ -5,6 +5,7 @@ import { RootState } from "../../redux/rootReducer";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import { adminUpdateGameData, getAllGames } from "../../redux/games/gamesActions";
+import Notification from "../../components/Notification";
 import "react-datepicker/dist/react-datepicker.css";
 import "./admin-planning-future-discounts.scss";
 
@@ -35,6 +36,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
   });
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
+  const { successMsg } = useSelector((state: RootState) => state.notification);
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
@@ -68,6 +70,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
 
   return (
     <div className="admin-add-game-container">
+      {successMsg && <Notification values={{ successMsg }} />}
       <div className="container-title-block add-game-title">
         <h2 className="container-title">Admin Planning Future Discounts</h2>
       </div>
