@@ -1,6 +1,3 @@
-// TODO: Не работает отчистка формы
-// TODO: Игра добавляется, если чекбоксы isPhysical/isDigital оба пустые
-
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
@@ -165,6 +162,7 @@ const AdminAddGame: React.FC = () => {
         initialValues={initialValues}
         onSubmit={(values, { resetForm }) => {
           dispatch(addGame({ ...values }, selectedFiles, userId));
+          resetForm({});
         }}
         validationSchema={validationSchema}
         enableReinitialize={true}
@@ -173,7 +171,15 @@ const AdminAddGame: React.FC = () => {
           <Form className="form">
             <FormControl error={!values.isDigital && !values.isPhysical} className="form__checkboxes checkboxes">
               <FormControlLabel
-                control={<Checkbox name="isPhysical" color="primary" onChange={handleChange} onBlur={handleBlur} />}
+                control={
+                  <Checkbox
+                    name="isPhysical"
+                    color="primary"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    checked={values.isPhysical || false}
+                  />
+                }
                 label="Physical"
               />
               <FormControlLabel
@@ -183,13 +189,15 @@ const AdminAddGame: React.FC = () => {
                     color="primary"
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    defaultChecked
+                    checked={values.isDigital || false}
                   />
                 }
                 label="Digital"
               />
               {!values.isDigital && !values.isPhysical && (
-                <FormHelperText className="checkboxes__helper-text">You must choose at least one type of game</FormHelperText>
+                <FormHelperText className="checkboxes__helper-text">
+                  You must choose at least one type of game
+                </FormHelperText>
               )}
             </FormControl>
             {inputs.map((input) => {
@@ -203,6 +211,7 @@ const AdminAddGame: React.FC = () => {
                       label={input.label}
                       variant="filled"
                       multiline
+                      value={values.gameDescription || ""}
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
@@ -225,8 +234,8 @@ const AdminAddGame: React.FC = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
-                      defaultValue={0}
                       type="number"
+                      value={values.numberOfPhysicalCopies || 0}
                       InputProps={{ inputProps: { min: 0 } }}
                       error={
                         touched[input.name] &&
@@ -263,8 +272,8 @@ const AdminAddGame: React.FC = () => {
                       onBlur={handleBlur}
                       name={input.name}
                       type="number"
-                      defaultValue={0}
-                      InputProps={{ inputProps: { min: 0 } }}
+                      value={values.price || 0}
+                      InputProps={{ inputProps: { min: 0, step: "any" } }}
                       error={Boolean(errors[input.name]) && touched[input.name]}
                       helperText={touched[input.name] ? errors[input.name] : ""}
                     />
@@ -282,7 +291,7 @@ const AdminAddGame: React.FC = () => {
                       onBlur={handleBlur}
                       name={input.name}
                       type="number"
-                      defaultValue={0}
+                      value={values.discount || 0}
                       InputProps={{ inputProps: { min: 0 } }}
                       error={Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))}
                       helperText={
@@ -322,6 +331,8 @@ const AdminAddGame: React.FC = () => {
                     onBlur={handleBlur}
                     name={input.name}
                     //@ts-ignore
+                    value={values[input.name] || ""}
+                    //@ts-ignore
                     error={Boolean(errors[input.name]) && touched[input.name]}
                     //@ts-ignore
                     helperText={touched[input.name] ? errors[input.name] : ""}
@@ -333,7 +344,9 @@ const AdminAddGame: React.FC = () => {
               type="submit"
               id="form-submit"
               className="add-game-button"
-              disabled={checksForButton(isSubmitting, errors, touched) || !values.isDigital && !values.isPhysical}
+              disabled={
+                checksForButton(isSubmitting, errors, touched) || Boolean(!values.isDigital && !values.isPhysical)
+              }
             >
               Add game
             </button>
