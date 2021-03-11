@@ -136,7 +136,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
         <div className="image-upload__image-preview image-preview">
           {previewSource ? (
             // @ts-ignore
-            <img src={previewSource} alt="Chosen image" className="image-preview__image" />
+            <img src={previewSource} alt="Chosen" className="image-preview__image" />
           ) : initialGameAuthorData.authorLogo ? (
             <div>
               <button
