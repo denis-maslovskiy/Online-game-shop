@@ -1,7 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Image } from "cloudinary-react";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Checkbox, FormControlLabel } from "@material-ui/core";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide,
+  Checkbox,
+  FormControlLabel,
+} from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
@@ -61,14 +70,26 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
             <div>
               <FormControlLabel
                 checked={isButtonPressed(COURIER_DELIVERY)}
-                control={<Checkbox name="CourierDelivery" color="primary" onChange={() => deliveryMethodButtonHandler(COURIER_DELIVERY)} />}
+                control={
+                  <Checkbox
+                    name="CourierDelivery"
+                    color="primary"
+                    onChange={() => deliveryMethodButtonHandler(COURIER_DELIVERY)}
+                  />
+                }
                 label="Courier delivery"
               />
             </div>
             <div>
               <FormControlLabel
                 checked={isButtonPressed(SELF_PICKUP)}
-                control={<Checkbox name="SelfPickup" color="primary" onChange={() => deliveryMethodButtonHandler(SELF_PICKUP)} />}
+                control={
+                  <Checkbox
+                    name="SelfPickup"
+                    color="primary"
+                    onChange={() => deliveryMethodButtonHandler(SELF_PICKUP)}
+                  />
+                }
                 label="Self-pickup"
               />
             </div>
@@ -126,6 +147,7 @@ const SelectedGame = () => {
   const [gameData, setGameData] = useState(null);
   const [gamePrice, setGamePrice] = useState(0);
   const [arrayOfImgs, setArrayOfImgs] = useState([]);
+  const [fullGameDiscount, setFullGameDiscount] = useState(0);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -177,12 +199,27 @@ const SelectedGame = () => {
         const startsOn = game.plannedDiscountStartsOn,
           endsOn = game.plannedDiscountEndsOn;
         if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
-          setGamePrice((game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) > 0 ? (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) : 0);
+          setGamePrice(
+            (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) > 0
+              ? (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2)
+              : 0
+          );
+          setFullGameDiscount(game.discount + game.plannedDiscount);
         } else {
-          setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2) > 0 ? (game?.price * (1 - game?.discount / 100)).toFixed(2) : 0);
+          setGamePrice(
+            (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+              ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+              : 0
+          );
+          setFullGameDiscount(game.discount);
         }
       } else {
-        setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2) > 0 ? (game?.price * (1 - game?.discount / 100)).toFixed(2) : 0);
+        setGamePrice(
+          (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+            ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+            : 0
+        );
+        setFullGameDiscount(game.discount);
       }
       setIsDigital(game.isDigital);
       setIsPhysical(game.isPhysical);
@@ -252,7 +289,7 @@ const SelectedGame = () => {
                   <div key={item.title}>
                     <p className="game-info__text-field-title">
                       <span className="static-field">{item.title}</span>
-                      <span className="game-info__text-field-value">{item.value}%</span>
+                      <span className="game-info__text-field-value">{fullGameDiscount}%</span>
                     </p>
                   </div>
                 );
