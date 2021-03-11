@@ -129,7 +129,7 @@ router.put("/:id", async (req, res) => {
         plannedDiscountEndsOn,
       }
     );
-    res.status(200).json({ message: "Game has been edited successfully" });
+    res.status(200).json({ message: "Game(s) has been edited successfully" });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
