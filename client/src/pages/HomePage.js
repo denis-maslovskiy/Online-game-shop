@@ -21,9 +21,16 @@ const Slider = ({ allGames, cloudName }) => {
             <Link to={`/selected-game/${game._id}`} className="home-page-slide__link">
               <p className="home-page-slide__text-on-image">{game.gameName}</p>
               {game.imgSource.length ? (
-                <Image cloudName={cloudName} publicId={game.imgSource[0]} width="800" height="450" crop="scale" />
+                <Image
+                  cloudName={cloudName}
+                  publicId={game.imgSource[0]}
+                  width="800"
+                  height="450"
+                  crop="scale"
+                  alt={game.gameName}
+                />
               ) : (
-                <img src={noImageAvailable} width="800" height="450"></img>
+                <img src={noImageAvailable} width="800" height="450" alt={game.gameName}></img>
               )}
             </Link>
           </div>
@@ -54,6 +61,33 @@ const HomePage = () => {
     );
   }
 
+  const discountCalculating = (game) => {
+    let finalPrice = 0;
+
+    if (game?.plannedDiscountEndsOn && game?.plannedDiscountStartsOn) {
+      const startsOn = game.plannedDiscountStartsOn,
+        endsOn = game.plannedDiscountEndsOn;
+      if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
+        finalPrice =
+          (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) > 0
+            ? (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2)
+            : 0;
+      } else {
+        finalPrice =
+          (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+            ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+            : 0;
+      }
+    } else {
+      finalPrice =
+        (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+          ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+          : 0;
+    }
+
+    return Boolean(+finalPrice < +game.price) ? `${finalPrice} $` : null;
+  };
+
   return (
     <main>
       {allGames.length && <Slider allGames={allGames} cloudName={cloudName} />}
@@ -76,17 +110,18 @@ const HomePage = () => {
                         alt={game.gameName}
                       />
                     ) : (
-                      <img
-                        src={noImageAvailable}
-                        className="card__picture"
-                        alt={game.gameName}
-                      />
+                      <img src={noImageAvailable} className="card__picture" alt={game.gameName} />
                     )}
                     <div>
                       <h2>{game.gameName}</h2>
                       <h3>{game.genre}</h3>
                       <h3>{game.author}</h3>
-                      <p>{game.price} $</p>
+                      <div className="card__price-container price-container">
+                        <p className={discountCalculating(game) ? "price-container__crossed-out-price" : ""}>
+                          {game.price} $
+                        </p>
+                        <p className="price-container__price-with-discount">{discountCalculating(game)}</p>
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -112,11 +147,7 @@ const HomePage = () => {
                         alt={game.gameName}
                       />
                     ) : (
-                      <img
-                        src={noImageAvailable}
-                        className="card__picture"
-                        alt={game.gameName}
-                      />
+                      <img src={noImageAvailable} className="card__picture" alt={game.gameName} />
                     )}
                     <div className="card_description">
                       <h2>{game.gameName}</h2>
