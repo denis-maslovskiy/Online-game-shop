@@ -224,7 +224,7 @@ input[name="r"]{
 }
 
 .dialog-content {
-    @include flex-display($flex-wrap: wrap, $justify-content: end);
+    @include flex-display($flex-wrap: wrap);
 
     &__text.MuiDialogContentText-root {
         color: $custom-light-grey;
