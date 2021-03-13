@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import { RootState } from "../../redux/rootReducer";
 import * as Yup from "yup";
-import { Field, Form, Formik, FieldProps } from "formik";
+import { Field, Form, Formik, FieldProps, FormikTouched, FormikErrors } from "formik";
 // @ts-ignore
 import { Image } from "cloudinary-react";
 import {
@@ -271,6 +271,61 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
     }
   }
 
+  const checksForButton = (errors: FormikErrors<any>, touched: FormikTouched<any>, values: FormValues) => {
+    if (!values.isPhysical) delete errors.numberOfPhysicalCopies;
+    return (
+      Boolean(errors.gameName && touched.gameName) ||
+      Boolean(errors.gameDescription && touched.gameDescription) ||
+      Boolean(errors.author && touched.author) ||
+      Boolean(errors.genre && touched.genre) ||
+      Boolean(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
+      Boolean(errors.price && touched.price) ||
+      Boolean(errors.isPhysical && touched.isPhysical) ||
+      Boolean(errors.isDigital && touched.isDigital) ||
+      Boolean(errors.discount && touched.discount) ||
+      Boolean(!values.isDigital && !values.isPhysical) ||
+      Boolean(checksForDiscountField(values.discount))
+    );
+  };
+
+  const checkboxHelperText = (isDigital: boolean, isPhysical: boolean, fieldName: string, gameName: string) => {
+    return !isDigital && !isPhysical && fieldName === "isPhysical" && Boolean(gameName);
+  };
+
+  const checksForNumberOfPhysicalCopiesField = (
+    touched: FormikTouched<any>,
+    numberOfPhysicalCopiesValue: number,
+    isPhysical: boolean
+  ) => {
+    return (
+      touched.numberOfPhysicalCopies &&
+      isPhysical &&
+      Boolean(numberOfPhysicalCopiesValue < 0 || (!numberOfPhysicalCopiesValue && numberOfPhysicalCopiesValue !== 0))
+    );
+  };
+
+  const numberOfPhysicalCopiesFieldHelperText = (
+    touched: FormikTouched<any>,
+    numberOfPhysicalCopiesValue: number,
+    isPhysical: boolean
+  ) => {
+    return touched.numberOfPhysicalCopies &&
+      isPhysical &&
+      Boolean(numberOfPhysicalCopiesValue < 0 || (!numberOfPhysicalCopiesValue && numberOfPhysicalCopiesValue !== 0))
+      ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
+      : "";
+  };
+
+  const checksForDiscountField = (discountValue: number) => {
+    return Boolean(discountValue < 0 || (!discountValue && discountValue !== 0));
+  };
+
+  const discountFieldHelperText = (touched: FormikTouched<any>, discountValue: number) => {
+    return touched.discount && Boolean(discountValue < 0 || (!discountValue && discountValue !== 0))
+      ? "Discount must be greater than or equal to 0"
+      : "";
+  };
+
   return (
     <div className="admin-edit-game-container">
       <div className="admin-edit-game-container__existing-images image-preview">
@@ -378,8 +433,15 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                           disabled={!Boolean(initialGameData.gameName)}
                           className={input.name === "isDigital" ? "edit-game-digital-checkbox" : ""}
                         />
-                        {!values.isDigital && !values.isPhysical && input.name === "isPhysical" && Boolean(initialGameData.gameName) && (
-                          <FormHelperText className="edit-game-checkbox-helper-text">You must choose at least one type of game</FormHelperText>
+                        {checkboxHelperText(
+                          values.isDigital,
+                          values.isPhysical,
+                          input.name,
+                          initialGameData.gameName
+                        ) && (
+                          <FormHelperText className="edit-game-checkbox-helper-text">
+                            You must choose at least one type of game
+                          </FormHelperText>
                         )}
                       </FormControl>
                     )}
@@ -401,25 +463,16 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                           variant="filled"
                           type="number"
                           InputProps={{ inputProps: { min: 0 } }}
-                          error={
-                            //@ts-ignore
-                            touched[input.name] &&
-                            Boolean(
-                              values.numberOfPhysicalCopies < 0 ||
-                                (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
-                            )
-                          }
-                          helperText={
-                            //@ts-ignore
-                            touched[input.name] &&
-                            values.isPhysical &&
-                            Boolean(
-                              values.numberOfPhysicalCopies < 0 ||
-                                (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
-                            )
-                              ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
-                              : ""
-                          }
+                          error={checksForNumberOfPhysicalCopiesField(
+                            touched,
+                            values.numberOfPhysicalCopies,
+                            values.isPhysical
+                          )}
+                          helperText={numberOfPhysicalCopiesFieldHelperText(
+                            touched,
+                            values.numberOfPhysicalCopies,
+                            values.isPhysical
+                          )}
                         />
                       </div>
                     )}
@@ -464,14 +517,8 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                           disabled={!Boolean(initialGameData.gameName)}
                           type="number"
                           InputProps={{ inputProps: { min: 0 } }}
-                          error={Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))}
-                          helperText={
-                            //@ts-ignore
-                            touched[input.name] &&
-                            Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))
-                              ? "Discount must be greater than or equal to 0"
-                              : ""
-                          }
+                          error={Boolean(checksForDiscountField(values.discount))}
+                          helperText={discountFieldHelperText(touched, values.discount)}
                         />
                       </div>
                     )}
@@ -541,7 +588,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 </Field>
               );
             })}
-            <button type="submit" className="add-game-button" disabled={!Boolean(initialGameData.gameName) || Boolean(!values.isDigital && !values.isPhysical)}>
+            <button type="submit" className="add-game-button" disabled={checksForButton(errors, touched, values)}>
               Save changes
             </button>
             <button

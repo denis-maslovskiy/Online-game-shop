@@ -42,9 +42,22 @@ const inputs = [
   { label: "Release date", name: "releaseDate" },
 ];
 
-const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
+interface FormValues {
+  gameName: string;
+  gameDescription: string;
+  releaseDate: Date;
+  author: string;
+  genre: string;
+  numberOfPhysicalCopies: number;
+  price: number;
+  isPhysical: boolean;
+  isDigital: boolean;
+  discount: number;
+}
+
+const checksForButton = (errors: FormikErrors<any>, touched: FormikTouched<any>, values: FormValues) => {
+  if (!values.isPhysical) errors.numberOfPhysicalCopies = "";
   return (
-    isSubmitting ||
     Boolean(errors.gameName && touched.gameName) ||
     Boolean(errors.gameDescription && touched.gameDescription) ||
     Boolean(errors.author && touched.author) ||
@@ -53,8 +66,48 @@ const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touch
     Boolean(errors.price && touched.price) ||
     Boolean(errors.isPhysical && touched.isPhysical) ||
     Boolean(errors.isDigital && touched.isDigital) ||
-    Boolean(errors.discount && touched.discount)
+    Boolean(errors.discount && touched.discount) ||
+    Boolean(!values.isDigital && !values.isPhysical) ||
+    Boolean(checksForDiscountField(values.discount))
   );
+};
+
+const checksForDefaultFields = (errors: FormikErrors<any>, touched: FormikTouched<any>, fieldName: string) => {
+  return Boolean(errors[fieldName]) && touched[fieldName];
+};
+
+const checksForNumberOfPhysicalCopiesField = (
+  touched: FormikTouched<any>,
+  numberOfPhysicalCopiesValue: number,
+  isPhysical: boolean
+) => {
+  return (
+    touched.numberOfPhysicalCopies &&
+    isPhysical &&
+    Boolean(numberOfPhysicalCopiesValue < 0 || (!numberOfPhysicalCopiesValue && numberOfPhysicalCopiesValue !== 0))
+  );
+};
+
+const numberOfPhysicalCopiesFieldHelperText = (
+  touched: FormikTouched<any>,
+  numberOfPhysicalCopiesValue: number,
+  isPhysical: boolean
+) => {
+  return touched.numberOfPhysicalCopies &&
+    isPhysical &&
+    Boolean(numberOfPhysicalCopiesValue < 0 || (!numberOfPhysicalCopiesValue && numberOfPhysicalCopiesValue !== 0))
+    ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
+    : "";
+};
+
+const checksForDiscountField = (discountValue: number) => {
+  return Boolean(discountValue < 0 || (!discountValue && discountValue !== 0));
+};
+
+const discountFieldHelperText = (touched: FormikTouched<any>, discountValue: number) => {
+  return touched.discount && Boolean(discountValue < 0 || (!discountValue && discountValue !== 0))
+    ? "Discount must be greater than or equal to 0"
+    : "";
 };
 
 const initialValues = {
@@ -167,7 +220,7 @@ const AdminAddGame: React.FC = () => {
         validationSchema={validationSchema}
         enableReinitialize={true}
       >
-        {({ errors, touched, handleChange, handleBlur, values, isSubmitting, setFieldValue }) => (
+        {({ errors, touched, handleChange, handleBlur, values, setFieldValue }) => (
           <Form className="form">
             <FormControl error={!values.isDigital && !values.isPhysical} className="form__checkboxes checkboxes">
               <FormControlLabel
@@ -215,7 +268,7 @@ const AdminAddGame: React.FC = () => {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       name={input.name}
-                      error={Boolean(errors[input.name]) && touched[input.name]}
+                      error={Boolean(checksForDefaultFields(errors, touched, input.name))}
                       helperText={touched[input.name] ? errors[input.name] : ""}
                     />
                   </div>
@@ -237,24 +290,14 @@ const AdminAddGame: React.FC = () => {
                       type="number"
                       value={values.numberOfPhysicalCopies || 0}
                       InputProps={{ inputProps: { min: 0 } }}
-                      error={
-                        touched[input.name] &&
-                        values.isPhysical &&
-                        Boolean(
-                          values.numberOfPhysicalCopies < 0 ||
-                            (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
-                        )
-                      }
-                      helperText={
-                        touched[input.name] &&
-                        values.isPhysical &&
-                        Boolean(
-                          values.numberOfPhysicalCopies < 0 ||
-                            (!values.numberOfPhysicalCopies && values.numberOfPhysicalCopies !== 0)
-                        )
-                          ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
-                          : ""
-                      }
+                      error={Boolean(
+                        checksForNumberOfPhysicalCopiesField(touched, values.numberOfPhysicalCopies, values.isPhysical)
+                      )}
+                      helperText={numberOfPhysicalCopiesFieldHelperText(
+                        touched,
+                        values.numberOfPhysicalCopies,
+                        values.isPhysical
+                      )}
                     />
                   </div>
                 );
@@ -274,7 +317,7 @@ const AdminAddGame: React.FC = () => {
                       type="number"
                       value={values.price || 0}
                       InputProps={{ inputProps: { min: 0, step: "any" } }}
-                      error={Boolean(errors[input.name]) && touched[input.name]}
+                      error={Boolean(checksForDefaultFields(errors, touched, input.name))}
                       helperText={touched[input.name] ? errors[input.name] : ""}
                     />
                   </div>
@@ -293,13 +336,8 @@ const AdminAddGame: React.FC = () => {
                       type="number"
                       value={values.discount || 0}
                       InputProps={{ inputProps: { min: 0 } }}
-                      error={Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))}
-                      helperText={
-                        touched[input.name] &&
-                        Boolean(values.discount < 0 || (!values.discount && values.discount !== 0))
-                          ? "Discount must be greater than or equal to 0"
-                          : ""
-                      }
+                      error={Boolean(checksForDiscountField(values.discount))}
+                      helperText={discountFieldHelperText(touched, values.discount)}
                     />
                   </div>
                 );
@@ -333,7 +371,7 @@ const AdminAddGame: React.FC = () => {
                     //@ts-ignore
                     value={values[input.name] || ""}
                     //@ts-ignore
-                    error={Boolean(errors[input.name]) && touched[input.name]}
+                    error={Boolean(checksForDefaultFields(errors, touched, input.name))}
                     //@ts-ignore
                     helperText={touched[input.name] ? errors[input.name] : ""}
                   />
@@ -344,9 +382,7 @@ const AdminAddGame: React.FC = () => {
               type="submit"
               id="form-submit"
               className="add-game-button"
-              disabled={
-                checksForButton(isSubmitting, errors, touched) || Boolean(!values.isDigital && !values.isPhysical)
-              }
+              disabled={checksForButton(errors, touched, values)}
             >
               Add game
             </button>
