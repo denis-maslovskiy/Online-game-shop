@@ -56,7 +56,7 @@ const AdminStatistic: React.FC = () => {
   useEffect(() => {
     dispatch(getAllUsers({ userId }));
     dispatch(getAllAchievements());
-  }, []);
+  }, [dispatch, userId]);
 
   let gamesBoughtFor = 0,
     usersPerMonth = 0,
@@ -256,6 +256,7 @@ const AdminStatistic: React.FC = () => {
                 if (index < firstAchievementsColumnLength) {
                   return <p key={item}>{item}</p>;
                 }
+                return null;
               })}
             </div>
             <div>
@@ -263,6 +264,7 @@ const AdminStatistic: React.FC = () => {
                 if (index >= firstAchievementsColumnLength) {
                   return <p key={item}>{item}</p>;
                 }
+                return null;
               })}
             </div>
           </div>

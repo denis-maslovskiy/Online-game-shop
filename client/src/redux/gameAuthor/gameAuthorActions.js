@@ -5,6 +5,7 @@ import {
   DELETE_GAME_AUTHOR,
   SET_SELECTED_GAME_AUTHOR_DATA,
 } from "./gameAuthorTypes";
+import { successMessage } from "../notification/notificationActions";
 
 export const setAllGameAuthors = (gameAuthors) => {
   return {
@@ -39,7 +40,7 @@ export const adminAddAuthor = (newAuthor) => {
     try {
       await axios.post("/api/admin/create-game-author", { ...newAuthor });
     } catch (e) {
-      console.log(e.response.data.message)
+      console.log(e.response.data.message);
     }
   };
 };
@@ -66,12 +67,12 @@ export const getSelectedGameAuthor = (gameAuthorId) => {
   };
 };
 
-export const adminUpdateGameAuthorData = (gameAuthorId, gameAuthor, userId, selectedFile ) => {
+export const adminUpdateGameAuthorData = (gameAuthorId, gameAuthor, userId, selectedFile) => {
   return async (dispatch) => {
     try {
       const { data } = await axios.get(`/api/game-author/get-selected-game-author/${gameAuthorId}`);
 
-      if(selectedFile) {
+      if (selectedFile) {
         const reader = new FileReader();
         reader.readAsDataURL(selectedFile);
         reader.onloadend = async () => {
@@ -80,15 +81,17 @@ export const adminUpdateGameAuthorData = (gameAuthorId, gameAuthor, userId, sele
             data: { uploadResponse },
           } = await axios.post("/api/admin/upload-image", { fileStr, userId });
           data.authorLogo = uploadResponse.public_id;
-          await axios.put(`/api/admin/edit-game-author-info/${gameAuthorId}`, { ...data, userId });
+          const {
+            data: { message },
+          } = await axios.put(`/api/admin/edit-game-author-info/${gameAuthorId}`, { ...data, userId });
           dispatch(updateGameAuthorArray(data));
-        }
+          dispatch(successMessage(message));
+        };
       }
-
       await axios.put(`/api/admin/edit-game-author-info/${gameAuthorId}`, { ...gameAuthor, userId });
       dispatch(updateGameAuthorArray(gameAuthor));
     } catch (e) {
-      console.log(e.response.data.message)
+      console.log(e.response.data.message);
     }
   };
 };
@@ -99,7 +102,7 @@ export const adminDeleteGameAuthor = (gameAuthorId, userId) => {
       await axios.delete(`/api/admin/delete-game-author/${gameAuthorId}`, { data: { ...userId } });
       dispatch(updateGameArrayAfterDeletingTheGameAuthor(gameAuthorId));
     } catch (e) {
-      console.log(e.response.data.message)
+      console.log(e.response.data.message);
     }
   };
 };

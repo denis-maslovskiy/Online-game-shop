@@ -133,11 +133,10 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
             disabled={!Boolean(initialGameAuthorData.authorName)}
           />
         </form>
-
         <div className="image-upload__image-preview image-preview">
           {previewSource ? (
             // @ts-ignore
-            <img src={previewSource} alt="Chosen image" className="image-preview__image" />
+            <img src={previewSource} alt="Chosen" className="image-preview__image" />
           ) : initialGameAuthorData.authorLogo ? (
             <div>
               <button
@@ -151,6 +150,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                 cloudName={cloudName}
                 publicId={initialGameAuthorData.authorLogo}
                 className="image-preview__image"
+                alt="Author's Logo"
               />
             </div>
           ) : (
@@ -188,6 +188,10 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                           required
                           multiline
                           label={input.label}
+                          //@ts-ignore
+                          error={Boolean(errors[input.name]) && touched[input.name]}
+                          //@ts-ignore
+                          helperText={touched[input.name] ? errors[input.name] : ""}
                           variant="filled"
                           disabled={!Boolean(initialGameAuthorData.authorName)}
                           className="form__input"
@@ -213,6 +217,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                   </div>
                 );
               }
+              return null;
             })}
             <button className="add-game-button" type="submit" disabled={checksForButton(isSubmitting, errors, touched)}>
               Save changes
@@ -233,7 +238,7 @@ const AdminEditGameAuthor: React.FC = () => {
 
   useEffect(() => {
     dispatch(getAllAuthors());
-  }, []);
+  }, [dispatch]);
 
   const selectHandleChange = (e: { target: HTMLInputElement }) => {
     const authorId = e.target.value;

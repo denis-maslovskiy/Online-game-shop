@@ -10,20 +10,18 @@ import "../styles/selected-game-author.scss";
 
 const SelectedGameAuthor = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const locationSplittedArray = location.pathname.split("/");
+  const gameAuthorId = locationSplittedArray[locationSplittedArray.length - 1];
 
   useEffect(() => {
     dispatch(getSelectedGameAuthor(gameAuthorId));
     dispatch(getAllGames());
-  }, []);
+  }, [dispatch, gameAuthorId]);
 
   const { cloudName } = useContext(DependenciesContext);
-  const location = useLocation();
-
   const { selectedGameAuthor } = useSelector((state) => state.gameAuthor);
   const { allGames } = useSelector((state) => state.games);
-
-  const locationSplittedArray = location.pathname.split("/");
-  const gameAuthorId = locationSplittedArray[locationSplittedArray.length - 1];
 
   const getGameId = (gameName, gameId) => {
     if (gameId) {
@@ -47,7 +45,12 @@ const SelectedGameAuthor = () => {
             <h2 className="game-name__title game-author-title">{selectedGameAuthor?.authorName}</h2>
           </div>
           {selectedGameAuthor?.authorLogo ? (
-            <Image cloudName={cloudName} publicId={selectedGameAuthor?.authorLogo} className="author-logo" />
+            <Image
+              cloudName={cloudName}
+              publicId={selectedGameAuthor?.authorLogo}
+              className="author-logo"
+              alt="Author's Logo"
+            />
           ) : (
             <img src={noImageAvailable} alt="No logo for author" className="author-logo"></img>
           )}
@@ -82,14 +85,10 @@ const SelectedGameAuthor = () => {
                         cloudName={cloudName}
                         publicId={game.imgSource[0]}
                         className="game__picture"
-                        alt={`${game.gameName} image`}
+                        alt={game.gameName}
                       />
                     ) : (
-                      <img
-                        src={noImageAvailable}
-                        className="game__picture"
-                        alt={`No available image for ${game.gameName}`}
-                      />
+                      <img src={noImageAvailable} className="game__picture" alt={game.gameName} />
                     )}
                     <div className="game__text authors-game-text">
                       <p>{game.gameName}</p>

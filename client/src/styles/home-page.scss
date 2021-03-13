@@ -137,6 +137,10 @@
         border: 2px solid $custom-light-grey;
     }
 
+    &__price-container {
+        @include flex-display($justify-content: center, $align-items: center);
+    }
+
     @media (max-width: 440px) {
         font-size: 12px;
         letter-spacing: 0;
@@ -145,6 +149,19 @@
             width: 120px;
             height: 150px;
         }
+    }
+}
+
+.price-container {
+    &__crossed-out-price {
+        text-decoration: line-through;
+        @include text-style(16px);
+        margin-right: 10px;
+    }
+
+    &__price-with-discount {
+        color: $light-red-color;
+        @include text-style(20px)
     }
 }
 

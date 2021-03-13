@@ -1,7 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Image } from "cloudinary-react";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Checkbox, FormControlLabel } from "@material-ui/core";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide,
+  Checkbox,
+  FormControlLabel,
+} from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
@@ -61,14 +70,26 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
             <div>
               <FormControlLabel
                 checked={isButtonPressed(COURIER_DELIVERY)}
-                control={<Checkbox name="CourierDelivery" color="primary" onChange={() => deliveryMethodButtonHandler(COURIER_DELIVERY)} />}
+                control={
+                  <Checkbox
+                    name="CourierDelivery"
+                    color="primary"
+                    onChange={() => deliveryMethodButtonHandler(COURIER_DELIVERY)}
+                  />
+                }
                 label="Courier delivery"
               />
             </div>
             <div>
               <FormControlLabel
                 checked={isButtonPressed(SELF_PICKUP)}
-                control={<Checkbox name="SelfPickup" color="primary" onChange={() => deliveryMethodButtonHandler(SELF_PICKUP)} />}
+                control={
+                  <Checkbox
+                    name="SelfPickup"
+                    color="primary"
+                    onChange={() => deliveryMethodButtonHandler(SELF_PICKUP)}
+                  />
+                }
                 label="Self-pickup"
               />
             </div>
@@ -97,7 +118,7 @@ const SliderShow = ({ arrayOfImgs, cloudName }) => {
     images = [],
     labels = [];
 
-  arrayOfImgs.map((item, index) => {
+  arrayOfImgs.forEach((item, index) => {
     inputRadios.push(<input type="radio" name="r" id={item.id} key={item.id} />);
     images.push(
       <div className={index ? "slide" : "slide s1"} key={item.id}>
@@ -126,6 +147,7 @@ const SelectedGame = () => {
   const [gameData, setGameData] = useState(null);
   const [gamePrice, setGamePrice] = useState(0);
   const [arrayOfImgs, setArrayOfImgs] = useState([]);
+  const [fullGameDiscount, setFullGameDiscount] = useState(0);
   const [textFields, setTextFields] = useState([
     { title: "Game description: ", value: "", fieldName: "gameDescription" },
     { title: "Rating: ", value: 0, fieldName: "rating" },
@@ -155,7 +177,7 @@ const SelectedGame = () => {
 
   useEffect(() => {
     dispatch(getUserData(userId));
-  }, []);
+  }, [userId, dispatch]);
 
   useEffect(() => {
     (async function () {
@@ -177,12 +199,27 @@ const SelectedGame = () => {
         const startsOn = game.plannedDiscountStartsOn,
           endsOn = game.plannedDiscountEndsOn;
         if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
-          setGamePrice((game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2));
+          setGamePrice(
+            (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) > 0
+              ? (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2)
+              : 0
+          );
+          setFullGameDiscount(game.discount + game.plannedDiscount);
         } else {
-          setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+          setGamePrice(
+            (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+              ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+              : 0
+          );
+          setFullGameDiscount(game.discount);
         }
       } else {
-        setGamePrice((game?.price * (1 - game?.discount / 100)).toFixed(2));
+        setGamePrice(
+          (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+            ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+            : 0
+        );
+        setFullGameDiscount(game.discount);
       }
       setIsDigital(game.isDigital);
       setIsPhysical(game.isPhysical);
@@ -192,7 +229,7 @@ const SelectedGame = () => {
       game.rating = game.rating + 1;
       dispatch(updateGameData(game._id, game));
     })();
-  }, [textFields, gameId]);
+  }, [textFields, gameId, dispatch]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -252,7 +289,7 @@ const SelectedGame = () => {
                   <div key={item.title}>
                     <p className="game-info__text-field-title">
                       <span className="static-field">{item.title}</span>
-                      <span className="game-info__text-field-value">{item.value}%</span>
+                      <span className="game-info__text-field-value">{fullGameDiscount}%</span>
                     </p>
                   </div>
                 );

@@ -123,7 +123,7 @@ export const adminUpdateGameData = (gameId, game, userId) => {
         }
       });
 
-      gameAuthor.authorsGames.map((authorGame) => {
+      gameAuthor.authorsGames.forEach((authorGame) => {
         if (authorGame.gameName === game.gameName) {
           authorGame.imgSource = game.imgSource;
         }
@@ -175,9 +175,9 @@ export const adminUploadGameImagesWhenEditingGame = (selectedFiles, gameId, user
           } = await axios.post("/api/admin/upload-image", { fileStr, userId });
           data.imgSource.push(uploadResponse.public_id);
           await axios.put(`/api/admin/${gameId}`, { ...data, userId });
-          gameAuthor.authorsGames.map((game) => {
+          gameAuthor.authorsGames.forEach((game) => {
             if (game.gameName === data.gameName) {
-              return (game.imgSource = data.imgSource);
+              game.imgSource = data.imgSource;
             }
           });
           await axios.put(`/api/admin/edit-game-author-info/${gameAuthor._id}`, { ...gameAuthor, userId });

@@ -166,6 +166,7 @@ export const Navbar = () => {
               getOptionLabel={(option) =>
                 option.authorName ? option.authorName : option.gameName + " - " + option.author
               }
+              getOptionSelected={(option, value) => option.id === value.id}
               renderInput={(params) => (
                 <TextField {...params} inputProps={{ ...params.inputProps, id: "search-input" }} />
               )}

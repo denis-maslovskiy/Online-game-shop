@@ -3,10 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import { RootState } from "../../redux/rootReducer";
 import * as Yup from "yup";
-import { Field, Form, Formik, FieldProps } from "formik";
+import { Field, Form, Formik, FieldProps, FormikTouched, FormikErrors } from "formik";
 // @ts-ignore
 import { Image } from "cloudinary-react";
-import { TextField, Checkbox, FormControlLabel, InputLabel, MenuItem, FormControl, Select } from "@material-ui/core";
+import {
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  FormHelperText,
+} from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import {
   adminUpdateGameData,
@@ -78,8 +87,8 @@ const validationSchema = Yup.object().shape({
   releaseDate: Yup.string().required("Release date is required"),
   author: Yup.string().required("Author is required"),
   genre: Yup.string().required("Genre is required"),
-  numberOfPhysicalCopies: Yup.number().required("Number of physical copies is required"),
-  price: Yup.number().required("Price is required"),
+  numberOfPhysicalCopies: Yup.number().min(0),
+  price: Yup.number().min(0).required("Price is required"),
   isPhysical: Yup.boolean(),
   isDigital: Yup.boolean(),
   discount: Yup.string().min(0).max(100),
@@ -225,10 +234,6 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
     initialGameData?.imgSource.splice(index, 1);
     document.querySelector(`[src*="${imgId}"]`)?.remove();
     document.querySelector(`[id*="${imgId}"]`)?.remove();
-    allGameAuthors.map((author) => {
-      if (author.authorName === initialGameData.gameName) {
-      }
-    });
     dispatch(adminUpdateGameData(initialGameData._id, { ...initialGameData }, userId));
   };
 
@@ -266,6 +271,61 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
     }
   }
 
+  const checksForButton = (errors: FormikErrors<any>, touched: FormikTouched<any>, values: FormValues) => {
+    if (!values.isPhysical) delete errors.numberOfPhysicalCopies;
+    return (
+      Boolean(errors.gameName && touched.gameName) ||
+      Boolean(errors.gameDescription && touched.gameDescription) ||
+      Boolean(errors.author && touched.author) ||
+      Boolean(errors.genre && touched.genre) ||
+      Boolean(errors.numberOfPhysicalCopies && touched.numberOfPhysicalCopies) ||
+      Boolean(errors.price && touched.price) ||
+      Boolean(errors.isPhysical && touched.isPhysical) ||
+      Boolean(errors.isDigital && touched.isDigital) ||
+      Boolean(errors.discount && touched.discount) ||
+      Boolean(!values.isDigital && !values.isPhysical) ||
+      Boolean(checksForDiscountField(values.discount))
+    );
+  };
+
+  const checkboxHelperText = (isDigital: boolean, isPhysical: boolean, fieldName: string, gameName: string) => {
+    return !isDigital && !isPhysical && fieldName === "isPhysical" && Boolean(gameName);
+  };
+
+  const checksForNumberOfPhysicalCopiesField = (
+    touched: FormikTouched<any>,
+    numberOfPhysicalCopiesValue: number,
+    isPhysical: boolean
+  ) => {
+    return (
+      touched.numberOfPhysicalCopies &&
+      isPhysical &&
+      Boolean(numberOfPhysicalCopiesValue < 0 || (!numberOfPhysicalCopiesValue && numberOfPhysicalCopiesValue !== 0))
+    );
+  };
+
+  const numberOfPhysicalCopiesFieldHelperText = (
+    touched: FormikTouched<any>,
+    numberOfPhysicalCopiesValue: number,
+    isPhysical: boolean
+  ) => {
+    return touched.numberOfPhysicalCopies &&
+      isPhysical &&
+      Boolean(numberOfPhysicalCopiesValue < 0 || (!numberOfPhysicalCopiesValue && numberOfPhysicalCopiesValue !== 0))
+      ? "Number Of Physical Copies is a required field and must be greater than or equal to 0"
+      : "";
+  };
+
+  const checksForDiscountField = (discountValue: number) => {
+    return Boolean(discountValue < 0 || (!discountValue && discountValue !== 0));
+  };
+
+  const discountFieldHelperText = (touched: FormikTouched<any>, discountValue: number) => {
+    return touched.discount && Boolean(discountValue < 0 || (!discountValue && discountValue !== 0))
+      ? "Discount must be greater than or equal to 0"
+      : "";
+  };
+
   return (
     <div className="admin-edit-game-container">
       <div className="admin-edit-game-container__existing-images image-preview">
@@ -289,7 +349,6 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
 
       <div className="image-upload">
         <h3>New images</h3>
-
         <form className="image-upload__form" onSubmit={submitFilesHandler}>
           <label
             htmlFor="image-upload-input"
@@ -328,7 +387,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                   >
                     <ClearIcon />
                   </button>
-                  <img src={file.preview} className="image-preview__image" />
+                  <img src={file.preview} className="image-preview__image" alt="Preview" />
                 </div>
               );
             })}
@@ -358,7 +417,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
         enableReinitialize={true}
         validationSchema={validationSchema}
       >
-        {({ values, setFieldValue }) => (
+        {({ values, setFieldValue, touched, errors }) => (
           <Form className="form">
             <h3>Edit Game Info</h3>
             {inputs.map((input) => {
@@ -366,29 +425,100 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 return (
                   <Field key={input.name} name={input.name} label={input.label}>
                     {({ field }: FieldProps<FormValues>) => (
-                      <FormControlLabel
-                        // @ts-ignore
-                        control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
-                        label={input.label}
-                        disabled={!Boolean(initialGameData.gameName)}
-                      />
+                      <FormControl error={!values.isDigital && !values.isPhysical}>
+                        <FormControlLabel
+                          // @ts-ignore
+                          control={<Checkbox {...field} color="primary" checked={values[`${input.name}`]} />}
+                          label={input.label}
+                          disabled={!Boolean(initialGameData.gameName)}
+                          className={input.name === "isDigital" ? "edit-game-digital-checkbox" : ""}
+                        />
+                        {checkboxHelperText(
+                          values.isDigital,
+                          values.isPhysical,
+                          input.name,
+                          initialGameData.gameName
+                        ) && (
+                          <FormHelperText className="edit-game-checkbox-helper-text">
+                            You must choose at least one type of game
+                          </FormHelperText>
+                        )}
+                      </FormControl>
                     )}
                   </Field>
                 );
               }
 
-              if (input.name === "numberOfPhysicalCopies" && !values.isPhysical) {
+              if (input.name === "numberOfPhysicalCopies") {
                 return (
                   <Field key={input.name} name={input.name}>
                     {({ field }: FieldProps<FormValues>) => (
                       <div className="form__div">
                         <TextField
-                          disabled
+                          disabled={!values.isPhysical}
                           {...field}
                           required
                           label={input.label}
                           className="form__input"
                           variant="filled"
+                          type="number"
+                          InputProps={{ inputProps: { min: 0 } }}
+                          error={checksForNumberOfPhysicalCopiesField(
+                            touched,
+                            values.numberOfPhysicalCopies,
+                            values.isPhysical
+                          )}
+                          helperText={numberOfPhysicalCopiesFieldHelperText(
+                            touched,
+                            values.numberOfPhysicalCopies,
+                            values.isPhysical
+                          )}
+                        />
+                      </div>
+                    )}
+                  </Field>
+                );
+              }
+
+              if (input.name === "gameDescription") {
+                return (
+                  <Field key={input.name} name={input.name}>
+                    {({ field }: FieldProps<FormValues>) => (
+                      <div className="form__div">
+                        <TextField
+                          {...field}
+                          required
+                          label={input.label}
+                          variant="filled"
+                          className="form__input"
+                          multiline
+                          disabled={!Boolean(initialGameData.gameName)}
+                          //@ts-ignore
+                          error={Boolean(errors[input.name]) && touched[input.name]}
+                          //@ts-ignore
+                          helperText={touched[input.name] ? errors[input.name] : ""}
+                        />
+                      </div>
+                    )}
+                  </Field>
+                );
+              }
+
+              if (input.name === "discount") {
+                return (
+                  <Field key={input.name} name={input.name}>
+                    {({ field }: FieldProps<FormValues>) => (
+                      <div className="form__div">
+                        <TextField
+                          {...field}
+                          label={input.label}
+                          className="form__input"
+                          variant="filled"
+                          disabled={!Boolean(initialGameData.gameName)}
+                          type="number"
+                          InputProps={{ inputProps: { min: 0 } }}
+                          error={Boolean(checksForDiscountField(values.discount))}
+                          helperText={discountFieldHelperText(touched, values.discount)}
                         />
                       </div>
                     )}
@@ -412,8 +542,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                   </div>
                 );
               }
-
-              if (input.name === "gameDescription") {
+              if (input.name === "price") {
                 return (
                   <Field key={input.name} name={input.name}>
                     {({ field }: FieldProps<FormValues>) => (
@@ -422,10 +551,15 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                           {...field}
                           required
                           label={input.label}
-                          multiline
                           variant="filled"
                           className="form__input"
                           disabled={!Boolean(initialGameData.gameName)}
+                          type="number"
+                          InputProps={{ inputProps: { min: 0, step: "any" } }}
+                          //@ts-ignore
+                          error={Boolean(errors[input.name]) && touched[input.name]}
+                          //@ts-ignore
+                          helperText={touched[input.name] ? errors[input.name] : ""}
                         />
                       </div>
                     )}
@@ -444,13 +578,17 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                         variant="filled"
                         className="form__input"
                         disabled={!Boolean(initialGameData.gameName)}
+                        //@ts-ignore
+                        error={Boolean(errors[input.name]) && touched[input.name]}
+                        //@ts-ignore
+                        helperText={touched[input.name] ? errors[input.name] : ""}
                       />
                     </div>
                   )}
                 </Field>
               );
             })}
-            <button type="submit" className="add-game-button" disabled={!Boolean(initialGameData.gameName)}>
+            <button type="submit" className="add-game-button" disabled={checksForButton(errors, touched, values)}>
               Save changes
             </button>
             <button
@@ -480,7 +618,7 @@ const AdminEditGame: React.FC = () => {
   useEffect(() => {
     dispatch(getAllGames());
     dispatch(getAllAuthors());
-  }, []);
+  }, [dispatch]);
 
   const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
     // @ts-ignore

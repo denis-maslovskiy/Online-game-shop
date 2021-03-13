@@ -78,7 +78,9 @@ form.box {
     width: 300px;
 }
 
-.MuiFormHelperText-root.MuiFormHelperText-contained.Mui-error.MuiFormHelperText-filled.Mui-required {
+.MuiFormHelperText-root.MuiFormHelperText-contained.Mui-error.MuiFormHelperText-filled.Mui-required,
+.MuiFormHelperText-root.MuiFormHelperText-contained.Mui-error.Mui-required,
+.MuiFormHelperText-root.MuiFormHelperText-contained.Mui-error.MuiFormHelperText-filled {
     @include dark-bg(1);
     margin: 0;
 }

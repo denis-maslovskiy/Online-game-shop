@@ -76,7 +76,7 @@ export const Filter = () => {
   };
 
   const onDone = () => {
-    allGames.map((item) => {
+    allGames.forEach((item) => {
       if (
         resultObject.gameNamesArray.includes(item.gameName) ||
         resultObject.authorsArray.includes(item.author) ||
@@ -201,6 +201,8 @@ export const Filter = () => {
                           />
                         </div>
                       );
+                    default:
+                      return null;
                   }
                 })}
               </div>

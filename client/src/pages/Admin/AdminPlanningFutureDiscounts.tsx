@@ -5,6 +5,7 @@ import { RootState } from "../../redux/rootReducer";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import { adminUpdateGameData, getAllGames } from "../../redux/games/gamesActions";
+import Notification from "../../components/Notification";
 import "react-datepicker/dist/react-datepicker.css";
 import "./admin-planning-future-discounts.scss";
 
@@ -35,11 +36,12 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
   });
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
+  const { successMsg } = useSelector((state: RootState) => state.notification);
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
     dispatch(getAllGames());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const tempArray: Array<string> = [];
@@ -47,7 +49,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
       tempArray.push(game.gameName);
     });
     setGamesNamesArray(tempArray);
-  }, [allGames.length]);
+  }, [allGames]);
 
   const onGameNameChangeHandler = (e: ChangeEvent<{}>, value: Array<string>) => {
     setSelectedResult(value);
@@ -68,6 +70,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
 
   return (
     <div className="admin-add-game-container">
+      {successMsg && <Notification values={{ successMsg }} />}
       <div className="container-title-block add-game-title">
         <h2 className="container-title">Admin Planning Future Discounts</h2>
       </div>
@@ -93,6 +96,8 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
               onChange={(e) => setDiscountValue(+e.target.value)}
               InputProps={{ inputProps: { min: 0, max: 100 } }}
               disabled={!selectedResult.length}
+              error={Boolean(discountValue < 0)}
+              helperText={Boolean(discountValue < 0) ? "Discount must be greater than or equal to 0" : ""}
             />
           </div>
           <div className="form__div">
@@ -125,7 +130,11 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
               />
             </div>
           </div>
-          <button className="add-game-button" onClick={saveButtonClickHandler} disabled={!selectedResult.length}>
+          <button
+            className="add-game-button"
+            onClick={saveButtonClickHandler}
+            disabled={!selectedResult.length || Boolean(discountValue < 0)}
+          >
             Save changes
           </button>
         </div>

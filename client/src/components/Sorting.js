@@ -79,7 +79,7 @@ export const Sorting = () => {
     }
     dispatch(setFilteredArray(allGames));
     handleClose();
-  }, [sortType, allGames]);
+  }, [sortType, allGames, dispatch]);
 
   return (
     <>
@@ -109,7 +109,7 @@ export const Sorting = () => {
               <Select
                 labelId="demo-customized-select-label"
                 id="demo-customized-select"
-                value={sortType || 'None'}
+                value={sortType || "None"}
                 onChange={handleChange}
               >
                 <MenuItem value="None">
