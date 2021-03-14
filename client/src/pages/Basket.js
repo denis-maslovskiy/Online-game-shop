@@ -151,8 +151,6 @@ const Basket = () => {
     dispatch(purchaseGame(userId, user));
   };
 
-  console.log(itemsInBasket);
-
   return (
     <>
       {infoMsg && <Notification values={{ infoMsg }} />}
