@@ -17,6 +17,7 @@ app.use("/api/admin", require("./routes/admin.routes"));
 app.use("/api/game-author", require("./routes/gameAuthor.routes"));
 app.use("/api/achievement", require("./routes/achievement.routes"));
 
+app.use(express.static(path.join(__dirname, "../client/build")));
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build/index.html"));
 });
