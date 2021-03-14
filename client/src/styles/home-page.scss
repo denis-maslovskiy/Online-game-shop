@@ -141,13 +141,23 @@
         @include flex-display($justify-content: center, $align-items: center);
     }
 
-    @media (max-width: 440px) {
+    & > div {
+        min-width: 230px;
+        max-width: 230px;
+    }
+
+    @media (max-width: 450px) {
         font-size: 12px;
         letter-spacing: 0;
 
         &__picture {
             width: 120px;
             height: 150px;
+        }
+
+        & > div {
+            min-width: 0;
+            max-width: 500px;
         }
     }
 }
