@@ -22,7 +22,7 @@ app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build/index.html"));
 });
 
-const PORT = config.get("port") || 5000;
+const PORT = config.get("PORT");
 
 async function start() {
   try {

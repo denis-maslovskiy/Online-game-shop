@@ -1,5 +1,5 @@
 {
-    "port": 5000,
+    "PORT": 5000,
     "mongoUri": "mongodb+srv://Denis:12345qwe@cluster0.ovymb.mongodb.net/app?retryWrites=true&w=majority",
     "jwtSecret": "denis-internship",
     "cloud_name": "dgefehkt9",
