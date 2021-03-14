@@ -56,7 +56,7 @@ interface FormValues {
 }
 
 const checksForButton = (errors: FormikErrors<any>, touched: FormikTouched<any>, values: FormValues) => {
-  if (!values.isPhysical) errors.numberOfPhysicalCopies = "";
+  if (!values.isPhysical) delete errors.numberOfPhysicalCopies;
   return (
     Boolean(errors.gameName && touched.gameName) ||
     Boolean(errors.gameDescription && touched.gameDescription) ||
