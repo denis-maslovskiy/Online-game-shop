@@ -7,11 +7,11 @@
         "node": "14.11.0"
     },
     "scripts": {
-      "start": "cd ./server && npm install && cross-env concurrently \"npm run server\" \"npm run client\"",
+      "start": "cd ./server && cross-env concurrently \"npm run server\" \"npm run client\"",
       "server": "node app.js",
       "client": "npm run start --prefix ../client",
       "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
-      "heroku-postbuild": "npm --prefix client/ install && npm --prefix client/ build"
+      "heroku-postbuild": "npm --prefix client/ install && npm --prefix server/ install"
     },
     
     "author": "",
