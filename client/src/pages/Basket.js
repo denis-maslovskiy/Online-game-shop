@@ -104,7 +104,7 @@ const Basket = () => {
   if (itemsInBasket?.length) {
     totalPrice = itemsInBasket
       .reduce((prevValue, currValue) => {
-        return prevValue + currValue.price * (1 - currValue?.discount / 100);
+        return +prevValue + +currValue.price;
       }, 0)
       .toFixed(2);
     youWillPay = totalPrice * (1 - user?.personalDiscount / 100);
@@ -150,6 +150,8 @@ const Basket = () => {
     setItemsInBasket([]);
     dispatch(purchaseGame(userId, user));
   };
+
+  console.log(itemsInBasket);
 
   return (
     <>
