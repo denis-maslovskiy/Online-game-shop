@@ -608,6 +608,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
 
 const AdminEditGame: React.FC = () => {
   const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
+  const [deletedGameId, setDeletedGameId] = useState("");
 
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
@@ -632,6 +633,7 @@ const AdminEditGame: React.FC = () => {
 
   const deleteGameClickHandler = async (gameId: string) => {
     dispatch(deleteGame(gameId, { userId }));
+    setDeletedGameId(gameId);
 
     const gameData = allGames.find((game: Game) => {
       return game._id === gameId;
@@ -662,7 +664,7 @@ const AdminEditGame: React.FC = () => {
           <FormControl className="select-game-container__select-game select-game">
             <InputLabel className="select-game__label">Select game</InputLabel>
             {/* @ts-ignore */}
-            <Select value={initialGameData?._id} onChange={selectHandleChange} className="select-game__select">
+            <Select value={deletedGameId === initialGameData?._id ? "" : initialGameData?._id} defaultValue={null} onChange={selectHandleChange} className="select-game__select">
               {allGames.map((game: FormValues) => {
                 return (
                   <MenuItem value={game._id} key={game._id}>
