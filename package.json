@@ -11,6 +11,6 @@
       "server": "node app.js",
       "client": "npm run start --prefix ../client",
       "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
-      "heroku-postbuild": "npm --prefix client/ install && npm --prefix client/ build && npm --prefix server/ install"
+      "heroku-postbuild": "npm --prefix server/ install && npm --prefix client/ install  && npm --prefix client/ build "
     }
 }
