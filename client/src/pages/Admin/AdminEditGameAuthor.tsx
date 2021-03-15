@@ -54,9 +54,8 @@ const validationSchema = Yup.object().shape({
   yearOfFoundationOfTheCompany: Yup.date().required("Year of foundation of the company is required"),
 });
 
-const checksForButton = (isSubmitting: boolean, errors: FormikErrors<any>, touched: FormikTouched<any>) => {
+const checksForButton = (errors: FormikErrors<any>, touched: FormikTouched<any>) => {
   return (
-    isSubmitting ||
     Boolean(errors.authorDescription && touched.authorDescription) ||
     Boolean(errors.yearOfFoundationOfTheCompany && touched.yearOfFoundationOfTheCompany)
   );
@@ -169,12 +168,12 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
           _id: initialGameAuthorData._id,
         }}
         onSubmit={(values) => {
-          dispatch(adminUpdateGameAuthorData(values._id, { ...values }, userId, selectedFile));
+          dispatch(adminUpdateGameAuthorData(values._id, { ...values }, userId, selectedFile, true));
         }}
         enableReinitialize={true}
         validationSchema={validationSchema}
       >
-        {({ values, errors, touched, isSubmitting, setFieldValue }) => (
+        {({ values, errors, touched, setFieldValue }) => (
           <Form className="form">
             <h3>Edit Game Author Info</h3>
             {inputs.map((input) => {
@@ -219,7 +218,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
               }
               return null;
             })}
-            <button className="add-game-button" type="submit" disabled={checksForButton(isSubmitting, errors, touched)}>
+            <button className="add-game-button" type="submit" disabled={checksForButton(errors, touched)}>
               Save changes
             </button>
           </Form>
