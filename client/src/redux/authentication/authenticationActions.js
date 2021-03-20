@@ -9,13 +9,14 @@ export const setCurrentUser = (decoded) => {
   };
 };
 
-export const registerUser = (userData) => {
+export const registerUser = (userData, resetForm) => {
   return async (dispatch) => {
     try {
       const { data } = await axios.post("/api/auth/registration", { ...userData });
       dispatch(successMessage(data.message));
       dispatch(setCurrentUser(data.user));
       localStorage.setItem("userData", JSON.stringify({ ...data, userId: data.user.id, isAdmin: data.user.isAdmin }));
+      resetForm({});
       window.location.href = "/";
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
@@ -23,12 +24,13 @@ export const registerUser = (userData) => {
   };
 };
 
-export const loginUser = (userData) => {
+export const loginUser = (userData, resetForm) => {
   return async (dispatch) => {
     try {
       const { data } = await axios.post("/api/auth/login", { ...userData });
       dispatch(setCurrentUser(data));
       localStorage.setItem("userData", JSON.stringify({ ...data, userId: data.userId, isAdmin: data.user.isAdmin }));
+      resetForm({});
       window.location.href = "/";
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
