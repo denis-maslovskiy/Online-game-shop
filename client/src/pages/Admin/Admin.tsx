@@ -50,7 +50,7 @@ const Admin = () => {
         {(["left"] as Anchor[]).map((anchor) => (
           <React.Fragment key={anchor}>
             <Button id="button" onClick={toggleDrawer(anchor, true)}>
-              <span className="admin-select-option__text">Click to choose admin option</span>
+              <span className="admin-select-option__text default-text">Click to choose admin option</span>
             </Button>
             <SwipeableDrawer
               anchor={anchor}

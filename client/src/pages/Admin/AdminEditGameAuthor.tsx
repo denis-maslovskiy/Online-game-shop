@@ -153,7 +153,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
               />
             </div>
           ) : (
-            <span className="image-preview__no-pictures">There are no logo for this author.</span>
+            <span className="image-preview__no-pictures default-text">There are no logo for this author.</span>
           )}
         </div>
       </div>
@@ -169,13 +169,14 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
         }}
         onSubmit={(values) => {
           dispatch(adminUpdateGameAuthorData(values._id, { ...values }, userId, selectedFile, true));
+          window.scrollTo(0, 0);
         }}
         enableReinitialize={true}
         validationSchema={validationSchema}
       >
         {({ values, errors, touched, setFieldValue }) => (
           <Form className="form">
-            <h3>Edit Game Author Info</h3>
+            <h3 className="titles">Edit Game Author Info</h3>
             {inputs.map((input) => {
               if (input.name === "authorDescription") {
                 return (
@@ -204,9 +205,10 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                 return (
                   <div className="form__div" key={input.name}>
                     <div className="form__datepicker">
-                      <label>{input.label}</label>
+                      <label className="default-text datepicker-label">{input.label}</label>
                       <DatePicker
                         selected={new Date(values.yearOfFoundationOfTheCompany)}
+                        className="default-text"
                         dateFormat="MM-dd-yyyy"
                         name="yearOfFoundationOfTheCompany"
                         onChange={(date) => setFieldValue("yearOfFoundationOfTheCompany", date)}
@@ -218,7 +220,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
               }
               return null;
             })}
-            <button className="add-game-button" type="submit" disabled={checksForButton(errors, touched)}>
+            <button className="add-game-button titles" type="submit" disabled={checksForButton(errors, touched)}>
               Save changes
             </button>
           </Form>
@@ -248,35 +250,37 @@ const AdminEditGameAuthor: React.FC = () => {
   };
 
   return (
-    <div className="edit-game-author-container">
-      <div className="container-title-block edit-game-author-title">
-        <h2 className="container-title">Edit Game Author</h2>
-      </div>
-      <div className="select-game-author-container">
-        <FormControl className="select-game-author-container__select-game-author select-game-author">
-          <InputLabel className="select-game-author__label">Select game author</InputLabel>
-          <Select
-            value={initialGameAuthorData?._id}
-            // @ts-ignore
-            onChange={selectHandleChange}
-            className="select-game-author__select"
-          >
-            {allGameAuthors.map((author: Author) => {
-              return (
-                <MenuItem value={author._id} key={author._id}>
-                  {author.authorName}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      </div>
-
+    <>
       {successMsg && <Notification values={{ successMsg }} />}
       {infoMsg && <Notification values={{ infoMsg }} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
-      {initialGameAuthorData && <RenderGameForm initialGameAuthorData={initialGameAuthorData} />}
-    </div>
+      <div className="edit-game-author-container">
+        <div className="container-title-block edit-game-author-title">
+          <h2 className="container-title titles">Edit Game Author</h2>
+        </div>
+        <div className="select-game-author-container">
+          <FormControl className="select-game-author-container__select-game-author select-game-author">
+            <InputLabel className="select-game-author__label">Select game author</InputLabel>
+            <Select
+              value={initialGameAuthorData?._id}
+              // @ts-ignore
+              onChange={selectHandleChange}
+              className="select-game-author__select"
+            >
+              {allGameAuthors.map((author: Author) => {
+                return (
+                  <MenuItem value={author._id} key={author._id}>
+                    {author.authorName}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </div>
+
+        {initialGameAuthorData && <RenderGameForm initialGameAuthorData={initialGameAuthorData} />}
+      </div>
+    </>
   );
 };
 
