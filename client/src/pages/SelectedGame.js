@@ -62,7 +62,7 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
           Please choose a delivery method for a physical copy of the game
         </DialogTitle>
         <DialogContent className="dialog__dialog-content dialog-content">
-          <DialogContentText className="dialog-content__text">
+          <DialogContentText className="dialog-content__text default-text">
             We offer you two delivery options: <strong>courier delivery</strong>, <strong>self-pickup</strong>. Please
             choose one option
           </DialogContentText>
@@ -97,14 +97,14 @@ const Modal = ({ isModalOpen, handleCloseModal, addToBasketButtonHandler }) => {
         </DialogContent>
         <DialogActions className="dialog__actions actions">
           <button
-            className="actions__confirm actions__btn"
+            className="actions__confirm actions__btn titles"
             type="button"
             onClick={onModalConfirm}
             disabled={!deliveryMethod}
           >
             Confirm
           </button>
-          <button className="actions__close actions__btn" type="button" onClick={onModalClose}>
+          <button className="actions__close actions__btn titles" type="button" onClick={onModalClose}>
             Close
           </button>
         </DialogActions>
@@ -272,14 +272,14 @@ const SelectedGame = () => {
 
   return (
     <>
-      {isReadyToDisplayGameInfo && (
-        <div className="game-name">
-          <h2 className="game-name__title">{textFields[5].value}</h2>
-        </div>
-      )}
-      {arrayOfImgs.length && <SliderShow arrayOfImgs={arrayOfImgs} cloudName={cloudName} />}
       {errorMsg && <Notification values={{ errorMsg }} />}
       {successMsg && <Notification values={{ successMsg }} />}
+      {isReadyToDisplayGameInfo && (
+        <div className="game-name">
+          <h2 className="game-name__title titles">{textFields[5].value}</h2>
+        </div>
+      )}
+      {Boolean(arrayOfImgs.length) && <SliderShow arrayOfImgs={arrayOfImgs} cloudName={cloudName} />}
       <div className="content-area">
         <div className="content-area__game-info game-info">
           {isReadyToDisplayGameInfo &&
@@ -288,8 +288,8 @@ const SelectedGame = () => {
                 return (
                   <div key={item.title}>
                     <p className="game-info__text-field-title">
-                      <span className="static-field">{item.title}</span>
-                      <span className="game-info__text-field-value">{fullGameDiscount}%</span>
+                      <span className="static-field default-text">{item.title}</span>
+                      <span className="game-info__text-field-value default-text">{fullGameDiscount}%</span>
                     </p>
                   </div>
                 );
@@ -298,8 +298,8 @@ const SelectedGame = () => {
                 return (
                   <div key={item.title}>
                     <p className="game-info__text-field-title">
-                      <span className="static-field">{item.title}</span>
-                      <span className="game-info__text-field-value">
+                      <span className="static-field default-text">{item.title}</span>
+                      <span className="game-info__text-field-value default-text">
                         {new Date(item.value).getMonth() + 1}
                         {"-"}
                         {new Date(item.value).getDate()}
@@ -313,8 +313,8 @@ const SelectedGame = () => {
               return (
                 <div key={item.title}>
                   <p className="game-info__text-field-title">
-                    <span className="static-field">{item.title}</span>
-                    <span className="game-info__text-field-value">{item.value}</span>
+                    <span className="static-field default-text">{item.title}</span>
+                    <span className="game-info__text-field-value default-text">{item.value}</span>
                   </p>
                 </div>
               );
@@ -322,29 +322,29 @@ const SelectedGame = () => {
         </div>
         <div className="content-area__buy-game buy-game">
           <div className="buy-game__digital-copy">
-            <h2 className="buy-game__title static-field">Digital Copy</h2>
-            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
+            <h2 className="default-text buy-game__title static-field">Digital Copy</h2>
+            {isReadyToDisplayGameInfo && <h2 className="default-text buy-game__price">Price {gamePrice}$</h2>}
             {isDigital && (
-              <button className="buy-game__button" onClick={() => addToBasketButtonHandler("Digital")}>
+              <button className="buy-game__button titles" onClick={() => addToBasketButtonHandler("Digital")}>
                 Add to basket
               </button>
             )}
             {!isDigital && (
-              <button className="buy-game__button--disable" disabled>
+              <button className="buy-game__button--disable titles" disabled>
                 Add to basket
               </button>
             )}
           </div>
           <div className="buy-game__physical-copy">
-            <h2 className="buy-game__title static-field">Physical Copy</h2>
-            {isReadyToDisplayGameInfo && <h2 className="buy-game__price">Price {gamePrice}$</h2>}
+            <h2 className="default-text buy-game__title static-field">Physical Copy</h2>
+            {isReadyToDisplayGameInfo && <h2 className="default-text buy-game__price">Price {gamePrice}$</h2>}
             {isPhysical && (
-              <button className="buy-game__button" onClick={handleOpenModal}>
+              <button className="buy-game__button titles" onClick={handleOpenModal}>
                 Add to basket
               </button>
             )}
             {!isPhysical && (
-              <button className="buy-game__button--disable" disabled>
+              <button className="buy-game__button--disable titles" disabled>
                 Add to basket
               </button>
             )}

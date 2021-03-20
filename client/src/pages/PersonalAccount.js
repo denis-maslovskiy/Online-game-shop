@@ -12,6 +12,7 @@ const PersonalAccount = () => {
   const [isCheckboxActive, setIsCheckboxActive] = useState(false);
   const [purchasedGames, setPurchasedGames] = useState([]);
   const [isUserDataUpdate, setIsUserDataUpdated] = useState(false);
+  const [numberOfLoadedGames, setNumberOfLoadedGames] = useState(5);
   const [userData, setUserDate] = useState([
     { title: "Account name", value: "", id: 1, fieldName: "username" },
     { title: "Email", value: "", id: 2, fieldName: "email" },
@@ -75,35 +76,10 @@ const PersonalAccount = () => {
 
   return (
     <div className="container">
-      <div className="container__account-info-block account-info-block">
-        <div className="title-block">
-          <h2 className="title-block__text">User Info</h2>
-        </div>
-        <div className="user-info">
-          {isReadyToDisplayUserInfo &&
-            userData.map((item) => (
-              <h2 className="user-info__text" key={item.id}>
-                <span className="user-info__title static-field">{item.title}: </span>
-                {item.value}
-              </h2>
-            ))}
-        </div>
-
-        <div className="title-block">
-          <h2 className="title-block__text">Achievements</h2>
-        </div>
-        <div className="account-info__achievements achievements">
-          {isReadyToDisplayUserInfo &&
-            (user?.achievements?.length
-              ? user?.achievements.map((achieve) => <p key={achieve.achievementText}>{achieve.achievementText}</p>)
-              : "No achievements. Try to update, maybe they will appear!")}
-        </div>
-      </div>
-
       <div className="orders-info">
         <div className="orders-info__orders orders">
           <div className="title-block">
-            <h2 className="title-block__text">Orders</h2>
+            <h2 className="title-block__text titles">Orders</h2>
 
             <div className="title-block__old-first-checkbox old-first-checkbox">
               <FormControlLabel
@@ -115,28 +91,68 @@ const PersonalAccount = () => {
             </div>
           </div>
 
-          {purchasedGames.map((item) => (
-            <div className="orders__game game" key={item.dateAddedToBasket}>
-              {item?.imgSource?.length ? (
-                <Image
-                  cloudName={cloudName}
-                  publicId={item.imgSource[0]}
-                  className="card__picture"
-                  alt={item.gameName}
-                />
-              ) : (
-                <img src={noImageAvailable} className="card__picture" alt={item.gameName} />
-              )}
-              <div className="game__text text">
-                <p>{item.gameName}</p>
-                <p>
-                  {new Date(item.dateAddedToBasket).getMonth() + 1}.{new Date(item.dateAddedToBasket).getDate()}.
-                  {new Date(item.dateAddedToBasket).getFullYear()}
-                </p>
-                <p>{item.price} $</p>
-              </div>
-            </div>
-          ))}
+          {purchasedGames.map((item, index) => {
+            if (index < numberOfLoadedGames) {
+              return (
+                <div className="orders__game game" key={item.dateAddedToBasket}>
+                  {item?.imgSource?.length ? (
+                    <Image
+                      cloudName={cloudName}
+                      publicId={item.imgSource[0]}
+                      className="card__picture game-image"
+                      alt={item.gameName}
+                    />
+                  ) : (
+                    <img src={noImageAvailable} className="card__picture game-image" alt={item.gameName} />
+                  )}
+                  <div className="game__text text">
+                    <p className="default-text">{item.gameName}</p>
+                    <p className="default-text">
+                      {new Date(item.dateAddedToBasket).getMonth() + 1}.{new Date(item.dateAddedToBasket).getDate()}.
+                      {new Date(item.dateAddedToBasket).getFullYear()}
+                    </p>
+                    <p className="default-text">{item.price} $</p>
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })}
+
+          {purchasedGames.length && purchasedGames.length > 5 && purchasedGames.length >= numberOfLoadedGames ? (
+            <button onClick={() => setNumberOfLoadedGames((prevState) => prevState + 5)} className="load-more-btn titles">
+              Load more
+            </button>
+          ) : null}
+
+          {!Boolean(purchasedGames.length) && (
+            <span className="basket-order__empty-basket-text default-text">You haven't bought any games yet</span>
+          )}
+        </div>
+      </div>
+
+      <div className="container__account-info-block account-info-block">
+        <div className="title-block user-info-title-block">
+          <h2 className="title-block__text titles">User Info</h2>
+        </div>
+        <div className="user-info">
+          {isReadyToDisplayUserInfo &&
+            userData.map((item) => (
+              <h2 className="user-info__text default-text" key={item.id}>
+                <span className="user-info__title static-field default-text">{item.title}: </span>
+                {item.value}
+              </h2>
+            ))}
+        </div>
+
+        <div className="title-block">
+          <h2 className="title-block__text titles">Achievements</h2>
+        </div>
+        <div className="account-info__achievements achievements default-text">
+          {isReadyToDisplayUserInfo &&
+            (user?.achievements?.length
+              ? user?.achievements.map((achieve) => <p key={achieve.achievementText}>{achieve.achievementText}</p>)
+              : "No achievements. Try to update, maybe they will appear!")}
         </div>
       </div>
     </div>

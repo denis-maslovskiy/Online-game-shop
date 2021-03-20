@@ -14,23 +14,22 @@ const Slider = ({ allGames, cloudName }) => {
 
   return (
     <div className="home-page-slider">
-      <h2 className="home-page-slider__title">Top 5 games by rating</h2>
+      <h2 className="home-page-slider__title titles">Top 5 games by rating</h2>
       <div className="home-page-slides">
         {sortedByRating.map((game) => (
           <div className="home-page-slide" key={game._id}>
             <Link to={`/selected-game/${game._id}`} className="home-page-slide__link">
-              <p className="home-page-slide__text-on-image">{game.gameName}</p>
+              <p className="home-page-slide__text-on-image default-text">{game.gameName}</p>
               {game.imgSource.length ? (
                 <Image
                   cloudName={cloudName}
                   publicId={game.imgSource[0]}
-                  width="800"
-                  height="450"
                   crop="scale"
+                  className="home-page-slide__image"
                   alt={game.gameName}
                 />
               ) : (
-                <img src={noImageAvailable} width="800" height="450" alt={game.gameName}></img>
+                <img src={noImageAvailable} className="home-page-slide__image" alt={game.gameName}></img>
               )}
             </Link>
           </div>
@@ -53,9 +52,9 @@ const HomePage = () => {
   if (filteredGames.length && filteredGames[0] === "No matches found.") {
     return (
       <main>
-        {allGames.length && <Slider allGames={allGames} cloudName={cloudName} />}
+        {Boolean(allGames.length) && <Slider allGames={allGames} cloudName={cloudName} />}
         <div className="content">
-          <h2 className="content__no-matches-found">{filteredGames[0]}</h2>
+          <h2 className="content__no-matches-found default-text">{filteredGames[0]}</h2>
         </div>
       </main>
     );
@@ -85,12 +84,12 @@ const HomePage = () => {
           : 0;
     }
 
-    return Boolean(+finalPrice < +game.price) ? `${finalPrice} $` : null;
+    return Boolean(+finalPrice < +game.price) ? `${finalPrice}$` : null;
   };
 
   return (
     <main>
-      {allGames.length && <Slider allGames={allGames} cloudName={cloudName} />}
+      {Boolean(allGames.length) && <Slider allGames={allGames} cloudName={cloudName} />}
       {filteredGames.length && filteredGames[0] !== "No matches found." ? (
         <div className="content">
           {filteredGames &&
@@ -113,14 +112,14 @@ const HomePage = () => {
                       <img src={noImageAvailable} className="card__picture" alt={game.gameName} />
                     )}
                     <div>
-                      <h2>{game.gameName}</h2>
-                      <h3>{game.genre}</h3>
-                      <h3>{game.author}</h3>
+                      <p className="card__text default-text">{game.gameName}</p>
+                      <p className="card__text default-text">{game.genre}</p>
+                      <p className="card__text default-text">{game.author}</p>
                       <div className="card__price-container price-container">
-                        <p className={discountCalculating(game) ? "price-container__crossed-out-price" : ""}>
-                          {game.price} $
+                        <p className={discountCalculating(game) ? "price-container__crossed-out-price card__text default-text" : " card__text default-text"}>
+                          {game.price}$
                         </p>
-                        <p className="price-container__price-with-discount">{discountCalculating(game)}</p>
+                        <p className="price-container__price-with-discount card__text default-text">{discountCalculating(game)}</p>
                       </div>
                     </div>
                   </div>
@@ -149,11 +148,16 @@ const HomePage = () => {
                     ) : (
                       <img src={noImageAvailable} className="card__picture" alt={game.gameName} />
                     )}
-                    <div className="card_description">
-                      <h2>{game.gameName}</h2>
-                      <h3>{game.genre}</h3>
-                      <h3>{game.author}</h3>
-                      <p>{game.price} $</p>
+                    <div>
+                      <p className="card__text default-text">{game.gameName}</p>
+                      <p className="card__text default-text">{game.genre}</p>
+                      <p className="card__text default-text">{game.author}</p>
+                      <div className="card__price-container price-container">
+                        <p className={discountCalculating(game) ? "price-container__crossed-out-price card__text default-text" : " card__text default-text"}>
+                          {game.price}$
+                        </p>
+                        <p className="price-container__price-with-discount card__text default-text">{discountCalculating(game)}</p>
+                      </div>
                     </div>
                   </div>
                 </Link>

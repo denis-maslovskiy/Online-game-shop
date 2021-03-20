@@ -31,7 +31,7 @@ const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
   }, [minutes, seconds, dateAddedToBasket, gameName, removeGameHandler]);
 
   return (
-    <div className="timer">
+    <div className="timer default-text">
       {minutes} : {seconds}
     </div>
   );
@@ -56,11 +56,11 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
                 <img src={noImageAvailable} className="basket-game__picture" alt={item.gameName} />
               )}
               <div className="basket-game__text">
-                <span>{item.gameName}</span>
-                {item.gameType === "Physical" && item.deliveryMethod && <span>{item.deliveryMethod}</span>}
-                <span>{item.price} $</span>
+                <span className="default-text">{item.gameName}</span>
+                {item.gameType === "Physical" && item.deliveryMethod && <span className="default-text">{item.deliveryMethod}</span>}
+                <span className="default-text">{item.price} $</span>
               </div>
-              <button className="remove-basket-game" onClick={() => removeGameHandler(item.gameName)}>
+              <button className="remove-basket-game titles" onClick={() => removeGameHandler(item.gameName)}>
                 <ClearIcon />
               </button>
             </div>
@@ -157,35 +157,35 @@ const Basket = () => {
       {successMsg && <Notification values={{ successMsg }} />}
       <div className="basket-container">
         <div className="basket-order">
-          <h1 className="basket-container__titles title-block">Order</h1>
+          <h1 className="basket-container__titles title-block titles">Order</h1>
           {itemsInBasket.length ? (
             <ItemsInBasketList itemsInBasket={itemsInBasket} removeGameHandler={removeGameHandler} />
           ) : (
-            <h1 className="basket-order__empty-basket-text">Basket is empty</h1>
+            <h1 className="basket-order__empty-basket-text default-text">Basket is empty</h1>
           )}
         </div>
         <div className="payment">
-          <h1 className="basket-container__titles">Payment</h1>
+          <h1 className="basket-container__titles titles">Payment</h1>
           <div className="price-summary">
-            <span className="price-summary__text">
-              <span className="static-field">Total price:</span> {totalPrice}$
+            <span className="price-summary__text default-text">
+              <span className="static-field default-text">Total price:</span> {totalPrice}$
             </span>
-            <span className="price-summary__text">
-              <span className="static-field">Personal discount:</span> {user?.personalDiscount}%
+            <span className="price-summary__text default-text">
+              <span className="static-field default-text">Personal discount:</span> {user?.personalDiscount}%
             </span>
-            <span className="price-summary__text">
-              <span className="static-field">You will pay:</span> {youWillPay.toFixed(2)}$
+            <span className="price-summary__text default-text">
+              <span className="static-field default-text">You will pay:</span> {youWillPay.toFixed(2)}$
             </span>
+            {itemsInBasket.length ? (
+              <button className="purchase-btn titles" onClick={purchaseClickHandler}>
+                Purchase
+              </button>
+            ) : (
+              <button className="purchase-btn purchase-btn_disabled titles" disabled>
+                Purchase
+              </button>
+            )}
           </div>
-          {itemsInBasket.length ? (
-            <button className="purchase-btn" onClick={purchaseClickHandler}>
-              Purchase
-            </button>
-          ) : (
-            <button className="purchase-btn purchase-btn_disabled" disabled>
-              Purchase
-            </button>
-          )}
         </div>
       </div>
     </>

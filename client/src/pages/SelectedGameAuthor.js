@@ -42,7 +42,7 @@ const SelectedGameAuthor = () => {
       {selectedGameAuthor && (
         <div className="selected-game-author-container">
           <div className="game-name game-author-title-block">
-            <h2 className="game-name__title game-author-title">{selectedGameAuthor?.authorName}</h2>
+            <h2 className="game-name__title game-author-title titles">{selectedGameAuthor?.authorName}</h2>
           </div>
           {selectedGameAuthor?.authorLogo ? (
             <Image
@@ -56,13 +56,13 @@ const SelectedGameAuthor = () => {
           )}
           <div className="selected-game-author-container__author-description-block">
             <div>
-              <span>
-                <strong className="static-field">Description:</strong> {selectedGameAuthor?.authorDescription}
+              <span className="default-text">
+                <strong className="static-field default-text">Description:</strong> {selectedGameAuthor?.authorDescription}
               </span>
             </div>
             <div>
-              <span>
-                <strong className="static-field">Year of foundation of the company: </strong>
+              <span className="default-text">
+                <strong className="static-field default-text">Year of foundation of the company: </strong>
                 {new Date(selectedGameAuthor?.yearOfFoundationOfTheCompany).getMonth() + 1}
                 {"-"}
                 {new Date(selectedGameAuthor?.yearOfFoundationOfTheCompany).getDate()}
@@ -91,16 +91,16 @@ const SelectedGameAuthor = () => {
                       <img src={noImageAvailable} className="game__picture" alt={game.gameName} />
                     )}
                     <div className="game__text authors-game-text">
-                      <p>{game.gameName}</p>
-                      <p>{game.gameDescription}</p>
-                      <p>
+                      <p className="default-text">{game.gameName}</p>
+                      <p className="default-text">{game.gameDescription}</p>
+                      <p className="default-text">
                         {new Date(game.releaseDate).getMonth() + 1}
                         {"-"}
                         {new Date(game.releaseDate).getDate()}
                         {"-"}
                         {new Date(game.releaseDate).getFullYear()}
                       </p>
-                      <p>{game.genre}</p>
+                      <p className="default-text">{game.genre}</p>
                     </div>
                   </div>
                 </Link>

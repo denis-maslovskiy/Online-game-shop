@@ -33,9 +33,8 @@ const Registration = (props) => {
   };
 
   const submit = (userData, { setSubmitting, resetForm }) => {
-    registerUser(userData);
+    registerUser(userData, resetForm);
     setIsSubmitting(true);
-    resetForm({});
     setSubmitting(false);
   };
 
@@ -59,7 +58,7 @@ const Registration = (props) => {
       >
         {({ handleChange, handleBlur, isSubmitting, errors, touched, values }) => (
           <Form className="box">
-            <h1 className="box__title">Registration</h1>
+            <h1 className="box__title titles">Registration</h1>
 
             <div className="form__div">
               <TextField
@@ -112,10 +111,10 @@ const Registration = (props) => {
                 helperText={touched.password ? errors.password : ""}
               />
             </div>
-            <button className="box__submit-btn" type="submit">
+            <button className="box__submit-btn titles" type="submit">
               {isSubmitting ? "Loading..." : "Sign Up"}
             </button>
-            <div className="box__bottom-text">
+            <div className="box__bottom-text default-text">
               Have an account?{" "}
               <Link to="/authorization" className="box__bottom-text__link">
                 Log in
@@ -137,7 +136,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    registerUser: (userData) => dispatch(registerUser(userData)),
+    registerUser: (userData, resetForm) => dispatch(registerUser(userData, resetForm)),
     clearErrorMessage: () => dispatch(clearErrorMessage()),
   };
 };
