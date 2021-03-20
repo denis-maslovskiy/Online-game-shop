@@ -5,6 +5,7 @@ import { Navbar } from "./components/Navbar";
 import { useAuth } from "./hooks/authHook";
 import { DependenciesContext } from "./context/DependenciesContext";
 import "./styles/body.scss";
+import "./styles/fonts.scss";
 
 function App() {
   const { token, logout, userId, isAdmin } = useAuth();
