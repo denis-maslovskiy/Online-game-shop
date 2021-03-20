@@ -86,6 +86,7 @@
 
 .static-field {
     color: $static-field-color !important;
+    font-family: 'Anton', sans-serif;
 }
 
 .buy-game {
@@ -245,6 +246,7 @@ input[name="r"]{
 
     &__text.MuiDialogContentText-root {
         color: $custom-light-grey;
+        font-size: 18px;
     }
 
     &__delivery-type-btn {

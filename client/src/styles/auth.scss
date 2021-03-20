@@ -40,6 +40,7 @@
 
     &__submit-btn {
         border: 0;
+        @include text-style(18px);
         background: none;
         display: block;
         margin: 20px auto;
@@ -52,6 +53,7 @@
         transition: .25s;
         cursor: pointer;
         width: 300px;
+        text-decoration: uppercase;
 
         &:hover {
             background: $light-green-color;
@@ -59,9 +61,10 @@
         }
     }
 
-    &__bottom-text {
+    div &__bottom-text {
         text-align: center;
         color: white;
+        font-size: 20px;
 
         &__link {
             text-decoration: none;

@@ -27,6 +27,10 @@
     padding: 10px 0;
     color: white;
 
+    & > h3 {
+        @include text-style(24px)
+    }
+
     &__form {
         margin-bottom: 1%;
     }
@@ -72,6 +76,10 @@
 }
 
 .image-preview {
+    & > div {
+        margin: 10px;
+    }
+
     &__image {
         width: 300px;
         height: 200px;
@@ -88,19 +96,29 @@
         background: none;
         border: none;
         cursor: pointer;
-        margin-left: -5px;
+        margin-left: -13px;
+        margin-bottom: 20px;
+        margin-top: -11px;
         padding: 1px 6px;
+        background: $light-red-color;
+        border-radius: 50%;
 
-        & > svg.MuiSvgIcon-root {
-            color: $light-red-color
-        }
+        // & > svg.MuiSvgIcon-root {
+        //     color: $light-red-color
+        // }
     }
+}
+
+svg.clear-icon.MuiSvgIcon-root {
+    color: white;
+    width: 18px;
+    height: 23px;
 }
 
 input[name="releaseDate"], input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {
     border: none;
     border-radius: 24px;
-    width: 300px;
+    width: 290px;
     height: 20px;
     text-align: center;
     @include text-style(17px);
@@ -211,6 +229,10 @@ input[name="yearOfFoundationOfTheCompany"] {
             width: 250px;
         }
     }
+
+    & > h3 {
+        @include text-style(24px)
+    }
 }
 
 .checkboxes {
@@ -276,6 +298,10 @@ input[name="yearOfFoundationOfTheCompany"] {
 
 .react-datepicker__day--selected{
     background-color: $custom-dark-blue;
+}
+
+.datepicker-label {
+    font-size: 16px !important;
 }
 
 @media (max-width: 425px) {

@@ -49,6 +49,40 @@
     width: 250px;
 }
 
+.search {
+    border-bottom: 1px solid #88a5b9;
+
+    &__image {
+        width: 100%;
+        height: 80px;
+    }
+
+    &__text-block {
+        @include flex-display($align-items: center, $justify-content: space-between);
+    }
+
+    &__author-text-block {
+        @include flex-display($flex-direction: column);
+    }
+}
+
+.text-block {
+    &__price {
+        width: 0px;
+        @include flex-display($flex-wrap: wrap, $justify-content: flex-end, $align-items: center);
+    }
+
+    &__game-text {
+        text-align: left;
+        @include text-style(18px)
+    }
+
+    &__author-text {
+        text-align: center;
+        @include text-style(18px)
+    }
+}
+
 .MuiAutocomplete-listbox {
     background: $custom-middle-blue;
     color: white;
@@ -61,10 +95,26 @@
     }
 }
 
+li.MuiAutocomplete-option[aria-selected="true"] {
+    background-color: $blue-input-bg;
+}
+
 .MuiInputBase-input.MuiInput-input.MuiAutocomplete-input.MuiAutocomplete-inputFocused.MuiInputBase-inputAdornedEnd {
     color: white;
 }
 
 svg.MuiSvgIcon-root {
     color: white;
+}
+
+.MuiSvgIcon-root.MuiChip-deleteIcon:hover {
+    color: white;
+}
+
+.MuiInputBase-input.MuiInput-input.MuiAutocomplete-input.MuiAutocomplete-inputFocused.MuiInputBase-inputAdornedEnd {
+    padding: 6px;
+}
+
+.MuiAutocomplete-listbox, .MuiPaper-root.MuiAutocomplete-paper.MuiPaper-elevation1.MuiPaper-rounded {
+    min-width: 240px;
 }

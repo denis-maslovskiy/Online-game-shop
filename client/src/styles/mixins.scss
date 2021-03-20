@@ -1,8 +1,7 @@
 @import './variables.scss';
 
 @mixin text-style($font-size, $font-weight: normal) {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: $font-size;
+    font-size: $font-size !important;
     font-weight: $font-weight;
 }
 
