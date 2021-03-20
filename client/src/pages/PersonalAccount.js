@@ -120,7 +120,10 @@ const PersonalAccount = () => {
           })}
 
           {purchasedGames.length && purchasedGames.length > 5 && purchasedGames.length >= numberOfLoadedGames ? (
-            <button onClick={() => setNumberOfLoadedGames((prevState) => prevState + 5)} className="load-more-btn titles">
+            <button
+              onClick={() => setNumberOfLoadedGames((prevState) => prevState + 5)}
+              className="load-more-btn titles"
+            >
               Load more
             </button>
           ) : null}

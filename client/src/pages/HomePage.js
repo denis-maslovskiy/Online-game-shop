@@ -116,10 +116,18 @@ const HomePage = () => {
                       <p className="card__text default-text">{game.genre}</p>
                       <p className="card__text default-text">{game.author}</p>
                       <div className="card__price-container price-container">
-                        <p className={discountCalculating(game) ? "price-container__crossed-out-price card__text default-text" : " card__text default-text"}>
+                        <p
+                          className={
+                            discountCalculating(game)
+                              ? "price-container__crossed-out-price card__text default-text"
+                              : " card__text default-text"
+                          }
+                        >
                           {game.price}$
                         </p>
-                        <p className="price-container__price-with-discount card__text default-text">{discountCalculating(game)}</p>
+                        <p className="price-container__price-with-discount card__text default-text">
+                          {discountCalculating(game)}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -153,10 +161,18 @@ const HomePage = () => {
                       <p className="card__text default-text">{game.genre}</p>
                       <p className="card__text default-text">{game.author}</p>
                       <div className="card__price-container price-container">
-                        <p className={discountCalculating(game) ? "price-container__crossed-out-price card__text default-text" : " card__text default-text"}>
+                        <p
+                          className={
+                            discountCalculating(game)
+                              ? "price-container__crossed-out-price card__text default-text"
+                              : " card__text default-text"
+                          }
+                        >
                           {game.price}$
                         </p>
-                        <p className="price-container__price-with-discount card__text default-text">{discountCalculating(game)}</p>
+                        <p className="price-container__price-with-discount card__text default-text">
+                          {discountCalculating(game)}
+                        </p>
                       </div>
                     </div>
                   </div>

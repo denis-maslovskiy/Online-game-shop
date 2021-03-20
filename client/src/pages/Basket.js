@@ -57,7 +57,9 @@ const ItemsInBasketList = ({ itemsInBasket, removeGameHandler }) => {
               )}
               <div className="basket-game__text">
                 <span className="default-text">{item.gameName}</span>
-                {item.gameType === "Physical" && item.deliveryMethod && <span className="default-text">{item.deliveryMethod}</span>}
+                {item.gameType === "Physical" && item.deliveryMethod && (
+                  <span className="default-text">{item.deliveryMethod}</span>
+                )}
                 <span className="default-text">{item.price} $</span>
               </div>
               <button className="remove-basket-game titles" onClick={() => removeGameHandler(item.gameName)}>

@@ -57,7 +57,8 @@ const SelectedGameAuthor = () => {
           <div className="selected-game-author-container__author-description-block">
             <div>
               <span className="default-text">
-                <strong className="static-field default-text">Description:</strong> {selectedGameAuthor?.authorDescription}
+                <strong className="static-field default-text">Description:</strong>{" "}
+                {selectedGameAuthor?.authorDescription}
               </span>
             </div>
             <div>
