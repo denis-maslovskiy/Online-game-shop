@@ -337,22 +337,22 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 onClick={() => removeImgClickHandler(imgId)}
                 className="image-preview__remove-image-btn"
               >
-                <ClearIcon />
+                <ClearIcon className="clear-icon" />
               </button>
               <Image cloudName={cloudName} publicId={imgId} className="image-preview__image" />
             </div>
           ))
         ) : (
-          <span className="image-preview__no-pictures">There are no pictures for this game.</span>
+          <span className="image-preview__no-pictures default-text">There are no pictures for this game.</span>
         )}
       </div>
 
       <div className="image-upload">
-        <h3>New images</h3>
+        <h3 className="titles">New images</h3>
         <form className="image-upload__form" onSubmit={submitFilesHandler}>
           <label
             htmlFor="image-upload-input"
-            className="image-upload__uploader"
+            className="image-upload__uploader titles"
             aria-disabled={!Boolean(initialGameData.gameName)}
           >
             Click to choose images
@@ -368,7 +368,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
           <button
             id="uploader-submit-btn"
             type="submit"
-            className="image-upload__uploader"
+            className="image-upload__uploader titles"
             disabled={!Boolean(initialGameData.gameName) || !Boolean(selectedFiles.length)}
           >
             Upload new images
@@ -385,7 +385,7 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                     className="image-preview__remove-image-btn"
                     onClick={() => removePreviewImgClickHandler(file.preview)}
                   >
-                    <ClearIcon />
+                    <ClearIcon className="clear-icon" />
                   </button>
                   <img src={file.preview} className="image-preview__image" alt="Preview" />
                 </div>
@@ -413,13 +413,14 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
         onSubmit={(values) => {
           dispatch(adminUpdateGameData(values._id, { ...values }, userId));
           updateGameInAuthorsArray(values);
+          window.scrollTo(0, 0);
         }}
         enableReinitialize={true}
         validationSchema={validationSchema}
       >
         {({ values, setFieldValue, touched, errors }) => (
           <Form className="form">
-            <h3>Edit Game Info</h3>
+            <h3 className="titles">Edit Game Info</h3>
             {inputs.map((input) => {
               if (input.name === "isDigital" || input.name === "isPhysical") {
                 return (
@@ -530,11 +531,12 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 return (
                   <div className="form__div" key={input.name}>
                     <div className="form__datepicker">
-                      <label>{input.label}</label>
+                      <label className="default-text datepicker-label">{input.label}</label>
                       <DatePicker
                         selected={new Date(values.releaseDate || Date.now())}
                         dateFormat="MM-dd-yyyy"
                         name="releaseDate"
+                        className="default-text"
                         onChange={(date) => setFieldValue("releaseDate", date)}
                         disabled={!Boolean(initialGameData.gameName)}
                       />
@@ -588,12 +590,16 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
                 </Field>
               );
             })}
-            <button type="submit" className="add-game-button" disabled={checksForButton(errors, touched, values)}>
+            <button
+              type="submit"
+              className="add-game-button titles"
+              disabled={checksForButton(errors, touched, values)}
+            >
               Save changes
             </button>
             <button
               type="button"
-              className="delete-game-button"
+              className="delete-game-button titles"
               disabled={!Boolean(initialGameData.gameName)}
               onClick={() => deleteGameClickHandler(values._id)}
             >
@@ -634,6 +640,8 @@ const AdminEditGame: React.FC = () => {
   const deleteGameClickHandler = async (gameId: string) => {
     dispatch(deleteGame(gameId, { userId }));
     setDeletedGameId(gameId);
+    setInitialGameData(initialEmptyForm);
+    window.scrollTo(0, 0);
 
     const gameData = allGames.find((game: Game) => {
       return game._id === gameId;
@@ -656,15 +664,23 @@ const AdminEditGame: React.FC = () => {
 
   return (
     <>
+      {successMsg && <Notification values={{ successMsg }} />}
+      {infoMsg && <Notification values={{ infoMsg }} />}
+      {errorMsg && <Notification values={{ errorMsg }} />}
       <div className="title-and-select-container">
         <div className="container-title-block edit-game-title">
-          <h2 className="container-title">Edit Game</h2>
+          <h2 className="container-title titles">Edit Game</h2>
         </div>
         <div className="select-game-container">
           <FormControl className="select-game-container__select-game select-game">
             <InputLabel className="select-game__label">Select game</InputLabel>
-            {/* @ts-ignore */}
-            <Select value={deletedGameId === initialGameData?._id ? "" : initialGameData?._id} defaultValue={null} onChange={selectHandleChange} className="select-game__select">
+            <Select
+              value={deletedGameId === initialGameData?._id ? "" : initialGameData?._id}
+              defaultValue={null}
+              // @ts-ignore
+              onChange={selectHandleChange}
+              className="select-game__select"
+            >
               {allGames.map((game: FormValues) => {
                 return (
                   <MenuItem value={game._id} key={game._id}>
@@ -677,9 +693,6 @@ const AdminEditGame: React.FC = () => {
         </div>
       </div>
 
-      {successMsg && <Notification values={{ successMsg }} />}
-      {infoMsg && <Notification values={{ infoMsg }} />}
-      {errorMsg && <Notification values={{ errorMsg }} />}
       {initialGameData && (
         <RenderGameForm
           initialGameData={initialGameData}

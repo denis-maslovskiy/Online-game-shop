@@ -3,18 +3,28 @@
 
 .container {
     margin: 0 auto;
-    width: 80%;
     border-radius: 24px;
     padding: 1%;
-    @include flex-display($flex-direction: row-reverse);
+    width: 90%;
 
     &__account-info-block {
         width: 40%;
-        margin-left: 5%;
+        margin-left: 20px;
+        display: inline-block;
+        position: fixed;
     }
 
     @media (max-width: 700px) {
-        flex-direction: column;
+        width: 80%;
+        display: flex;
+
+        &__account-info-block {
+            position: static;
+        }
+    }
+
+    @media (max-width: 700px) {
+        flex-direction: column-reverse;
 
         &__account-info-block {
             width: 100%;
@@ -58,12 +68,12 @@
         flex-direction: column;
 
         &__text {
-            margin: 1% 0;
+            margin: 10px 0;
         }
 
         &__old-first-checkbox {
             position: initial;
-            margin-bottom: 2%;
+            margin-bottom: 10px;
         }
     }
 }
@@ -141,6 +151,7 @@
 
 .orders-info {
     width: 55%;
+    display: inline-block;
 
     &__orders, &__achievements {
         width: 100%;
@@ -168,9 +179,9 @@
         text-align: center;
         padding: 0 10px;
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1500px) {
             @include flex-display($flex-direction: column, $align-items: center);
-            @include text-style(18px);
+            @include text-style(24px);
             & > p {
                 margin: 1% 0;
             }
@@ -178,8 +189,8 @@
     }
 
     &__picture {
-        height: 100px;
-        width: 100px;
+        height: 150px;
+        width: 300px;
         margin: 2%;
         border: 1px solid white;
 
@@ -189,16 +200,10 @@
         }
     }
     
-    @media (max-width: 759px) {
+    @media (max-width: 950px) {
         flex-direction: column;
-        width: 70%;
+        width: 97%;
     }
-
-    @media (max-width: 500px) {
-        width: 100%;
-        padding: 5px 0;
-    }
-
 }
 
 .achievements {
@@ -209,6 +214,22 @@
     padding: 2%;
     @include text-style(20px);
     color: white;
+}
+
+.load-more-btn {
+    @include custom-btn(22px, $border: 2px solid $custom-light-blue, $bg-hover: $custom-light-blue);
+    color: $custom-light-blue;
+}
+
+.user-info-title-block {
+    padding: 7.5px;
+    @media(max-width: 1030px) {
+        padding: 31px;
+    }
+}
+
+.game-image {
+    width: 250px;
 }
 
 .old-first-checkbox > label > span > span.MuiIconButton-label {

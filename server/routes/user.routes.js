@@ -6,7 +6,7 @@ router.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "Error: User not found" });
     }
 
     res.status(200).json(user);
@@ -21,7 +21,7 @@ router.put("/:id", async (req, res) => {
     checkIsGameAlreadyExist.gamesInTheBasket.forEach((obj) => {
       if (obj.gameName === req.body.gamesInTheBasket[req.body.gamesInTheBasket.length - 1].gameName) {
         return res.status(400).json({
-          message: "Such game already exists in the basket.",
+          message: "Error: Such game already exists in the basket.",
         });
       }
     });

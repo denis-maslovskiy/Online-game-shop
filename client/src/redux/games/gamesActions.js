@@ -38,7 +38,7 @@ export const updateGameArrayAfterDeletingTheGame = (deletedGame) => {
   };
 };
 
-export const addGame = (newGame, selectedFiles, userId) => {
+export const addGame = (newGame, selectedFiles, userId, resetForm) => {
   return async (dispatch) => {
     try {
       const {
@@ -79,6 +79,8 @@ export const addGame = (newGame, selectedFiles, userId) => {
           await axios.put(`/api/admin/${game.id}`, { ...game, userId });
         };
       });
+
+      resetForm({});
     } catch (e) {
       dispatch(errorMessage(e.response.data.message));
     }

@@ -18,7 +18,7 @@ const Notification = ({ clearErrorMessage, clearSuccessMessage, clearInfoMessage
   if (values.successMsg) {
     return (
       <div ref={alertRef} className="alert alert-success alert--show">
-        <span className="alert__text">{values.successMsg}</span>
+        <span className="alert__text default-text">{values.successMsg}</span>
         <button className="alert__close-btn alert__close-btn--success" onClick={clickHandler}>
           <ClearIcon />
         </button>
@@ -28,7 +28,7 @@ const Notification = ({ clearErrorMessage, clearSuccessMessage, clearInfoMessage
   if (values.errorMsg) {
     return (
       <div ref={alertRef} className="alert alert-error alert--show">
-        <span className="alert__text">{values.errorMsg}</span>
+        <span className="alert__text default-text">{values.errorMsg}</span>
         <button className="alert__close-btn alert__close-btn--error" onClick={clickHandler}>
           <ClearIcon />
         </button>
@@ -38,7 +38,7 @@ const Notification = ({ clearErrorMessage, clearSuccessMessage, clearInfoMessage
   if (values.infoMsg) {
     return (
       <div ref={alertRef} className="alert alert-info alert--show">
-        <span className="alert__text">{values.infoMsg}</span>
+        <span className="alert__text default-text">{values.infoMsg}</span>
         <button className="alert__close-btn alert__close-btn--info" onClick={clickHandler}>
           <ClearIcon />
         </button>

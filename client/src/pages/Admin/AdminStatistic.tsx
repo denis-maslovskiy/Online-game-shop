@@ -159,7 +159,14 @@ const AdminStatistic: React.FC = () => {
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
     return (
-      <text x={x} y={y} fill="black" textAnchor={x > cx ? "start" : "end"} dominantBaseline="central">
+      <text
+        x={x}
+        y={y}
+        fill="black"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+        className="default-text"
+      >
         {`${(percent * 100).toFixed(0)}%`} ({payload.name})
       </text>
     );
@@ -179,29 +186,29 @@ const AdminStatistic: React.FC = () => {
   return (
     <div className="admin-statistic-container">
       <div className="container-title-block statistic">
-        <h2 className="container-title">Statistic</h2>
+        <h2 className="container-title titles">Statistic</h2>
       </div>
       <div className="admin-statistic-container__admin-statistic-content admin-statistic-content">
         <div className="admin-statistic-content__statistic">
-          <p>
+          <p className="default-text">
             Total users: <span>{allUsers.length}</span>
           </p>
-          <p>
+          <p className="default-text">
             Number of games purchased: <span>{numberOfGamePurchased}</span>
           </p>
-          <p>
+          <p className="default-text">
             Games bought for <span>{gamesBoughtFor.toFixed(2)} $</span>
           </p>
-          <p>
+          <p className="default-text">
             Users per month: <span>{usersPerMonth}</span>
           </p>
-          <p>
+          <p className="default-text">
             Users for the last month: <span>{usersForTheLastMonth}</span>
           </p>
-          <p>
+          <p className="default-text">
             Number of purchased physical copies of the game: <span>{numberOfPurchasedPhysicalCopiesOfTheGame}</span>
           </p>
-          <p>
+          <p className="default-text">
             Number of purchased digital copies of the game: <span>{numberOfPurchasedDigitalCopiesOfTheGame}</span>
           </p>
         </div>
@@ -248,21 +255,29 @@ const AdminStatistic: React.FC = () => {
           </PieChart>
         </div>
         <div className="admin-statistic-content__statistic-achievements statistic-achievements">
-          <h3 className="static-field">List of all available achievements</h3>
+          <h3 className="static-field statistic-achievements__title titles">List of all available achievements</h3>
 
           <div className="statistic-achievements__container">
-            <div>
+            <div className="statistic-achievements__text-block">
               {ArrayOfAllAvailableAchievements.map((item, index) => {
                 if (index < firstAchievementsColumnLength) {
-                  return <p key={item}>{item}</p>;
+                  return (
+                    <p key={item} className="default-text">
+                      {item}
+                    </p>
+                  );
                 }
                 return null;
               })}
             </div>
-            <div>
+            <div className="statistic-achievements__text-block">
               {ArrayOfAllAvailableAchievements.map((item, index) => {
                 if (index >= firstAchievementsColumnLength) {
-                  return <p key={item}>{item}</p>;
+                  return (
+                    <p key={item} className="default-text">
+                      {item}
+                    </p>
+                  );
                 }
                 return null;
               })}

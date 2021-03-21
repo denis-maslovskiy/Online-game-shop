@@ -51,6 +51,10 @@ export const Filter = () => {
   };
 
   const handleClose = () => {
+    if (!resultArray.length) {
+      dispatch(setFilteredArray(resultArray));
+      filterTrigger(false);
+    }
     setAnchorEl(null);
   };
 
@@ -144,7 +148,7 @@ export const Filter = () => {
           >
             <div className="filter-block">
               <div className="filter-block__filter filter">
-                <h2 className="filter-block__section-name">Filter</h2>
+                <h2 className="filter-block__section-name titles">Filter</h2>
                 {filterValues.map((item) => {
                   switch (item.inputLabel) {
                     case "Game Name":
@@ -157,7 +161,9 @@ export const Filter = () => {
                             options={gameNamesArray}
                             getOptionLabel={(option) => option}
                             onChange={onGameNameChangeHandler}
-                            renderInput={(params) => <TextField {...params} label={item.inputLabel} />}
+                            renderInput={(params) => (
+                              <TextField {...params} label={item.inputLabel} className="default-text" />
+                            )}
                           />
                         </div>
                       );
@@ -171,7 +177,9 @@ export const Filter = () => {
                             options={authorsArray}
                             getOptionLabel={(option) => option}
                             onChange={onAuthorChangeHandler}
-                            renderInput={(params) => <TextField {...params} label={item.inputLabel} />}
+                            renderInput={(params) => (
+                              <TextField {...params} label={item.inputLabel} className="default-text" />
+                            )}
                           />
                         </div>
                       );
@@ -185,7 +193,9 @@ export const Filter = () => {
                             options={genresArray}
                             getOptionLabel={(option) => option}
                             onChange={onGenreChangeHandler}
-                            renderInput={(params) => <TextField {...params} label={item.inputLabel} />}
+                            renderInput={(params) => (
+                              <TextField {...params} label={item.inputLabel} className="default-text" />
+                            )}
                           />
                         </div>
                       );
@@ -193,7 +203,7 @@ export const Filter = () => {
                       return (
                         <div className="filter__option option" key={item.id}>
                           <TextField
-                            className="filter__input"
+                            className="filter__input default-text"
                             type="number"
                             label={item.inputLabel}
                             onChange={onNumberOfCopiesChangeHandler}
@@ -207,7 +217,7 @@ export const Filter = () => {
                 })}
               </div>
               <div className="filter-block__button-container button-container">
-                <button className="button-container__button" onClick={() => onDone()}>
+                <button className="button-container__button titles" onClick={() => onDone()}>
                   Done
                 </button>
               </div>

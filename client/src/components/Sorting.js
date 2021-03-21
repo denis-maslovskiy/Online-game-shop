@@ -102,22 +102,22 @@ export const Sorting = () => {
         onClose={handleClose}
       >
         <div className="sorting-block">
-          <h2 className="sorting-block__section-name">Sort</h2>
+          <h2 className="sorting-block__section-name titles">Sort</h2>
           <div className="sorting-block__sorting-option sorting-option">
             <FormControl>
-              <InputLabel id="demo-customized-select-label">By:</InputLabel>
+              <InputLabel id="demo-customized-select-label default-text">By:</InputLabel>
               <Select
                 labelId="demo-customized-select-label"
                 id="demo-customized-select"
                 value={sortType || "None"}
                 onChange={handleChange}
               >
-                <MenuItem value="None">
+                <MenuItem value="None" className="default-text">
                   <em>None</em>
                 </MenuItem>
                 {sortValues.map((item) => {
                   return (
-                    <MenuItem value={item.value} key={item.id}>
+                    <MenuItem value={item.value} key={item.id} className="default-text">
                       {item.label}
                     </MenuItem>
                   );

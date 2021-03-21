@@ -1,21 +1,25 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useHistory, Link, useLocation } from "react-router-dom";
+import { Image } from "cloudinary-react";
 import { AppBar, Toolbar, IconButton, Typography, Badge, MenuItem, Menu, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useSelector, useDispatch } from "react-redux";
 import { getSelectedGameAuthor } from "../redux/gameAuthor/gameAuthorActions";
+import { clearErrorMessage, clearSuccessMessage, clearInfoMessage } from "../redux/notification/notificationActions";
 import { Filter } from "./Filter";
 import { Sorting } from "./Sorting";
 import { useStyles } from "../hooks/useStyles";
 import { DependenciesContext } from "../context/DependenciesContext";
+import noImageAvailable from "../img/no-image-available.jpg";
 import "../styles/navbar.scss";
 
 export const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [isHomePage, setIsHomePage] = useState(false);
 
+  const { cloudName } = useContext(DependenciesContext);
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
@@ -32,8 +36,15 @@ export const Navbar = () => {
     setIsHomePage(isHomePage);
   }, [location.pathname]);
 
+  const navbarLinkClickHandler = () => {
+    clearErrorMessage();
+    clearSuccessMessage();
+    clearInfoMessage();
+  };
+
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
+    navbarLinkClickHandler();
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -42,6 +53,8 @@ export const Navbar = () => {
 
   const logoutHandler = () => {
     logout();
+    handleMobileMenuClose();
+    navbarLinkClickHandler();
     history.push("/");
   };
 
@@ -95,6 +108,33 @@ export const Navbar = () => {
     }
   };
 
+  const discountCalculating = (game) => {
+    let finalPrice = 0;
+
+    if (game?.plannedDiscountEndsOn && game?.plannedDiscountStartsOn) {
+      const startsOn = game.plannedDiscountStartsOn,
+        endsOn = game.plannedDiscountEndsOn;
+      if (Date.parse(startsOn) < Date.now() && Date.now() < Date.parse(endsOn)) {
+        finalPrice =
+          (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2) > 0
+            ? (game?.price * (1 - (game?.discount + game.plannedDiscount) / 100)).toFixed(2)
+            : 0;
+      } else {
+        finalPrice =
+          (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+            ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+            : 0;
+      }
+    } else {
+      finalPrice =
+        (game?.price * (1 - game?.discount / 100)).toFixed(2) > 0
+          ? (game?.price * (1 - game?.discount / 100)).toFixed(2)
+          : 0;
+    }
+
+    return Boolean(+finalPrice < +game.price) ? `${finalPrice}$` : null;
+  };
+
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -108,7 +148,7 @@ export const Navbar = () => {
       {!isAuthenticated &&
         notLoggedInMobileMenu.map((item) => {
           return (
-            <MenuItem key={item.id}>
+            <MenuItem key={item.id} onClick={navbarLinkClickHandler}>
               <IconButton>
                 <Badge>
                   <Link to={item.linkTo} className="mobile-menu-link">
@@ -123,7 +163,7 @@ export const Navbar = () => {
         <div>
           {loggedIn_MobileMenu.map((item) => {
             return (
-              <MenuItem key={item.id}>
+              <MenuItem key={item.id} onClick={handleMobileMenuClose}>
                 <IconButton>
                   <Badge>
                     <Link to={item.linkTo} className="mobile-menu-link">
@@ -153,7 +193,7 @@ export const Navbar = () => {
       <AppBar id="navbar">
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            <Link to="/" className="navbar-links">
+            <Link to="/" className="navbar-links" onClick={navbarLinkClickHandler}>
               Online Game Shop
             </Link>
           </Typography>
@@ -170,6 +210,41 @@ export const Navbar = () => {
               renderInput={(params) => (
                 <TextField {...params} inputProps={{ ...params.inputProps, id: "search-input" }} />
               )}
+              renderOption={(option) => (
+                <div className="search">
+                  <div>
+                    {option?.imgSource?.length ? (
+                      <Image publicId={option.imgSource[0]} cloudName={cloudName} className="search__image" />
+                    ) : option.authorLogo ? (
+                      <Image publicId={option.authorLogo} cloudName={cloudName} className="search__image" />
+                    ) : (
+                      <img src={noImageAvailable} alt="test" className="search__image" />
+                    )}
+                  </div>
+                  <div
+                    className={`search__text-block text-block ${option.authorName ? "search__author-text-block" : ""}`}
+                  >
+                    <span className="text-block__game-text default-text">{option.gameName}</span>
+                    <span className="text-block__author-text default-text">{option.authorName}</span>
+                    <span className="text-block__price default-text">
+                      {option.price && (
+                        <span
+                          className={
+                            discountCalculating(option)
+                              ? "price-container__crossed-out-price default-text"
+                              : "default-text"
+                          }
+                        >
+                          {option.price}$
+                        </span>
+                      )}
+                      <span className="price-container__price-with-discount default-text">
+                        {discountCalculating(option)}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              )}
               onFocus={onSearchFocusHandler}
               onBlur={onSearchBlurHandler}
               onChange={onSearchChangeHandler}
@@ -183,7 +258,7 @@ export const Navbar = () => {
               <>
                 {notLoggedIn.map((item) => {
                   return (
-                    <IconButton key={item.id}>
+                    <IconButton key={item.id} onClick={navbarLinkClickHandler}>
                       <Badge>
                         <Link to={item.path} className="navbar-links">
                           {item.linkName}
@@ -198,7 +273,7 @@ export const Navbar = () => {
               <>
                 {loggedIn.map((item) => {
                   return (
-                    <IconButton key={item.id}>
+                    <IconButton key={item.id} onClick={navbarLinkClickHandler}>
                       <Badge>
                         <Link to={item.path} className="navbar-links">
                           {item.linkName}

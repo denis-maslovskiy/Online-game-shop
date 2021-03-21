@@ -8,10 +8,11 @@
     padding: 1%;
 
     &__titles {
-        text-align: center;
         @include text-style(32px, bold);
         color: white;
         @include dark-bg();
+        width: 100%;
+        @include flex-display($justify-content: center);
     }
 
     @media (max-width: 500px) {
@@ -64,9 +65,19 @@
 
     &__picture {
         height: 150px;
-        width: 150px;
+        width: 300px;
         margin: 20px;
         border: 1px solid white;
+
+        @media (max-width: 860px) {
+            height: 200px;
+            width: 400px;
+        }
+
+        @media (max-width: 860px) {
+            height: 150px;
+            width: 290px;
+        }
     }
 
     &__timer {
@@ -103,6 +114,7 @@
     &_disabled {
         border: 2px solid $custom-grey;
         cursor: not-allowed;
+        color: $custom-grey;
 
         &:hover {
             background: $custom-grey;
@@ -143,10 +155,6 @@
     .basket-game {
         &__text {
             @include flex-display($flex-direction: column, $align-items: center);
-        }
-
-        &__picture {
-            width: 60%;
         }
     }
 

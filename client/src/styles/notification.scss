@@ -10,49 +10,29 @@
     @include flex-display($justify-content: space-around, $align-items: center);
     position: absolute;
     width: 100%;
-    max-width: 300px;
-    padding: 15px;
-    color: white;
-    border-radius: 24px;
+    max-width: 290px;
+    padding: 10px;
+    color: $custom-dark-blue;
+    border: 2px solid $custom-middle-blue;
+    background-color: $static-field-color;
     z-index: 10;
-
-    &-error {
-        background-color: $red-color;
-    }
-
-    &-success {
-        background-color: $dark-green-color;
-    }
-
-    &-info {
-        background-color: $custom-middle-yellow;
-        color: black;
-    }
 
     &__close-btn {
         border: none;
         background: none;
         border-radius: 24px;
-        color: white;
-        margin-left: 1%;
         cursor: pointer;
 
-        &--error {
-            &:hover {
-                background-color: $light-red-color;
+        &:hover {
+            background-color: $custom-dark-blue;
+
+            & > svg.MuiSvgIcon-root {
+                color: white;
             }
         }
 
-        &--success {
-            &:hover {
-                background-color: $light-green-color;
-            }
-        }
-
-        &--info {
-            &:hover {
-                background-color: $custom-light-yellow;
-            }
+        & > svg.MuiSvgIcon-root {
+            color: $custom-dark-blue;
         }
     }
 }
@@ -72,7 +52,7 @@
         transform: translateX(0%);
     }
     100% {
-        transform: translateX(10px);
+        transform: translateX(1%);
     }
 }
 
@@ -82,10 +62,10 @@
 
 @keyframes hide_slide {
     0% {
-        transform: translateX(10px);
+        transform: translateX(1%);
     }
     40% {
-        transform: translateX(00%);
+        transform: translateX(0%);
     }
     80% {
         transform: translateX(10%);

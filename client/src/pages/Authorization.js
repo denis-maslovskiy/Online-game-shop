@@ -22,9 +22,8 @@ const Authorization = (props) => {
   };
 
   const submit = (userData, { setSubmitting, resetForm }) => {
-    loginUser(userData);
+    loginUser(userData, resetForm);
     setIsSubmitting(true);
-    resetForm({});
     setSubmitting(false);
   };
 
@@ -50,7 +49,7 @@ const Authorization = (props) => {
       >
         {({ handleChange, handleBlur, isSubmitting, errors, touched, values }) => (
           <Form className="box">
-            <h1 className="box__title">Authorization</h1>
+            <h1 className="box__title titles">Authorization</h1>
 
             <div className="form__div">
               <TextField
@@ -86,10 +85,10 @@ const Authorization = (props) => {
                 helperText={touched.password ? errors.password : ""}
               />
             </div>
-            <button className="box__submit-btn" type="submit">
+            <button className="box__submit-btn titles" type="submit">
               {isSubmitting ? "Loading..." : "Log In"}
             </button>
-            <div className="box__bottom-text">
+            <div className="box__bottom-text default-text">
               Don't have an account?{" "}
               <Link to="/registration" className="box__bottom-text__link">
                 Sign up
@@ -110,7 +109,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loginUser: (userData) => dispatch(loginUser(userData)),
+    loginUser: (userData, resetForm) => dispatch(loginUser(userData, resetForm)),
     clearErrorMessage: () => dispatch(clearErrorMessage()),
   };
 };

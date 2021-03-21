@@ -18,9 +18,9 @@ router.use(async (req, res, next) => {
     const user = await User.findById(userId);
     user.isAdmin
       ? next()
-      : res.status(400).json({ message: "Access is blocked. Functionality are available only to the admin!" });
+      : res.status(400).json({ message: "Error: Access is blocked. Functionality are available only to the admin!" });
   } catch (e) {
-    res.status(500).json({ message: "Something wrong, try again later..." });
+    res.status(500).json({ message: "Error: Something wrong, try again later..." });
   }
 });
 
@@ -44,7 +44,7 @@ router.post("/create-game", async (req, res) => {
     const isGameExist = await Game.findOne({ gameName });
 
     if (isGameExist) {
-      return res.status(400).json({ message: "Game with this name already exist." });
+      return res.status(400).json({ message: "Error: Game with this name already exist." });
     }
 
     const newGame = new Game({
@@ -184,7 +184,7 @@ router.post("/create-achievement", async (req, res) => {
     const isAchievementExist = await Achievement.findOne({ achievementName });
 
     if (isAchievementExist) {
-      return res.status(400).json({ message: "Achievement with this name already exist." });
+      return res.status(400).json({ message: "Error: Achievement with this name already exist." });
     }
 
     const newAchievement = new Achievement({
@@ -254,7 +254,7 @@ router.post("/create-game-author", async (req, res) => {
     const isAuthorExist = await GameAuthor.findOne({ authorName });
 
     if (isAuthorExist) {
-      return res.status(400).json({ message: "Author with this name already exist." });
+      return res.status(400).json({ message: "Error: Author with this name already exist." });
     }
 
     const newGameAuthor = new GameAuthor({

@@ -66,80 +66,90 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
         }
       });
     });
+    window.scrollTo(0, 0);
   };
 
+  const isSubmitButtonDisable =
+    !selectedResult.length ||
+    Boolean(discountValue < 0) ||
+    Boolean(plannedDiscountDates.endsOn < plannedDiscountDates.startsOn);
+
   return (
-    <div className="admin-add-game-container">
+    <>
       {successMsg && <Notification values={{ successMsg }} />}
-      <div className="container-title-block add-game-title">
-        <h2 className="container-title">Admin Planning Future Discounts</h2>
-      </div>
-      <div className="planning-future-discounts">
-        <div className="planning-future-discounts__pfd-content">
-          <div className="autocomplete-field">
-            <Autocomplete
-              multiple
-              id="autocomplete"
-              options={gameNamesArray}
-              getOptionLabel={(option) => option}
-              onChange={onGameNameChangeHandler}
-              renderInput={(params) => <TextField {...params} label="Game Names" />}
-            />
-          </div>
-          <div className="form__div">
-            <TextField
-              type="number"
-              label="Discount value"
-              variant="filled"
-              className="form__input"
-              value={discountValue}
-              onChange={(e) => setDiscountValue(+e.target.value)}
-              InputProps={{ inputProps: { min: 0, max: 100 } }}
-              disabled={!selectedResult.length}
-              error={Boolean(discountValue < 0)}
-              helperText={Boolean(discountValue < 0) ? "Discount must be greater than or equal to 0" : ""}
-            />
-          </div>
-          <div className="form__div">
-            <div className="form__datepicker">
-              <label>Starts On</label>
-              <DatePicker
-                selected={plannedDiscountDates.startsOn}
-                dateFormat="MM-dd-yyyy"
-                name="plannedDiscountStartsOn"
-                disabled={!selectedResult.length}
-                onChange={(date) =>
-                  // @ts-ignore
-                  setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, startsOn: date }))
-                }
+      <div className="admin-add-game-container">
+        <div className="container-title-block add-game-title">
+          <h2 className="container-title titles">Admin Planning Future Discounts</h2>
+        </div>
+        <div className="planning-future-discounts">
+          <div className="planning-future-discounts__pfd-content">
+            <div className="autocomplete-field">
+              <Autocomplete
+                multiple
+                id="autocomplete"
+                options={gameNamesArray}
+                getOptionLabel={(option) => option}
+                onChange={onGameNameChangeHandler}
+                renderInput={(params) => <TextField {...params} label="Game Names" />}
               />
             </div>
-          </div>
-          <div className="form__div">
-            <div className="form__datepicker">
-              <label>Ends On</label>
-              <DatePicker
-                selected={plannedDiscountDates.endsOn}
-                dateFormat="MM-dd-yyyy"
-                name="plannedDiscountEndsOn"
+            <div className="form__div">
+              <TextField
+                type="number"
+                label="Discount value"
+                variant="filled"
+                className="form__input"
+                value={discountValue}
+                onChange={(e) => setDiscountValue(+e.target.value)}
+                InputProps={{ inputProps: { min: 0, max: 100 } }}
                 disabled={!selectedResult.length}
-                onChange={(date) =>
-                  // @ts-ignore
-                  setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, endsOn: date }))
-                }
+                error={Boolean(discountValue < 0)}
+                helperText={Boolean(discountValue < 0) ? "Discount must be greater than or equal to 0" : ""}
               />
             </div>
+            <div className="form__div">
+              <div className="form__datepicker">
+                <label className="default-text datepicker-label">Starts On</label>
+                <DatePicker
+                  selected={plannedDiscountDates.startsOn}
+                  className="default-text"
+                  dateFormat="MM-dd-yyyy"
+                  name="plannedDiscountStartsOn"
+                  disabled={!selectedResult.length}
+                  onChange={(date) =>
+                    // @ts-ignore
+                    setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, startsOn: date }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="form__div">
+              <div className="form__datepicker">
+                <label className="default-text datepicker-label">Ends On</label>
+                <DatePicker
+                  selected={plannedDiscountDates.endsOn}
+                  className="default-text"
+                  dateFormat="MM-dd-yyyy"
+                  name="plannedDiscountEndsOn"
+                  disabled={!selectedResult.length}
+                  onChange={(date) =>
+                    // @ts-ignore
+                    setPlannedDiscountDates((plannedDiscountDates) => ({ ...plannedDiscountDates, endsOn: date }))
+                  }
+                />
+              </div>
+            </div>
+            <button
+              className="add-game-button titles"
+              onClick={saveButtonClickHandler}
+              disabled={isSubmitButtonDisable}
+            >
+              Save changes
+            </button>
           </div>
-          <button
-            className="add-game-button"
-            onClick={saveButtonClickHandler}
-            disabled={!selectedResult.length || Boolean(discountValue < 0)}
-          >
-            Save changes
-          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

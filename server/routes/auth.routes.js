@@ -23,17 +23,24 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           errors: errors.array(),
-          message: "Incorrect data during registration.",
+          message: "Error: Incorrect data during registration.",
         });
       }
 
       const { username, email, password } = req.body;
 
-      const candidate = await User.findOne({ email });
+      const candidateByName = await User.findOne({ username })
+      const candidateByEmail = await User.findOne({ email });
 
-      if (candidate) {
+      if (candidateByName && Object.keys(candidateByName).length) {
         return res.status(400).json({
-          message: "Such user already exist. Try another email or user name.",
+          message: "Error: User with such name already exist...",
+        });
+      }
+
+      if (candidateByEmail) {
+        return res.status(400).json({
+          message: "Error: User with such email already exist...",
         });
       }
 
@@ -63,6 +70,7 @@ router.post(
         },
       });
     } catch (e) {
+      console.log(e)
       res.status(500).json({ message: "Something wrong, try again later..." });
     }
   }
@@ -91,12 +99,12 @@ router.post(
       const user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(400).json({ message: "User is not found." });
+        return res.status(400).json({ message: "Error: User is not found." });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(400).json({ message: "Wrong password. Try again..." });
+        return res.status(400).json({ message: "Error: Wrong password. Try again..." });
       }
 
       const token = jwt.sign({ userId: user.id }, config.get("jwtSecret"), {
