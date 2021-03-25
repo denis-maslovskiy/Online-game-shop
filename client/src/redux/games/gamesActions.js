@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME, GAME_FILTER, GAME_SORT } from "./gamesTypes";
 import { successMessage, errorMessage, infoMessage, clearSuccessMessage } from "../notification/notificationActions";
-import { updateGameAuthorArray } from "../gameAuthor/gameAuthorActions";
+import { updateGameAuthorArray, adminAddAuthor } from "../gameAuthor/gameAuthorActions";
 
 export const setSortedArray = (array) => {
   return {
@@ -46,6 +46,20 @@ export const addGame = (newGame, selectedFiles, userId, resetForm) => {
       } = await axios.post("/api/admin/create-game", { ...newGame, userId });
       dispatch(successMessage(message));
 
+      // Image upload
+      selectedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = async () => {
+          const fileStr = reader.result;
+          const {
+            data: { uploadResponse },
+          } = await axios.post("/api/admin/upload-image", { fileStr, userId });
+          game.imgSource.push(uploadResponse.public_id);
+          await axios.put(`/api/admin/${game.id}`, { ...game, userId });
+        };
+      });
+
       // Checking the existence of the author
       let isAuthorAlreadyExist = false;
       const { data } = await axios.get("/api/game-author/get-all-game-authors");
@@ -61,24 +75,13 @@ export const addGame = (newGame, selectedFiles, userId, resetForm) => {
       if (!isAuthorAlreadyExist) {
         const newAuthor = {
           authorName: newGame.author,
-          authorsGames: [newGame],
+          authorsGames: [game],
         };
-        await axios.post("/api/admin/create-game-author", { ...newAuthor, userId });
+        // This setTimeout - is a hot fix solution and should be removed in future
+        setTimeout(async() => {
+          await axios.post("/api/admin/create-game-author", { ...newAuthor, userId });
+        }, 5000);
       }
-
-      // Image upload
-      selectedFiles.forEach((file) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = async () => {
-          const fileStr = reader.result;
-          const {
-            data: { uploadResponse },
-          } = await axios.post("/api/admin/upload-image", { fileStr, userId });
-          game.imgSource.push(uploadResponse.public_id);
-          await axios.put(`/api/admin/${game.id}`, { ...game, userId });
-        };
-      });
 
       resetForm({});
     } catch (e) {
