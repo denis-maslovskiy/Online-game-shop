@@ -1,6 +1,6 @@
 import axios from "axios";
 import { successMessage, errorMessage, infoMessage } from "../notification/notificationActions";
-import { SET_ALL_USERS, SET_USER_DATA } from "./userTypes";
+import { SET_ALL_USERS, SET_USER_DATA, SET_OPTION_FOR_ADMIN, CLEAR_OPTION_FOR_ADMIN } from "./userTypes";
 import { reloadAchievements } from "../../helpers/userHelpers";
 
 export const setAllUser = (users) => {
@@ -14,6 +14,19 @@ export const setUserData = (user) => {
   return {
     type: SET_USER_DATA,
     payload: user,
+  };
+};
+
+export const setOptionForAdmin = (optionData) => {
+  return {
+    type: SET_OPTION_FOR_ADMIN,
+    payload: optionData,
+  };
+};
+
+export const clearOptionForAdmin = () => {
+  return {
+    type: CLEAR_OPTION_FOR_ADMIN,
   };
 };
 
