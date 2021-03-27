@@ -72,7 +72,7 @@ const AdminPlanningFutureDiscounts: React.FC = () => {
   const isSubmitButtonDisable =
     !selectedResult.length ||
     Boolean(discountValue < 0) ||
-    Boolean(plannedDiscountDates.endsOn < plannedDiscountDates.startsOn);
+    Boolean(plannedDiscountDates.endsOn <= plannedDiscountDates.startsOn);
 
   return (
     <>
