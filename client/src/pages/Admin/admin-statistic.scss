@@ -45,6 +45,10 @@
             @media (max-width: 590px) {
                 padding: 5px 15px;
             }
+
+            @media (max-width: 340px) {
+                @include text-style(18px);
+            }
         }
 
         & > p > span {

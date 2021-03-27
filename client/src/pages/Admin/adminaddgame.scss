@@ -109,6 +109,8 @@ svg.clear-icon.MuiSvgIcon-root {
     color: white;
     width: 18px;
     height: 23px;
+    position: relative;
+    top: 1px;
 }
 
 input[name="releaseDate"], input[name="plannedDiscountStartsOn"], input[name="plannedDiscountEndsOn"] {

@@ -18,26 +18,6 @@
         font-weight: 500;
     }
 
-    &__input {
-        border: 0;
-        background: none;
-        display: block;
-        margin: 20px auto;
-        text-align: center;
-        border: 2px solid $custom-light-blue;
-        padding: 14px 10px;
-        width: 200px;
-        outline: none;
-        color: white;
-        border-radius: 24px;
-        transition: .25s;
-
-        &:focus {
-          width: 280px;
-          border-color: $light-green-color;   
-        }
-    }
-
     &__submit-btn {
         border: 0;
         @include text-style(18px);
@@ -58,6 +38,13 @@
         &:hover {
             background: $light-green-color;
             color: white;
+        }
+
+        &:disabled {
+            @include custom-btn(none, $border: 2px solid $custom-grey, $bg-hover: $custom-grey);
+            border: 2px solid $custom-grey;
+            cursor: not-allowed;
+            color: $custom-grey;
         }
     }
 
