@@ -45,11 +45,31 @@ export const adminAddAuthor = (newAuthor) => {
   };
 };
 
-export const getAllAuthors = () => {
+export const getAllAuthors = (userId) => {
   return async (dispatch) => {
     try {
       const { data } = await axios.get("/api/game-author/get-all-game-authors");
-      dispatch(setAllGameAuthors(data));
+      const { data: games } = await axios.get("/api/games/get-all-games");
+      const authorsToReturn = [];
+
+      // Prevent displaying of Game Authors without existing in shop games
+      data.forEach(author => {
+        let numberOfChecks = 0;
+        author.authorsGames.forEach(authorGame => {
+          games.forEach(game => {
+            if(game.gameName === authorGame.gameName) {
+              numberOfChecks++;
+            }
+          })
+        })
+        if(numberOfChecks === author.authorsGames.length) {
+          authorsToReturn.push(author);
+        } else {
+          axios.delete(`/api/admin/delete-game-author/${author._id}`, { data: { ...userId } });
+        }
+      })
+
+      dispatch(setAllGameAuthors(authorsToReturn));
     } catch (e) {
       console.log(e.response.data.message);
     }
