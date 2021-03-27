@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SET_ALL_GAMES, UPDATE_GAME_ARRAY, DELETE_GAME, GAME_FILTER, GAME_SORT } from "./gamesTypes";
 import { successMessage, errorMessage, infoMessage, clearSuccessMessage } from "../notification/notificationActions";
-import { updateGameAuthorArray, adminAddAuthor } from "../gameAuthor/gameAuthorActions";
+import { updateGameAuthorArray } from "../gameAuthor/gameAuthorActions";
 
 export const setSortedArray = (array) => {
   return {
@@ -128,11 +128,13 @@ export const adminUpdateGameData = (gameId, game, userId) => {
         }
       });
 
-      gameAuthor.authorsGames.forEach((authorGame) => {
-        if (authorGame.gameName === game.gameName) {
-          authorGame.imgSource = game.imgSource;
-        }
-      });
+      if(gameAuthor) {
+        gameAuthor.authorsGames.forEach((authorGame) => {
+          if (authorGame.gameName === game.gameName) {
+            authorGame.imgSource = game.imgSource;
+          }
+        });
+      }
       await axios.put(`/api/admin/edit-game-author-info/${gameAuthor._id}`, { ...gameAuthor, userId });
 
       dispatch(updateGameArray(game));
