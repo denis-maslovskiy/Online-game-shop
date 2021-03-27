@@ -86,7 +86,7 @@ router.post(
 
       if (!errors.isEmpty()) {
         return (
-          res,
+          res.
           status(400).json({
             errors: errors.array(),
             message: "Incorrect data during login.",
