@@ -1,8 +1,12 @@
-import { SET_ALL_USERS, SET_USER_DATA } from "./userTypes";
+import { SET_ALL_USERS, SET_USER_DATA, SET_OPTION_FOR_ADMIN, CLEAR_OPTION_FOR_ADMIN } from "./userTypes";
 
 const initialState = {
   allUsers: [],
   user: {},
+  adminOptionData: {
+    optionName: "",
+    optionData: null,
+  },
 };
 
 const userReducer = (state = initialState, action) => {
@@ -16,6 +20,16 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload,
+      };
+    case SET_OPTION_FOR_ADMIN:
+      return {
+        ...state,
+        adminOptionData: action.payload,
+      };
+    case CLEAR_OPTION_FOR_ADMIN:
+      return {
+        ...state,
+        adminOptionData: initialState.adminOptionData,
       };
     default:
       return state;
