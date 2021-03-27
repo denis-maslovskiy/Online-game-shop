@@ -17,7 +17,13 @@ const schema = Yup.object({
     .min(3, "Must be at least 3 characters")
     .max(15, "Must be no more than 15 characters")
     .required("Required"),
-  email: Yup.string().email("Invalid email address").required("Required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .matches(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      "Invalid email address"
+    )
+    .required("Required"),
   password: Yup.string().min(6, "Must be at least 6 characters").required("Required"),
 });
 
@@ -25,6 +31,7 @@ const Registration = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const history = useHistory();
   const { isAuthenticated } = useContext(DependenciesContext);
+  const WITH_SUCH_NAME = "with such name", WITH_SUCH_EMAIL = "with such email";
 
   const { errorMsg, successMsg, registerUser, clearErrorMessage } = props;
 
@@ -43,9 +50,34 @@ const Registration = (props) => {
     return null;
   }
 
+  const checksForUsername = (errors, touched) => {
+    return (Boolean(errors.username) && touched.username) || Boolean(errorMsg && errorMsg.includes(WITH_SUCH_NAME));
+  }
+
+  const usernameHelperText = (errors, touched) => {
+    return checksForUsername(errors, touched) ? (Boolean(errorMsg) ? errorMsg : errors.username) : "";
+  }
+
+  const checksForEmail = (errors, touched) => {
+    return (Boolean(errors.email) && touched.email) || Boolean(errorMsg && errorMsg.includes(WITH_SUCH_EMAIL));
+  };
+
+  const emailHelperText = (errors, touched) => {
+    return checksForEmail(errors, touched) ? (Boolean(errorMsg) ? errorMsg : errors.email) : "";
+  };
+
+  const checkForSubmitButton = (errors, touched, values) => {
+    return (
+      Boolean(checksForEmail(errors, touched)) ||
+      Boolean(checksForUsername(errors, touched)) ||
+      Boolean(!values.email) ||
+      Boolean(!values.password) || 
+      Boolean(!values.username)
+    );
+  };
+
   return (
     <>
-      {isSubmitting && errorMsg && <Notification values={{ successMsg, errorMsg }} />}
       {isSubmitting && successMsg && <Notification values={{ successMsg, errorMsg }} />}
       <Formik
         initialValues={{
@@ -72,8 +104,8 @@ const Registration = (props) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.username) && touched.username}
-                helperText={touched.username ? errors.username : ""}
+                error={Boolean(checksForUsername(errors, touched))}
+                helperText={usernameHelperText(errors, touched)}
               />
             </div>
 
@@ -89,8 +121,8 @@ const Registration = (props) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.email) && touched.email}
-                helperText={touched.email ? errors.email : ""}
+                error={Boolean(checksForEmail(errors, touched))}
+                helperText={emailHelperText(errors, touched)}
               />
             </div>
 
@@ -111,7 +143,7 @@ const Registration = (props) => {
                 helperText={touched.password ? errors.password : ""}
               />
             </div>
-            <button className="box__submit-btn titles" type="submit">
+            <button className="box__submit-btn titles" type="submit" disabled={checkForSubmitButton(errors, touched, values)}>
               {isSubmitting ? "Loading..." : "Sign Up"}
             </button>
             <div className="box__bottom-text default-text">
