@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, Link } from "react-router-dom";
 import { Image } from "cloudinary-react";
 import {
   Dialog,
@@ -11,11 +11,12 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGameData } from "../redux/games/gamesActions";
 import { getGameInfo } from "../helpers/gameHelpers";
 import { clearErrorMessage, clearSuccessMessage } from "../redux/notification/notificationActions";
-import { addGameInTheBasket, getUserData } from "../redux/user/userActions";
+import { addGameInTheBasket, getUserData, setOptionForAdmin } from "../redux/user/userActions";
 import { DependenciesContext } from "../context/DependenciesContext";
 import Notification from "../components/Notification";
 import "../styles/selected-game.scss";
@@ -166,7 +167,7 @@ const SelectedGame = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
-  const { cloudName } = useContext(DependenciesContext);
+  const { cloudName, isAdmin } = useContext(DependenciesContext);
   const { user } = useSelector((state) => state.user);
   const { successMsg, errorMsg } = useSelector((state) => state.notification);
 
@@ -270,6 +271,10 @@ const SelectedGame = () => {
     }
   };
 
+  const editGameLinkClickHandler = () => {
+    dispatch(setOptionForAdmin({ optionName: "Edit game", optionData: gameData }));
+  };
+
   return (
     <>
       {errorMsg && <Notification values={{ errorMsg }} />}
@@ -281,6 +286,11 @@ const SelectedGame = () => {
       )}
       {Boolean(arrayOfImgs.length) && <SliderShow arrayOfImgs={arrayOfImgs} cloudName={cloudName} />}
       <div className="content-area">
+        {isAdmin && (
+          <Link to="/admin-panel" onClick={editGameLinkClickHandler} className="admin-edit-link">
+            <span className="default-text static-field">Edit</span><EditIcon className="static-field" />{" "}
+          </Link>
+        )}
         <div className="content-area__game-info game-info">
           {isReadyToDisplayGameInfo &&
             textFields.map((item) => {

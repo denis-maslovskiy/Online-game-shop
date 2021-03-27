@@ -2,7 +2,9 @@ import React, { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { Image } from "cloudinary-react";
+import EditIcon from "@material-ui/icons/Edit";
 import { getSelectedGameAuthor } from "../redux/gameAuthor/gameAuthorActions";
+import { setOptionForAdmin } from "../redux/user/userActions";
 import { getAllGames } from "../redux/games/gamesActions";
 import { DependenciesContext } from "../context/DependenciesContext";
 import noImageAvailable from "../img/no-image-available.jpg";
@@ -19,7 +21,7 @@ const SelectedGameAuthor = () => {
     dispatch(getAllGames());
   }, [dispatch, gameAuthorId]);
 
-  const { cloudName } = useContext(DependenciesContext);
+  const { cloudName, isAdmin } = useContext(DependenciesContext);
   const { selectedGameAuthor } = useSelector((state) => state.gameAuthor);
   const { allGames } = useSelector((state) => state.games);
 
@@ -35,6 +37,10 @@ const SelectedGameAuthor = () => {
       }
     });
     return setGameId;
+  };
+
+  const editAuthorLinkClickHandler = () => {
+    dispatch(setOptionForAdmin({ optionName: "Edit game author", optionData: selectedGameAuthor }));
   };
 
   return (
@@ -55,6 +61,12 @@ const SelectedGameAuthor = () => {
             <img src={noImageAvailable} alt="No logo for author" className="author-logo"></img>
           )}
           <div className="selected-game-author-container__author-description-block">
+            {isAdmin && (
+              <Link to="/admin-panel" onClick={editAuthorLinkClickHandler} className="admin-edit-link edit-author-link">
+                <span className="default-text static-field">Edit</span>
+                <EditIcon className="static-field" />
+              </Link>
+            )}
             <div>
               <span className="default-text">
                 <strong className="static-field default-text">Description:</strong>{" "}
