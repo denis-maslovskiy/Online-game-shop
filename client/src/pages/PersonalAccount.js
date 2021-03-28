@@ -155,7 +155,7 @@ const PersonalAccount = () => {
           {isReadyToDisplayUserInfo &&
             (user?.achievements?.length
               ? user?.achievements.map((achieve) => <p key={achieve.achievementText}>{achieve.achievementText}</p>)
-              : "No achievements. Try to update, maybe they will appear!")}
+              : "You have no achievements yet.")}
         </div>
       </div>
     </div>
