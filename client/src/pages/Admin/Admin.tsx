@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { SwipeableDrawer, Button, List, ListItem, ListItemText } from "@material-ui/core";
+import { RootState } from "../../redux/rootReducer";
+import { clearOptionForAdmin } from "../../redux/user/userActions";
 import AdminAddGame from "./AdminAddGame";
 import AdminEditGame from "./AdminEditGame";
 import AdminStatistic from "./AdminStatistic";
@@ -15,6 +18,11 @@ const Admin = () => {
   });
   const [adminOption, setAdminOption] = useState("Statistic");
 
+  const dispatch = useDispatch();
+  const {
+    adminOptionData: { optionName },
+  } = useSelector((state: RootState) => state.user);
+
   const toggleDrawer = (anchor: Anchor, open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
     if (
       event &&
@@ -26,7 +34,8 @@ const Admin = () => {
     setState({ ...state, [anchor]: open });
   };
 
-  function clickHandler(text: string) {
+  function listItemClickHandler(text: string) {
+    dispatch(clearOptionForAdmin());
     setAdminOption(text);
   }
 
@@ -36,13 +45,30 @@ const Admin = () => {
     <div role="presentation" onClick={toggleDrawer(anchor, false)} onKeyDown={toggleDrawer(anchor, false)}>
       <List>
         {adminOptions.map((text) => (
-          <ListItem button key={text} onClick={() => clickHandler(text)}>
+          <ListItem button key={text} onClick={() => listItemClickHandler(text)}>
             <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
     </div>
   );
+
+  const renderAdminOption = (option: string) => {
+    switch (option) {
+      case "Add new game":
+        return <AdminAddGame />;
+      case "Edit game":
+        return <AdminEditGame />;
+      case "Statistic":
+        return <AdminStatistic />;
+      case "Edit game author":
+        return <AdminEditGameAuthor />;
+      case "Planning future discounts":
+        return <AdminPlanningFutureDiscounts />;
+      default:
+        return <AdminStatistic />;
+    }
+  };
 
   return (
     <>
@@ -63,11 +89,7 @@ const Admin = () => {
           </React.Fragment>
         ))}
       </div>
-      {adminOption === "Add new game" && <AdminAddGame />}
-      {adminOption === "Edit game" && <AdminEditGame />}
-      {adminOption === "Statistic" && <AdminStatistic />}
-      {adminOption === "Edit game author" && <AdminEditGameAuthor />}
-      {adminOption === "Planning future discounts" && <AdminPlanningFutureDiscounts />}
+      {optionName ? renderAdminOption(optionName) : renderAdminOption(adminOption)}
     </>
   );
 };

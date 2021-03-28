@@ -8,6 +8,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useSelector, useDispatch } from "react-redux";
 import { getSelectedGameAuthor } from "../redux/gameAuthor/gameAuthorActions";
 import { clearErrorMessage, clearSuccessMessage, clearInfoMessage } from "../redux/notification/notificationActions";
+import { clearOptionForAdmin } from "../redux/user/userActions";
 import { Filter } from "./Filter";
 import { Sorting } from "./Sorting";
 import { useStyles } from "../hooks/useStyles";
@@ -37,9 +38,10 @@ export const Navbar = () => {
   }, [location.pathname]);
 
   const navbarLinkClickHandler = () => {
-    clearErrorMessage();
-    clearSuccessMessage();
-    clearInfoMessage();
+    dispatch(clearErrorMessage());
+    dispatch(clearSuccessMessage());
+    dispatch(clearInfoMessage());
+    dispatch(clearOptionForAdmin());
   };
 
   const handleMobileMenuClose = () => {

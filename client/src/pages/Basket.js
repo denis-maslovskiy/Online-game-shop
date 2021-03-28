@@ -15,15 +15,15 @@ const Timer = ({ removeGameHandler, gameName, dateAddedToBasket }) => {
   const [minutes, setMinutes] = useState();
   const [seconds, setSeconds] = useState();
 
-  const fifteenMinutes = 900000;
+  // const fifteenMinutes = 900000; - used as default value which equals to 15 minutes
   const oneMinute = 60000;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      let time = new Date(new Date(fifteenMinutes) - new Date(Date.now() - Date.parse(dateAddedToBasket)));
+      let time = new Date(new Date(oneMinute) - new Date(Date.now() - Date.parse(dateAddedToBasket)));
       setMinutes(time.getMinutes());
       setSeconds(time.getSeconds());
-      if ((time.getMinutes() === 0 && time.getSeconds() === 0) || time.getMinutes() > fifteenMinutes / oneMinute) {
+      if ((time.getMinutes() === 0 && time.getSeconds() === 0) || time.getMinutes() > oneMinute / oneMinute) {
         removeGameHandler(gameName);
       }
     }, 1000);

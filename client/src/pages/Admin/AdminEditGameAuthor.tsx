@@ -6,7 +6,8 @@ import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps, FormikErrors, FormikTouched } from "formik";
 // @ts-ignore
 import { Image } from "cloudinary-react";
-import { TextField, InputLabel, MenuItem, FormControl, Select } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import ClearIcon from "@material-ui/icons/Clear";
 import { getAllAuthors, adminUpdateGameAuthorData } from "../../redux/gameAuthor/gameAuthorActions";
 import { DependenciesContext } from "../../context/DependenciesContext";
@@ -143,7 +144,7 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
                 onClick={() => removeImgClickHandler(initialGameAuthorData.authorLogo)}
                 className="image-preview__remove-image-btn"
               >
-                <ClearIcon />
+                <ClearIcon className="clear-icon" />
               </button>
               <Image
                 cloudName={cloudName}
@@ -176,7 +177,16 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
       >
         {({ values, errors, touched, setFieldValue }) => (
           <Form className="form">
-            <h3 className="titles">Edit Game Author Info</h3>
+            <h3 className="titles">
+              <span className="static-field">Edit Info</span>{" "}
+              {initialGameAuthorData.authorName ? (
+                <span>
+                  <span className="static-field">of</span> {initialGameAuthorData.authorName}
+                </span>
+              ) : (
+                ""
+              )}
+            </h3>
             {inputs.map((input) => {
               if (input.name === "authorDescription") {
                 return (
@@ -232,21 +242,33 @@ const RenderGameForm = ({ initialGameAuthorData }: IProps) => {
 
 const AdminEditGameAuthor: React.FC = () => {
   const [initialGameAuthorData, setInitialGameAuthorData] = useState(initialEmptyForm);
+  const [autocompleteValue, setAutocompleteValue] = useState("");
 
   const dispatch = useDispatch();
   const { successMsg, infoMsg, errorMsg } = useSelector((state: RootState) => state.notification);
   const { allGameAuthors } = useSelector((state: RootState) => state.gameAuthor);
+  const {
+    adminOptionData: { optionData },
+  } = useSelector((state: RootState) => state.user);
+  const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
-    dispatch(getAllAuthors());
-  }, [dispatch]);
+    dispatch(getAllAuthors({ userId }));
+  }, [dispatch, userId]);
 
-  const selectHandleChange = (e: { target: HTMLInputElement }) => {
-    const authorId = e.target.value;
-    const gameAuthorData = allGameAuthors.find((author: Author) => {
-      return author._id === authorId;
-    });
-    setInitialGameAuthorData(gameAuthorData);
+  useEffect(() => {
+    if (optionData?.authorName) {
+      setInitialGameAuthorData(optionData);
+      setAutocompleteValue(optionData.authorName);
+    }
+  }, [optionData]);
+
+  const onAutocompleteChangeHandler = (e: Event, value: FormValues) => {
+    if (value) {
+      setAutocompleteValue(value.authorName);
+      //@ts-ignore
+      setInitialGameAuthorData(value);
+    }
   };
 
   return (
@@ -259,23 +281,21 @@ const AdminEditGameAuthor: React.FC = () => {
           <h2 className="container-title titles">Edit Game Author</h2>
         </div>
         <div className="select-game-author-container">
-          <FormControl className="select-game-author-container__select-game-author select-game-author">
-            <InputLabel className="select-game-author__label">Select game author</InputLabel>
-            <Select
-              value={initialGameAuthorData?._id}
-              // @ts-ignore
-              onChange={selectHandleChange}
-              className="select-game-author__select"
-            >
-              {allGameAuthors.map((author: Author) => {
-                return (
-                  <MenuItem value={author._id} key={author._id}>
-                    {author.authorName}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            className="select-game-container__select-game"
+            options={allGameAuthors}
+            inputValue={autocompleteValue}
+            onInputChange={(e, newInputValue) => {
+              setAutocompleteValue(newInputValue);
+            }}
+            getOptionLabel={(option) => option.authorName}
+            getOptionSelected={() => true}
+            renderInput={(params) => (
+              <TextField {...params} label="Select Game Author" inputProps={{ ...params.inputProps }} />
+            )}
+            // @ts-ignore
+            onChange={onAutocompleteChangeHandler}
+          />
         </div>
 
         {initialGameAuthorData && <RenderGameForm initialGameAuthorData={initialGameAuthorData} />}

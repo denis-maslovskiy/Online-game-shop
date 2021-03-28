@@ -41,7 +41,11 @@
     transition: 0.2s;
 
     &:hover {
-        color: $custom-light-blue;
+        color: $custom-dark-blue;
+        .price-container__price-with-discount {
+            font-weight: 800;
+            transition-delay: 1s;
+        }
         background-color: $custom-light-grey;
         box-shadow: 0 0 10px $custom-light-blue, 0 0 40px $custom-light-blue, 0 0 80px $custom-light-blue;
         .card__picture {

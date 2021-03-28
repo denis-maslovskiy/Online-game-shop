@@ -6,16 +6,8 @@ import * as Yup from "yup";
 import { Field, Form, Formik, FieldProps, FormikTouched, FormikErrors } from "formik";
 // @ts-ignore
 import { Image } from "cloudinary-react";
-import {
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Select,
-  FormHelperText,
-} from "@material-ui/core";
+import { TextField, Checkbox, FormControlLabel, FormControl, FormHelperText } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import ClearIcon from "@material-ui/icons/Clear";
 import {
   adminUpdateGameData,
@@ -137,6 +129,11 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
   const dispatch = useDispatch();
   const { cloudName } = useContext(DependenciesContext);
   const maxNumberOfImages = 6;
+
+  useEffect(() => {
+    setPreviews([]);
+    setSelectedFiles([]);
+  }, [initialGameData]);
 
   const updateGameInAuthorsArray = (game: Game) => {
     let previousAuthor: Author = {
@@ -420,7 +417,17 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
       >
         {({ values, setFieldValue, touched, errors }) => (
           <Form className="form">
-            <h3 className="titles">Edit Game Info</h3>
+            <h3 className="titles">
+              <span className="static-field">Edit Info </span>
+              {initialGameData.gameName ? (
+                <span>
+                  <span className="static-field">of </span>
+                  {initialGameData.gameName}
+                </span>
+              ) : (
+                ""
+              )}
+            </h3>
             {inputs.map((input) => {
               if (input.name === "isDigital" || input.name === "isPhysical") {
                 return (
@@ -614,33 +621,33 @@ const RenderGameForm = ({ initialGameData, deleteGameClickHandler, allGameAuthor
 
 const AdminEditGame: React.FC = () => {
   const [initialGameData, setInitialGameData] = useState(initialEmptyForm);
-  const [deletedGameId, setDeletedGameId] = useState("");
+  const [autocompleteValue, setAutocompleteValue] = useState("");
 
   const dispatch = useDispatch();
   const { allGames } = useSelector((state: RootState) => state.games);
   const { successMsg, infoMsg, errorMsg } = useSelector((state: RootState) => state.notification);
   const { allGameAuthors } = useSelector((state: RootState) => state.gameAuthor);
+  const {
+    adminOptionData: { optionData },
+  } = useSelector((state: RootState) => state.user);
   const { userId } = JSON.parse(localStorage.getItem("userData")!);
 
   useEffect(() => {
     dispatch(getAllGames());
-    dispatch(getAllAuthors());
-  }, [dispatch]);
+    dispatch(getAllAuthors({ userId }));
+  }, [dispatch, userId]);
 
-  const selectHandleChange = (event: React.FormEvent<HTMLInputElement>) => {
-    // @ts-ignore
-    const gameId = event.target.value;
-    const gameData = allGames.find((game: Game) => {
-      return game._id === gameId;
-    });
-
-    setInitialGameData(gameData);
-  };
+  useEffect(() => {
+    if (optionData?.gameName) {
+      setInitialGameData(optionData);
+      setAutocompleteValue(optionData.gameName);
+    }
+  }, [optionData]);
 
   const deleteGameClickHandler = async (gameId: string) => {
     dispatch(deleteGame(gameId, { userId }));
-    setDeletedGameId(gameId);
     setInitialGameData(initialEmptyForm);
+    setAutocompleteValue("");
     window.scrollTo(0, 0);
 
     const gameData = allGames.find((game: Game) => {
@@ -662,6 +669,14 @@ const AdminEditGame: React.FC = () => {
     });
   };
 
+  const onAutocompleteChangeHandler = (e: Event, value: FormValues) => {
+    if (value) {
+      setAutocompleteValue(value.gameName);
+      // @ts-ignore
+      setInitialGameData(value);
+    }
+  };
+
   return (
     <>
       {successMsg && <Notification values={{ successMsg }} />}
@@ -672,24 +687,21 @@ const AdminEditGame: React.FC = () => {
           <h2 className="container-title titles">Edit Game</h2>
         </div>
         <div className="select-game-container">
-          <FormControl className="select-game-container__select-game select-game">
-            <InputLabel className="select-game__label">Select game</InputLabel>
-            <Select
-              value={deletedGameId === initialGameData?._id ? "" : initialGameData?._id}
-              defaultValue={null}
-              // @ts-ignore
-              onChange={selectHandleChange}
-              className="select-game__select"
-            >
-              {allGames.map((game: FormValues) => {
-                return (
-                  <MenuItem value={game._id} key={game._id}>
-                    {game.gameName}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            className="select-game-container__select-game"
+            options={allGames}
+            inputValue={autocompleteValue}
+            onInputChange={(e, newInputValue) => {
+              setAutocompleteValue(newInputValue);
+            }}
+            getOptionLabel={(option) => option.gameName}
+            getOptionSelected={() => true}
+            renderInput={(params) => (
+              <TextField {...params} label="Select Game" inputProps={{ ...params.inputProps }} />
+            )}
+            // @ts-ignore
+            onChange={onAutocompleteChangeHandler}
+          />
         </div>
       </div>
 

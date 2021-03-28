@@ -86,7 +86,6 @@
 
 .static-field {
     color: $static-field-color !important;
-    font-family: 'Anton', sans-serif;
 }
 
 .buy-game {
@@ -112,6 +111,19 @@
 
     &__digital-copy, &__physical-copy {
         @include flex-display(nowrap, column, flex-start, center);
+    }
+}
+
+.admin-edit-link {
+    @include flex-display($justify-content: space-between, $align-items: center);
+    width: 70px;
+    position: absolute;
+    right: 7%;
+    text-decoration: none;
+
+    &:hover, &:focus {
+        text-decoration: underline;
+        text-decoration-color: $static-field-color;
     }
 }
 

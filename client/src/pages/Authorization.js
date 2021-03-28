@@ -1,21 +1,20 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { TextField } from "@material-ui/core";
-import Notification from "../components/Notification";
 import { clearErrorMessage } from "../redux/notification/notificationActions";
 import { loginUser } from "../redux/authentication/authenticationActions";
 import { DependenciesContext } from "../context/DependenciesContext";
 import "../styles/auth.scss";
 
 const Authorization = (props) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { loginUser, clearErrorMessage, errorMsg } = props;
   const history = useHistory();
   const { isAuthenticated } = useContext(DependenciesContext);
+  const USER = "User", PASSWORD = 'password';
 
   const onInputClickHandler = () => {
     clearErrorMessage();
@@ -23,7 +22,6 @@ const Authorization = (props) => {
 
   const submit = (userData, { setSubmitting, resetForm }) => {
     loginUser(userData, resetForm);
-    setIsSubmitting(true);
     setSubmitting(false);
   };
 
@@ -33,16 +31,46 @@ const Authorization = (props) => {
     }
   }, [isAuthenticated, history]);
 
+  const checksForEmail = (errors, touched) => {
+    return (Boolean(errors.email) && touched.email) || Boolean(errorMsg && errorMsg.includes(USER));
+  };
+
+  const emailHelperText = (errors, touched) => {
+    return checksForEmail(errors, touched) ? (Boolean(errorMsg) ? errorMsg : errors.email) : "";
+  };
+
+  const checksForPassword = (errors, touched) => {
+    return (Boolean(errors.password) && touched.password) || Boolean(errorMsg && errorMsg.includes(PASSWORD));
+  };
+
+  const passwordHelperText = (errors, touched) => {
+    return checksForPassword(errors, touched) ? (Boolean(errorMsg) ? errorMsg : errors.password) : "";
+  };
+
+  const checkForSubmitButton = (errors, touched, values) => {
+    return (
+      Boolean(checksForEmail(errors, touched)) ||
+      Boolean(checksForPassword(errors, touched)) ||
+      Boolean(!values.email) ||
+      Boolean(!values.password)
+    );
+  };
+
   return (
     <>
-      {isSubmitting && errorMsg && <Notification values={{ errorMsg }} />}
       <Formik
         initialValues={{
           email: "",
           password: "",
         }}
         validationSchema={Yup.object({
-          email: Yup.string().email("Invalid email address").required("Required"),
+          email: Yup.string()
+            .email("Invalid email address")
+            .matches(
+              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              "Invalid email address"
+            )
+            .required("Required"),
           password: Yup.string().min(6, "Must be at least 6 characters").required("Required"),
         })}
         onSubmit={submit}
@@ -63,8 +91,8 @@ const Authorization = (props) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.email) && touched.email}
-                helperText={touched.email ? errors.email : ""}
+                error={Boolean(checksForEmail(errors, touched))}
+                helperText={emailHelperText(errors, touched)}
               />
             </div>
 
@@ -81,11 +109,15 @@ const Authorization = (props) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onClick={onInputClickHandler}
-                error={Boolean(errors.password) && touched.password}
-                helperText={touched.password ? errors.password : ""}
+                error={Boolean(checksForPassword(errors, touched))}
+                helperText={passwordHelperText(errors, touched)}
               />
             </div>
-            <button className="box__submit-btn titles" type="submit">
+            <button
+              className="box__submit-btn titles"
+              type="submit"
+              disabled={checkForSubmitButton(errors, touched, values)}
+            >
               {isSubmitting ? "Loading..." : "Log In"}
             </button>
             <div className="box__bottom-text default-text">

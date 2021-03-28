@@ -43,11 +43,12 @@ const HomePage = () => {
   const dispatch = useDispatch();
   const { allGames, filteredGames } = useSelector((state) => state.games);
   const { cloudName } = useContext(DependenciesContext);
+  const userId = JSON.parse(localStorage.getItem("userData"))?.userId;
 
   useEffect(() => {
     dispatch(getAllGames());
-    dispatch(getAllAuthors());
-  }, [dispatch]);
+    dispatch(getAllAuthors({ userId }));
+  }, [dispatch, userId]);
 
   if (filteredGames.length && filteredGames[0] === "No matches found.") {
     return (

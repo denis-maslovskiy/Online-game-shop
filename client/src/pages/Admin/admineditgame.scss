@@ -89,7 +89,7 @@
     @include dark-bg(1);
     padding: 15px 0;
 
-    &__select-game.MuiFormControl-root, &__select-game-author.MuiFormControl-root {
+    &__select-game.MuiAutocomplete-root, &__select-game-author.MuiAutocomplete-root {
         width: 250px;
     }
 

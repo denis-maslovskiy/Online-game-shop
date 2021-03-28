@@ -19,4 +19,9 @@ body {
 ::-webkit-scrollbar-thumb {
     background: $custom-dark-blue;
 }
+
+// Outline fix
+button.alert__close-btn {
+    outline: none !important;
+}
  
